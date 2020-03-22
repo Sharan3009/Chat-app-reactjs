@@ -7,21 +7,7 @@ import './App.scss';
 class App extends React.Component {
   constructor(props){
     super(props);
-    this.state = {
-      show:false
-    }
-  }
-  
-  setShow(bool){
-    this.setState({show:bool});
-  }
-
-  handleClose(){
-    this.setShow(false);
-  }
-
-  handleShow(){
-    this.setShow(true);
+    this.state = {};
   }
 
   render(){
