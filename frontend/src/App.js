@@ -1,6 +1,8 @@
 import React from 'react';
-import {Button, Modal} from 'react-bootstrap';
-import './App.css';
+import {BrowserRouter as Router, Switch, HashRouter, Link, Route,} from "react-router-dom";
+import Login from "./components/login";
+import SignUp from "./components/signup";
+import './App.scss';
 
 class App extends React.Component {
   constructor(props){
@@ -24,26 +26,16 @@ class App extends React.Component {
 
   render(){
     return(
-      <>
-      <Button variant="primary" onClick={this.handleShow.bind(this)}>
-        Open Modal
-      </Button>
-
-      <Modal show={this.state.show} onHide={this.handleClose.bind(this)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={this.handleClose.bind(this)}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={this.handleClose.bind(this)}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
+      <HashRouter>
+        <Switch>
+          <Route path="/" render={Login}>
+          </Route>
+          <Route path="/signup" render={SignUp}>
+          </Route>
+          <Route path="/login" render={Login}>
+          </Route>
+        </Switch>
+      </HashRouter>
     )
   }
 }
