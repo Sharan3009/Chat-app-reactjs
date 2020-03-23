@@ -1,6 +1,6 @@
 import React from 'react';
 import {Form,Button,Col,Row,Alert} from 'react-bootstrap';
-import {Link,useHistory} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import axios from "axios";
 import './login.scss';
 
@@ -37,7 +37,7 @@ class Login extends React.Component {
         this.setState({formValid:true});
         if(apiResponse.data){
           if(apiResponse.data.status===200){
-            useHistory().push("/home");
+          this.props.history.push("/home");
           } else {
             this.handleConfirmation(true,"warning",apiResponse.data.message);
           }
