@@ -37,7 +37,7 @@ module.exports.setRouter = (app) => {
                 "password": string,
                 "active": boolean,
                 "createdOn": date,
-                "activateUserToken":string
+                @deprecated "activateUserToken":string
             }
 
         }
@@ -47,43 +47,6 @@ module.exports.setRouter = (app) => {
 	 * {
 	    "error": true,
 	    "message": "Failed to create user",
-	    "status": 500,
-	    "data": null
-	   }
-    */
-
-   app.post(`${baseUrl}/verify`, userController.activateUser);
-       /**
-     * @apiGroup User
-     * @apiVersion  1.0.0
-     * @api {post} /api/v1/users/verify User Verify.
-     *
-     * @apiParam {string} email email of the user. (body params) (required)
-     * @apiParam {string} password password of the user. (body params) (required)
-     * @apiParam {string} verifyToken verifyToken of the user. (body params) (required)
-     * 
-     * @apiSuccessExample {object} Success-Response:
-         {
-            "error": false,
-            "message": "Login Successful",
-            "status": 200,
-            "data": {
-                "authToken":string,
-                "userDetails":{
-                "userId": string,
-                "firstName": string,
-                "lastName": string,
-                "email": string,
-                }
-            }
-
-        }
-
-        @apiErrorExample {json} Error-Response:
-	 *
-	 * {
-	    "error": true,
-	    "message": "Login Failed",
 	    "status": 500,
 	    "data": null
 	   }

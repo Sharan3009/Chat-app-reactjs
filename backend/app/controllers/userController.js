@@ -56,7 +56,6 @@ let signUpFunction = (req, res) => {
                         email : req.body.email.toLowerCase(),
                         mobileNumber : req.body.mobileNumber,
                         password : passwordLib.hashpassword(req.body.password),
-                        activateUserToken : uuid.v4(),
                         createdOn : time.now(),
                         active:true
                     })
@@ -366,7 +365,6 @@ module.exports = {
 
     signUpFunction: signUpFunction,
     loginFunction: loginFunction,
-    activateUser: activateUser,
     forgotPassword : forgotPassword,
     resetPassword : resetPassword,
     logout: logout
