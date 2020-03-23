@@ -57,7 +57,8 @@ let signUpFunction = (req, res) => {
                         mobileNumber : req.body.mobileNumber,
                         password : passwordLib.hashpassword(req.body.password),
                         activateUserToken : uuid.v4(),
-                        createdOn : time.now()
+                        createdOn : time.now(),
+                        active:true
                     })
                     newUser.save((err,newUser)=>{
                         if(err){
@@ -105,7 +106,7 @@ let loginFunction = (req, res) => {
                         logger.error('Failed to Retrieve User Data', 'User Controller : findUser',5)
                         let apiResponse = response.generate(true,'Failed to find the user',400,null)
                         reject(apiResponse)
-                    } else if (check.isEmpty(userDetails) || userDetails.active === false) {
+                    } else if (check.isEmpty(userDetails)) {
                         logger.error('No User Found','User Controller : findUser',5)
                         let apiResponse = response.generate(true,'No User Details Found',400,null)
                         reject(apiResponse)
@@ -218,174 +219,6 @@ let loginFunction = (req, res) => {
 
     findUser(req,res)
     .then(validatePassword)
-    .then(generateToken)
-    .then(saveToken)
-    .then((resolve)=>{
-        let apiResponse = response.generate(false,'Login successful',200,resolve)
-        res.send(apiResponse)
-    })
-    .catch((err)=>{
-        console.log(err)
-        res.send(err)
-    })
-}
-
-let activateUser = (req, res) => {
-    let findUser = () => {
-        return new Promise((resolve,reject)=>{
-            if(req.body.verifyToken){
-                UserModel.findOne({activateUserToken: req.body.verifyToken},(err,userDetails)=>{
-                    if(err){
-                        console.log(err)
-                        logger.error('Failed to Retrieve User Data', 'User Controller : findUser',5)
-                        let apiResponse = response.generate(true,'Failed to find the user',400,null)
-                        reject(apiResponse)
-                    } else if (check.isEmpty(userDetails)) {
-                        logger.error('No User Found','User Controller : findUser',5)
-                        let apiResponse = response.generate(true,'No User Details Found',400,null)
-                        reject(apiResponse)
-                    } else {
-                        if(req.body.email.toLowerCase() === userDetails.email){
-                            logger.info('User Found','User Controller : findUser',5)
-                            resolve(userDetails)
-                        } else {
-                            logger.error('No User Found','User Controller : findUser',5)
-                            let apiResponse = response.generate(true,'No User Details Found',400,null)
-                            reject(apiResponse)
-                        }
-                        
-                    }
-                })
-            } else {
-                let apiResponse = response.generate(true,'verify Token is missing',400,null)
-                reject(apiResponse)
-            }
-        })
-    }
-
-    let validatePassword = (retrievedUserDetails) => {
-        return new Promise((resolve,reject)=>{
-            passwordLib.comparePassword(req.body.password,retrievedUserDetails.password,(err,isMatch)=>{
-                if(err){
-                    console.log(err)
-                    logger.error(err.message,'User Controller : validatePassword',5)
-                    let apiResponse = response.generate(true,'Login Failed',500,null)
-                    reject(apiResponse)
-                } else if (isMatch) {
-                    resolve()
-                } else {
-                    logger.error('Login failed due to incorrect password','User Controller : validatePassword',5)
-                    let apiResponse = response.generate(true,'Wrong password . Login Failed',500,null)
-                    reject(apiResponse)
-                }
-            })
-           
-        })
-    }
-
-    let activateUserToken = ()=>{
-        return new Promise((resolve, reject) => {
-            let findQuery = {
-                activateUserToken: req.body.verifyToken
-            }
-      
-            let updateQuery = {
-              active: true,
-              $unset : { activateUserToken:1 }
-            }
-      
-            UserModel.findOneAndUpdate(findQuery, updateQuery, {multi: true, new:true})
-            .exec((err, result) => {
-              if (err) {
-                console.log(err)
-                logger.error(err.message, 'User Controller: activateUser', 10)
-                let apiResponse = response.generate(true, `error occurred: ${err.message}`, 500, null)
-                reject(apiResponse)
-              } else {
-                let retrievedUserDetailsObj = result.toObject()
-                delete retrievedUserDetailsObj.password
-                delete retrievedUserDetailsObj._id
-                delete retrievedUserDetailsObj.__v
-                delete retrievedUserDetailsObj.createdOn
-                delete retrievedUserDetailsObj.active
-                resolve(retrievedUserDetailsObj)
-              }
-            })
-          })
-    }
-
-    let generateToken = (userDetails) => {
-        return new Promise ((resolve,reject)=>{
-            token.generateToken(userDetails,(err,tokenDetails)=>{
-                if(err){
-                    console.log(err)
-                    let apiResponse = response.generate(true,'Failed to generate token',500,null)
-                    reject(apiResponse)
-                } else {
-                    tokenDetails.userId = userDetails.userId
-                    tokenDetails.userDetails = userDetails
-                    resolve(tokenDetails)
-                }
-            })
-        })
-    }
-
-    let saveToken = (tokenDetails) => {
-        return new Promise((resolve,reject)=>{
-            AuthModel.findOne({userId : tokenDetails.userId })
-            .exec((err, retrievedTokenDetails)=>{
-                if(err){
-                    logger.error(err.message,'User Controller : saveToken',5)
-                    let apiResponse = response.generate(true,'Failed to generate token',400,null)
-                    reject(apiResponse)
-                } else if (check.isEmpty(retrievedTokenDetails)) {
-                    let newAuthToken = new AuthModel({
-                        userId : tokenDetails.userId,
-                        authToken : tokenDetails.token,
-                        tokenDetails : tokenDetails.tokenDetails,
-                        tokenSecret : tokenDetails.tokenSecret,
-                        tokenGenerationTime : time.now()
-                    })
-                    newAuthToken.save((err,newTokenDetails)=>{
-                        if(err){
-                            console.log(err)
-                            logger.error(err.message,'User Controller : saveToken', 10)
-                            let apiResponse = response.generate(true,'Failed to generate new token',400,null)
-                            reject(apiResponse)
-                        } else {
-                            let responseBody = {
-                                authToken : newTokenDetails.authToken,
-                                userDetails : tokenDetails.userDetails
-                            }
-                            resolve(responseBody)
-                        }
-                    })
-                } else {
-                    retrievedTokenDetails.authToken = tokenDetails.token
-                    retrievedTokenDetails.tokenSecret = tokenDetails.tokenSecret
-                    retrievedTokenDetails.tokenGenerationTime = time.now()
-                    retrievedTokenDetails.save((err,newTokenDetails)=>{
-                        if(err){
-                            console.log(err)
-                            logger.error(err.message,'User Controller : saveToken',10)
-                            let apiResponse = response.generate(true,'Failed to generate Token',400,null)
-                            reject(apiResponse)
-                        } else {
-                            let responseBody = {
-                                authToken : newTokenDetails.authToken,
-                                userDetails : tokenDetails.userDetails
-                            }
-                            resolve(responseBody)
-                        }
-                    })
-                } 
-            })
-        })
-    }
-
-    findUser(req,res)
-    .then(validatePassword)
-    .then(activateUserToken)
     .then(generateToken)
     .then(saveToken)
     .then((resolve)=>{
