@@ -62,7 +62,7 @@ class SignUp extends React.Component {
         break;
       case 'password':
         if(this.state.formTouched[fieldName]){
-          let passwordValid = value.length >= 6;
+          let passwordValid = value.length >= 8;
           fieldValidationErrors.password = passwordValid ? '': 'Password is too short';
         }
         break;
