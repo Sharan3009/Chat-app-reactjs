@@ -9,7 +9,9 @@ class SignUp extends React.Component {
 
   render(){
     return(
-      <h2>signup</h2>
+     <div className="credentials-bg">
+       
+     </div>
     )
   }
 }
