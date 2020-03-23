@@ -13,9 +13,8 @@ class Login extends React.Component {
   }
 
   setForm = (event) => {
-    const key = event.target.name;
-    const value = event.target.value;
-    this.setState({[key]:value});
+    const {name,value} = event.target;
+    this.setState({[name]:value});
   }
 
   submitForm = () =>{
