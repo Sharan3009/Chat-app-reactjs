@@ -1,5 +1,6 @@
 import React from 'react';
-import {Form,Button} from 'react-bootstrap';
+import {Form,Button,Col,Row} from 'react-bootstrap';
+import {Link} from 'react-router-dom';
 import './login.scss';
 
 class Login extends React.Component {
@@ -43,9 +44,16 @@ class Login extends React.Component {
           <Form.Group controlId="formBasicCheckbox">
             <Form.Check name="rememberMe" type="checkbox" label="Remember me" defaultChecked={this.state.rememberMe} onChange={this.setForm}/>
           </Form.Group>
-          <Button variant="primary" type="submit" disabled={!this.validateForm()}>
-            Login
-          </Button>
+          <Row>
+            <Col>
+              <Button variant="primary" type="submit" disabled={!this.validateForm()}>
+                Login
+              </Button>
+            </Col>
+            <Col className="d-flex align-items-center justify-content-end">
+              <Link to={"signup"}>Create new Account</Link>
+            </Col>
+          </Row>
         </Form>
       </div>
     )

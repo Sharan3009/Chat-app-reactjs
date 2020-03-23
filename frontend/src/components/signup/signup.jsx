@@ -1,5 +1,6 @@
 import React from 'react';
-import { Form, Button, Col } from 'react-bootstrap';
+import { Form, Button, Col,Row } from 'react-bootstrap';
+import {Link} from 'react-router-dom';
 import './signup.scss';
 
 class SignUp extends React.Component {
@@ -149,9 +150,16 @@ class SignUp extends React.Component {
               {this.state.formErrors.confirmPassword.text}
           </Form.Control.Feedback>
         </Form.Group>
-        <Button variant="primary" type="submit" disabled={!this.state.formValid}>
-          Sign Up
-        </Button>
+        <Row>
+          <Col>
+            <Button variant="primary" type="submit" disabled={!this.state.formValid}>
+              Sign Up
+            </Button>
+          </Col>
+          <Col className="d-flex align-items-center justify-content-end">
+            <Link to={"login"}>Already a User</Link>
+          </Col>
+        </Row>
       </Form>
      </div>
     )
