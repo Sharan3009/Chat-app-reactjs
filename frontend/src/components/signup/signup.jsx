@@ -14,8 +14,10 @@ class SignUp extends React.Component {
     }
   }
 
-  setForm(key,event){
-    this.setState({[key]:event.target.value});
+  setForm = (event) => {
+    const key = event.target.name;
+    const value = event.target.value;
+    this.setState({[key]:value});
   }
 
   submitForm = () =>{
@@ -29,24 +31,24 @@ class SignUp extends React.Component {
        <Form.Row>
           <Form.Group as={Col} controlId="formGridFirstName">
             <Form.Label>First Name</Form.Label>
-            <Form.Control type="text" placeholder="First Name" value={this.state.firstName} onChange={(e)=>this.setForm("firstName",e)} />
+            <Form.Control name="firstName" type="text" placeholder="First Name" value={this.state.firstName} onChange={this.setForm} />
           </Form.Group>
           <Form.Group as={Col} controlId="formGridLastName">
             <Form.Label>Last Name</Form.Label>
-            <Form.Control type="text" placeholder="Enter last name" value={this.state.lastName} onChange={(e)=>this.setForm("lastName",e)} />
+            <Form.Control name="lastName" type="text" placeholder="Enter last name" value={this.state.lastName} onChange={this.setForm} />
           </Form.Group>
         </Form.Row>
         <Form.Group controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
-          <Form.Control type="email" placeholder="Enter email" value={this.state.email} onChange={(e)=>this.setForm("email",e)}/>
+          <Form.Control name="email" type="email" placeholder="Enter email" value={this.state.email} onChange={this.setForm}/>
         </Form.Group>
         <Form.Group controlId="formBasicPassword">
           <Form.Label>Password</Form.Label>
-          <Form.Control type="password" placeholder="Password" value={this.state.password} onChange={(e)=>this.setForm("password",e)} />
+          <Form.Control name="password" type="password" placeholder="Password" value={this.state.password} onChange={this.setForm} />
         </Form.Group>
         <Form.Group controlId="formBasicConfirmPasswod">
           <Form.Label>Confirm Password</Form.Label>
-          <Form.Control type="password" placeholder="Re-enter password" value={this.state.confirmPassword} onChange={(e)=>this.setForm("confirmPassword",e)}/>
+          <Form.Control name="confirmPassword" type="password" placeholder="Re-enter password" value={this.state.confirmPassword} onChange={this.setForm}/>
         </Form.Group>
         <Button variant="primary" type="submit">
           Sign Up

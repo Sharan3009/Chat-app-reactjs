@@ -5,25 +5,46 @@ import './login.scss';
 class Login extends React.Component {
   constructor(props){
     super(props);
-    this.state = {}
+    this.state = {
+      email:"",
+      password:"",
+      rememberMe:false
+    }
+  }
+
+  setForm = (event) => {
+    const key = event.target.name;
+    const value = event.target.value;
+    this.setState({[key]:value});
+  }
+
+  submitForm = () =>{
+    console.log(this.state)
+  }
+
+  validateForm = () =>{
+    if(this.state.email && this.state.password){
+      return true;
+    }
+    return false;
   }
 
   render(){
     return(
       <div className="credentials-bg">
-        <Form className="bg-white p-3 custom-form rounded">
+        <Form className="bg-white p-3 custom-form rounded" onSubmit={this.submitForm} method="POST">
           <Form.Group controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
-            <Form.Control type="email" placeholder="Enter email" />
+            <Form.Control name="email" type="email" placeholder="Enter email" value={this.state.email} onChange={this.setForm}/>
           </Form.Group>
           <Form.Group controlId="formBasicPassword">
             <Form.Label>Password</Form.Label>
-            <Form.Control type="password" placeholder="Password" />
+            <Form.Control name="password" type="password" placeholder="Password" value={this.state.password} onChange={this.setForm}/>
           </Form.Group>
           <Form.Group controlId="formBasicCheckbox">
-            <Form.Check type="checkbox" label="Remember me" />
+            <Form.Check name="rememberMe" type="checkbox" label="Remember me" defaultChecked={this.state.rememberMe} onChange={this.setForm}/>
           </Form.Group>
-          <Button variant="primary" type="submit">
+          <Button variant="primary" type="submit" disabled={!this.validateForm()}>
             Login
           </Button>
         </Form>
