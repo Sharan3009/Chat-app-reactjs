@@ -1,7 +1,8 @@
 import React from 'react';
-import { Form, Button, Col,Row } from 'react-bootstrap';
+import { Form, Button, Col,Row, Alert } from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import './signup.scss';
+import axios from "axios";
 
 class SignUp extends React.Component {
   constructor(props){
@@ -27,7 +28,12 @@ class SignUp extends React.Component {
         password:false,
         confirmPassword:false
       },
-      formValid:false
+      formValid:false,
+      registerConfirmation:{
+        show:false,
+        variant:"",
+        message:""
+      }
     }
   }
 
@@ -43,8 +49,37 @@ class SignUp extends React.Component {
     this.setState({formTouched},()=>this.validateField(name,value));
   }
 
-  submitForm = () =>{
-    console.log(this.state)
+  submitForm = (event) =>{
+    event.preventDefault();
+    this.setState({formValid:false});
+    axios.post(`${process.env.REACT_APP_DOMAIN || ""}/api/v1/users/signsup`,
+    {
+      firstName:this.state.firstName,
+      lastName:this.state.lastName,
+      email:this.state.email,
+      password:this.state.password
+    }).then(
+      (apiResponse)=>{
+        this.setState({formValid:true});
+        if(apiResponse.data){
+          if(apiResponse.data.status===200){
+            this.handleConfirmation(true,"success",apiResponse.data.message);
+          } else {
+            this.handleConfirmation(true,"warning",apiResponse.data.message);
+            this.setState({formValid:false});
+          }
+        }
+      }
+    ).catch(
+      (apiError)=>{
+        this.setState({formValid:true});
+        let message = "Something went wrong!"
+        if(apiError.data){
+          message=apiError.data.message;
+        }
+        this.handleConfirmation(true,"danger",message);
+      }
+    );
   }
 
   validateField(fieldName, value) {
@@ -93,10 +128,21 @@ class SignUp extends React.Component {
     this.setState({formValid: !formErrors.firstName && !formErrors.email && !formErrors.password && formErrors.confirmPassword.status==="valid"});
   }
 
+  handleConfirmation = (show,variant,message) =>{
+    let registerationState = this.state.registerConfirmation;
+    registerationState.show = show;
+    registerationState.message = message || "";
+    registerationState.variant = variant || "";
+    this.setState({registerConfirmation:registerationState});
+  }
   render(){
     return(
      <div className="credentials-bg">
-       <Form className="bg-white p-3 custom-form rounded" onSubmit={this.submitForm} method="POST">
+       <Form className="bg-white p-3 custom-form rounded" onSubmit={this.submitForm}>
+       {this.state.registerConfirmation.show && 
+        (<Alert variant={this.state.registerConfirmation.variant} onClose={() => this.handleConfirmation(false)} dismissible>
+          {this.state.registerConfirmation.message}
+       </Alert>)}
        <Form.Row>
           <Form.Group as={Col} controlId="formGridFirstName">
             <Form.Label>First Name</Form.Label>
@@ -157,7 +203,7 @@ class SignUp extends React.Component {
             </Button>
           </Col>
           <Col className="d-flex align-items-center justify-content-end">
-            <Link to={"login"}>Already a User</Link>
+            <Link to={"login"}>Already a User?</Link>
           </Col>
         </Row>
       </Form>
