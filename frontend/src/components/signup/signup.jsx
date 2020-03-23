@@ -52,7 +52,7 @@ class SignUp extends React.Component {
   submitForm = (event) =>{
     event.preventDefault();
     this.setState({formValid:false});
-    axios.post(`${process.env.REACT_APP_DOMAIN || ""}/api/v1/users/signsup`,
+    axios.post(`${process.env.REACT_APP_DOMAIN || ""}/api/v1/users/signup`,
     {
       firstName:this.state.firstName,
       lastName:this.state.lastName,

@@ -1,6 +1,7 @@
 import React from 'react';
-import {Form,Button,Col,Row} from 'react-bootstrap';
-import {Link} from 'react-router-dom';
+import {Form,Button,Col,Row,Alert} from 'react-bootstrap';
+import {Link,useHistory} from 'react-router-dom';
+import axios from "axios";
 import './login.scss';
 
 class Login extends React.Component {
@@ -9,30 +10,75 @@ class Login extends React.Component {
     this.state = {
       email:"",
       password:"",
-      rememberMe:false
+      rememberMe:false,
+      formValid:false,
+      loginConfirmation:{
+        show:false,
+        variant:"",
+        message:""
+      }
     }
   }
 
   setForm = (event) => {
     const {name,value} = event.target;
-    this.setState({[name]:value});
+    this.setState({[name]:value},()=>this.validateForm());
   }
 
-  submitForm = () =>{
-    console.log(this.state)
+  submitForm = (event) =>{
+    event.preventDefault();
+    this.setState({formValid:false});
+    axios.post(`${process.env.REACT_APP_DOMAIN || ""}/api/v1/users/login`,
+    {
+      email:this.state.email,
+      password:this.state.password
+    }).then(
+      (apiResponse)=>{
+        this.setState({formValid:true});
+        if(apiResponse.data){
+          if(apiResponse.data.status===200){
+            useHistory().push("/home");
+          } else {
+            this.handleConfirmation(true,"warning",apiResponse.data.message);
+          }
+        }
+      }
+    ).catch(
+      (apiError)=>{
+        this.setState({formValid:true});
+        let message = "Something went wrong!"
+        if(apiError.data){
+          message=apiError.data.message;
+        }
+        this.handleConfirmation(true,"danger",message);
+      }
+    );
   }
 
   validateForm = () =>{
+    let bool = false;
     if(this.state.email && this.state.password){
-      return true;
+      bool = true;
     }
-    return false;
+    this.setState({formValid:bool});
+  }
+
+  handleConfirmation = (show,variant,message) =>{
+    let loginState = this.state.loginConfirmation;
+    loginState.show = show;
+    loginState.message = message || "";
+    loginState.variant = variant || "";
+    this.setState({loginConfirmation:loginState});
   }
 
   render(){
     return(
       <div className="credentials-bg">
-        <Form className="bg-white p-3 custom-form rounded" onSubmit={this.submitForm} method="POST">
+        <Form className="bg-white p-3 custom-form rounded" onSubmit={this.submitForm}>
+        {this.state.loginConfirmation.show && 
+        (<Alert variant={this.state.loginConfirmation.variant} onClose={() => this.handleConfirmation(false)} dismissible>
+          {this.state.loginConfirmation.message}
+       </Alert>)}
           <Form.Group controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
             <Form.Control name="email" type="email" placeholder="Enter email" value={this.state.email} onChange={this.setForm}/>
@@ -46,7 +92,7 @@ class Login extends React.Component {
           </Form.Group>
           <Row>
             <Col>
-              <Button variant="primary" type="submit" disabled={!this.validateForm()}>
+              <Button variant="primary" type="submit" disabled={!this.state.formValid}>
                 Login
               </Button>
             </Col>
