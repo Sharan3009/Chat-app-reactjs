@@ -1,7 +1,11 @@
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
 import credentialsForm from './reducers/credentials-form';
-const mainReducer = combineReducers({
+import thunk from 'redux-thunk';
+const rootReducer = combineReducers({
     credentialsForm
 })
-const store = createStore(mainReducer);
+const store = createStore(
+    rootReducer,
+    applyMiddleware(thunk)
+    );
 export default store;
