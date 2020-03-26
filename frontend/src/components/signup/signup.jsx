@@ -3,76 +3,72 @@ import { Form, Button, Col,Row, Alert } from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import './signup.scss';
 import axios from "axios";
+import { FORM_VALID,AFTER_SUBMIT,FORM_HANDLER,FORM_FIELD_ERROR_HANDLER,FORM_FIELD_TOUCHED_HANDLER } from '../../actions/credentials-form';
+import { connect } from 'react-redux';
+import { Action } from '../../classes/Action';
 
 class SignUp extends React.Component {
   constructor(props){
     super(props);
-    this.state = {
-      firstName:'',
-      lastName:'',
-      email:'',
-      password:'',
-      confirmPassword:'',
-      formErrors: {
-        firstName:"",
-        email:"",
-        password:"",
-        confirmPassword:{
-          status:"",
-          text:""
-        }
-      },
-      formTouched:{
-        firstName:false,
-        email:false,
-        password:false,
-        confirmPassword:false
-      },
-      formValid:false,
-      registerConfirmation:{
-        show:false,
-        variant:"",
-        message:""
-      }
-    }
+    this.state = {}
   }
 
   setForm = (event) => {
-    const {name,value} = event.target
-    this.setState({[name]:value},()=>this.validateField(name,value));
+    const {name,value} = event.target;
+    this.props.dispatch(this.setFormDispatchPromise(FORM_HANDLER,{name,value})).then(()=>this.validateField(name,value))
+  }
+
+  setFormDispatchPromise = (type,data)=>{
+    return function(dispatch){
+      let action = {...new Action(type,data)};
+      dispatch(action);
+      return Promise.resolve();
+    }
   }
 
   setTouched = (event) => {
     const {name,value} = event.target
-    let formTouched = this.state.formTouched;
+    let formTouched = this.props.formTouched;
     formTouched[name] = true;
-    this.setState({formTouched},()=>this.validateField(name,value));
+    this.props.dispatch(this.setFormTouchedDispatchPromise(formTouched)).then(()=>this.validateField(name,value));
+  }
+
+  setFormTouchedDispatchPromise = (formTouched)=>{
+    return function(dispatch){
+      let action = {...new Action(FORM_FIELD_TOUCHED_HANDLER,formTouched)};
+      dispatch(action);
+      return Promise.resolve();
+    }
   }
 
   submitForm = (event) =>{
     event.preventDefault();
-    this.setState({formValid:false});
+    let action = {...new Action(FORM_VALID,false)};
+    this.props.dispatch(action);
     axios.post(`${process.env.REACT_APP_DOMAIN || ""}/api/v1/users/signup`,
     {
-      firstName:this.state.firstName,
-      lastName:this.state.lastName,
-      email:this.state.email,
-      password:this.state.password
+      firstName:this.props.firstName,
+      lastName:this.props.lastName,
+      email:this.props.email,
+      password:this.props.password
     }).then(
       (apiResponse)=>{
-        this.setState({formValid:true});
+        action.value = true;
+        this.props.dispatch(action);
         if(apiResponse.data){
           if(apiResponse.data.status===200){
             this.handleConfirmation(true,"success",apiResponse.data.message);
           } else {
             this.handleConfirmation(true,"warning",apiResponse.data.message);
-            this.setState({formValid:false});
+            action.value = false;
+            this.props.dispatch(action);
           }
         }
       }
     ).catch(
       (apiError)=>{
-        this.setState({formValid:true});
+        action.value = true;
+        this.props.dispatch(action);
         let message = "Something went wrong!"
         if(apiError.data){
           message=apiError.data.message;
@@ -83,28 +79,28 @@ class SignUp extends React.Component {
   }
 
   validateField(fieldName, value) {
-    let fieldValidationErrors = this.state.formErrors;
+    let fieldValidationErrors = this.props.formErrors;
     switch(fieldName) {
       case "firstName":
-        if(this.state.formTouched[fieldName]){
+        if(this.props.formTouched[fieldName]){
           fieldValidationErrors.firstName = value ? '': 'First Name cannot be empty';
         }
       break;
       case 'email':
-        if(this.state.formTouched[fieldName]){
+        if(this.props.formTouched[fieldName]){
           let emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
           fieldValidationErrors.email = emailValid ? '' : 'Email is invalid';
         }
         break;
       case 'password':
-        if(this.state.formTouched[fieldName]){
+        if(this.props.formTouched[fieldName]){
           let passwordValid = value.length >= 8;
           fieldValidationErrors.password = passwordValid ? '': 'Password is too short';
         }
         break;
       case "confirmPassword":
         if(value){
-          if(value===this.state.password){
+          if(value===this.props.password){
             fieldValidationErrors.confirmPassword.status = "valid";
             fieldValidationErrors.confirmPassword.text = "Passwords Matched";
           } else {
@@ -119,46 +115,47 @@ class SignUp extends React.Component {
       default:
         break;
     }
-    this.setState({formErrors: fieldValidationErrors,
-                  }, this.validateForm);
+    this.props.dispatch(this.setFormDispatchPromise(FORM_FIELD_ERROR_HANDLER,fieldValidationErrors)).then(()=>this.validateForm())
   }
   
   validateForm() {
-    let formErrors = this.state.formErrors;
-    this.setState({formValid: !formErrors.firstName && !formErrors.email && !formErrors.password && formErrors.confirmPassword.status==="valid"});
+    let formErrors = this.props.formErrors;
+    let bool = false;
+    if(!formErrors.firstName && !formErrors.email && !formErrors.password && formErrors.confirmPassword.status==="valid"){
+      bool = true;
+    }
+    let action = {...new Action(FORM_VALID,bool)}
+    this.props.dispatch(action);
   }
 
   handleConfirmation = (show,variant,message) =>{
-    let registerationState = this.state.registerConfirmation;
-    registerationState.show = show;
-    registerationState.message = message || "";
-    registerationState.variant = variant || "";
-    this.setState({registerConfirmation:registerationState});
+    let action = {...new Action(AFTER_SUBMIT,{show,message,variant})}
+    this.props.dispatch(action);
   }
   render(){
     return(
      <div className="credentials-bg">
        <Form className="bg-white p-3 custom-form rounded" onSubmit={this.submitForm}>
-       {this.state.registerConfirmation.show && 
-        (<Alert variant={this.state.registerConfirmation.variant} onClose={() => this.handleConfirmation(false)} dismissible>
-          {this.state.registerConfirmation.message}
+       {this.props.afterSubmit.show && 
+        (<Alert variant={this.props.afterSubmit.variant} onClose={() => this.handleConfirmation(false)} dismissible>
+          {this.props.afterSubmit.message}
        </Alert>)}
        <Form.Row>
           <Form.Group as={Col} controlId="formGridFirstName">
             <Form.Label>First Name</Form.Label>
             <Form.Control name="firstName" type="text" placeholder="First Name" 
-            value={this.state.firstName} 
+            value={this.props.firstName} 
             onChange={this.setForm} 
-            isInvalid={this.state.formErrors.firstName}
+            isInvalid={this.props.formErrors.firstName}
             onBlur={this.setTouched} />
             <Form.Control.Feedback type="invalid">
-              {this.state.formErrors.firstName}
+              {this.props.formErrors.firstName}
             </Form.Control.Feedback>
           </Form.Group>
           <Form.Group as={Col} controlId="formGridLastName">
             <Form.Label>Last Name</Form.Label>
             <Form.Control name="lastName" type="text" placeholder="Enter last name" 
-            value={this.state.lastName} 
+            value={this.props.lastName} 
             onChange={this.setForm}
             onBlur={this.setTouched} />
           </Form.Group>
@@ -166,39 +163,39 @@ class SignUp extends React.Component {
         <Form.Group controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control name="email" type="email" placeholder="Enter email"
-          value={this.state.email}
+          value={this.props.email}
           onChange={this.setForm}
-          isInvalid={this.state.formErrors.email}
+          isInvalid={this.props.formErrors.email}
           onBlur={this.setTouched}/>
           <Form.Control.Feedback type="invalid">
-              {this.state.formErrors.email}
+              {this.props.formErrors.email}
           </Form.Control.Feedback>
         </Form.Group>
         <Form.Group controlId="formBasicPassword">
           <Form.Label>Password</Form.Label>
           <Form.Control name="password" type="password" placeholder="Password"
-          value={this.state.password}
+          value={this.props.password}
           onChange={this.setForm}
-          isInvalid={this.state.formErrors.password}
+          isInvalid={this.props.formErrors.password}
           onBlur={this.setTouched} />
           <Form.Control.Feedback type="invalid">
-              {this.state.formErrors.password}
+              {this.props.formErrors.password}
           </Form.Control.Feedback>
         </Form.Group>
         <Form.Group controlId="formBasicConfirmPasswod">
           <Form.Label>Confirm Password</Form.Label>
           <Form.Control name="confirmPassword" type="password" placeholder="Re-enter password" 
-          value={this.state.confirmPassword} 
+          value={this.props.confirmPassword} 
           onChange={this.setForm} 
-          isInvalid={this.state.formErrors.confirmPassword.status==="invalid"}
-          isValid={this.state.formErrors.confirmPassword.status==="valid"}/>
-          <Form.Control.Feedback type={this.state.formErrors.confirmPassword.status}>
-              {this.state.formErrors.confirmPassword.text}
+          isInvalid={this.props.formErrors.confirmPassword.status==="invalid"}
+          isValid={this.props.formErrors.confirmPassword.status==="valid"}/>
+          <Form.Control.Feedback type={this.props.formErrors.confirmPassword.status}>
+              {this.props.formErrors.confirmPassword.text}
           </Form.Control.Feedback>
         </Form.Group>
         <Row>
           <Col>
-            <Button variant="primary" type="submit" disabled={!this.state.formValid}>
+            <Button variant="primary" type="submit" disabled={!this.props.formValid}>
               Sign Up
             </Button>
           </Col>
@@ -212,4 +209,8 @@ class SignUp extends React.Component {
   }
 }
 
-export default SignUp;
+const mapStateToProps = ({credentialsForm}) => {
+  return credentialsForm;
+}
+
+export default connect(mapStateToProps)(SignUp);

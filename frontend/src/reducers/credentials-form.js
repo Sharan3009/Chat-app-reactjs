@@ -1,15 +1,33 @@
-import { FORM_VALID,AFTER_SUBMIT,FORM_HANDLER } from '../actions/credentials-form';
+import { FORM_VALID, AFTER_SUBMIT, FORM_HANDLER, FORM_FIELD_ERROR_HANDLER, FORM_FIELD_TOUCHED_HANDLER } from '../actions/credentials-form';
 
 const initialState = {
-    email: "",
-    password: "",
-    rememberMe: false,
-    formValid: false,
-    afterSubmit: {
-      show: false,
-      variant: "",
-      message: ""
+  firstName: "",
+  lastName: "",
+  confirmPassword: "",
+  email: "",
+  password: "",
+  rememberMe: false,
+  formValid: false,
+  afterSubmit: {
+    show: false,
+    variant: "",
+    message: ""
+  },
+  formErrors: {
+    firstName:"",
+    email:"",
+    password:"",
+    confirmPassword:{
+      status:"",
+      text:""
     }
+  },
+  formTouched:{
+    firstName:false,
+    email:false,
+    password:false,
+    confirmPassword:false
+  }
 };
 
 function reducer(state = initialState, action) {
@@ -23,8 +41,7 @@ function reducer(state = initialState, action) {
       return {
         ...state,
         afterSubmit:{
-          show:action.value.show,
-          variant:action.value.variant,
+          ...action.value,
           message:action.value.message || "Something went wrong"
         }
       }
@@ -33,6 +50,20 @@ function reducer(state = initialState, action) {
         ...state,
         [action.value.name]:action.value.value
       };
+    case FORM_FIELD_ERROR_HANDLER:
+      return {
+        ...state,
+        formErrors:{
+          ...action.value
+        }
+      }
+    case FORM_FIELD_TOUCHED_HANDLER:
+      return{
+        ...state,
+        formTouched:{
+          ...action.value
+        }
+      }
     default:
       return state;
     }
