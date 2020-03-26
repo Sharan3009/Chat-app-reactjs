@@ -3,6 +3,8 @@ import {Form,Button,Col,Row,Alert} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import axios from "axios";
 import './login.scss';
+import { FORM_VALID } from '../../actions/credentials-form';
+import { connect } from 'react-redux';
 
 class Login extends React.Component {
   constructor(props){
@@ -11,7 +13,6 @@ class Login extends React.Component {
       email:"",
       password:"",
       rememberMe:false,
-      formValid:false,
       loginConfirmation:{
         show:false,
         variant:"",
@@ -27,14 +28,14 @@ class Login extends React.Component {
 
   submitForm = (event) =>{
     event.preventDefault();
-    this.setState({formValid:false});
+    this.props.dispatch({type:FORM_VALID,value:false});
     axios.post(`${process.env.REACT_APP_DOMAIN || ""}/api/v1/users/login`,
     {
       email:this.state.email,
       password:this.state.password
     }).then(
       (apiResponse)=>{
-        this.setState({formValid:true});
+        this.props.dispatch({type:FORM_VALID,value:true});
         if(apiResponse.data){
           if(apiResponse.data.status===200){
           this.props.history.push("/home");
@@ -45,7 +46,7 @@ class Login extends React.Component {
       }
     ).catch(
       (apiError)=>{
-        this.setState({formValid:true});
+        this.props.dispatch({type:FORM_VALID,value:true});
         let message = "Something went wrong!"
         if(apiError.data){
           message=apiError.data.message;
@@ -60,7 +61,7 @@ class Login extends React.Component {
     if(this.state.email && this.state.password){
       bool = true;
     }
-    this.setState({formValid:bool});
+    this.props.dispatch({type:FORM_VALID,value:bool});
   }
 
   handleConfirmation = (show,variant,message) =>{
@@ -92,7 +93,7 @@ class Login extends React.Component {
           </Form.Group>
           <Row>
             <Col>
-              <Button variant="primary" type="submit" disabled={!this.state.formValid}>
+              <Button variant="primary" type="submit" disabled={!this.props.formValid}>
                 Login
               </Button>
             </Col>
@@ -106,4 +107,10 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+const mapStateToProps = ({credentialsForm}) => {
+  return {
+    formValid: credentialsForm.formValid
+  };
+}
+
+export default connect(mapStateToProps)(Login);
