@@ -3,7 +3,11 @@ import { Form, Button, Col,Row, Alert } from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import './signup.scss';
 import axios from "axios";
-import { FORM_VALID,AFTER_SUBMIT,FORM_HANDLER,FORM_FIELD_ERROR_HANDLER,FORM_FIELD_TOUCHED_HANDLER } from '../../actions/credentials-form';
+import { 
+  FORM_VALID,AFTER_SUBMIT,
+  FORM_HANDLER,
+  FORM_FIELD_ERROR_HANDLER,
+  FORM_FIELD_TOUCHED_HANDLER } from '../../actions/credentials-form';
 import { connect } from 'react-redux';
 import { Action } from '../../classes/Action';
 
@@ -15,7 +19,8 @@ class SignUp extends React.Component {
 
   setForm = (event) => {
     const {name,value} = event.target;
-    this.props.dispatch(this.setFormDispatchPromise(FORM_HANDLER,{name,value})).then(()=>this.validateField(name,value))
+    this.props.dispatch(this.setFormDispatchPromise(FORM_HANDLER,{name,value}))
+    .then(()=>this.validateField(name,value))
   }
 
   setFormDispatchPromise = (type,data)=>{
@@ -30,7 +35,8 @@ class SignUp extends React.Component {
     const {name,value} = event.target
     let formTouched = this.props.formTouched;
     formTouched[name] = true;
-    this.props.dispatch(this.setFormTouchedDispatchPromise(formTouched)).then(()=>this.validateField(name,value));
+    this.props.dispatch(this.setFormTouchedDispatchPromise(formTouched))
+    .then(()=>this.validateField(name,value));
   }
 
   setFormTouchedDispatchPromise = (formTouched)=>{
@@ -115,13 +121,16 @@ class SignUp extends React.Component {
       default:
         break;
     }
-    this.props.dispatch(this.setFormDispatchPromise(FORM_FIELD_ERROR_HANDLER,fieldValidationErrors)).then(()=>this.validateForm())
+    this.props
+    .dispatch(this.setFormDispatchPromise(FORM_FIELD_ERROR_HANDLER,fieldValidationErrors))
+    .then(()=>this.validateForm())
   }
   
   validateForm() {
     let formErrors = this.props.formErrors;
     let bool = false;
-    if(!formErrors.firstName && !formErrors.email && !formErrors.password && formErrors.confirmPassword.status==="valid"){
+    if(!formErrors.firstName && !formErrors.email 
+      && !formErrors.password && formErrors.confirmPassword.status==="valid"){
       bool = true;
     }
     let action = {...new Action(FORM_VALID,bool)}
@@ -137,7 +146,8 @@ class SignUp extends React.Component {
      <div className="credentials-bg">
        <Form className="bg-white p-3 custom-form rounded" onSubmit={this.submitForm}>
        {this.props.afterSubmit.show && 
-        (<Alert variant={this.props.afterSubmit.variant} onClose={() => this.handleConfirmation(false)} dismissible>
+        (<Alert variant={this.props.afterSubmit.variant} 
+        onClose={() => this.handleConfirmation(false)} dismissible>
           {this.props.afterSubmit.message}
        </Alert>)}
        <Form.Row>

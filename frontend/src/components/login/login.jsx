@@ -15,7 +15,8 @@ class Login extends React.Component {
 
   setForm = (event) => {
     const {name,value} = event.target;
-    this.props.dispatch(this.setFormDispatchPromise(name,value)).then(()=>this.validateForm())
+    this.props.dispatch(this.setFormDispatchPromise(name,value))
+    .then(()=>this.validateForm())
   }
 
   setFormDispatchPromise = (name,value)=>{
@@ -78,19 +79,23 @@ class Login extends React.Component {
       <div className="credentials-bg">
         <Form className="bg-white p-3 custom-form rounded" onSubmit={this.submitForm}>
         {this.props.afterSubmit.show && 
-        (<Alert variant={this.props.afterSubmit.variant} onClose={() => this.handleConfirmation(false)} dismissible>
+        (<Alert variant={this.props.afterSubmit.variant} 
+        onClose={() => this.handleConfirmation(false)} dismissible>
           {this.props.afterSubmit.message}
        </Alert>)}
           <Form.Group controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
-            <Form.Control name="email" type="email" placeholder="Enter email" value={this.props.email} onChange={this.setForm}/>
+            <Form.Control name="email" type="email" placeholder="Enter email"
+             value={this.props.email} onChange={this.setForm}/>
           </Form.Group>
           <Form.Group controlId="formBasicPassword">
             <Form.Label>Password</Form.Label>
-            <Form.Control name="password" type="password" placeholder="Password" value={this.props.password} onChange={this.setForm}/>
+            <Form.Control name="password" type="password" placeholder="Password"
+             value={this.props.password} onChange={this.setForm}/>
           </Form.Group>
           <Form.Group controlId="formBasicCheckbox">
-            <Form.Check name="rememberMe" type="checkbox" label="Remember me" defaultChecked={this.props.rememberMe} onChange={this.setForm}/>
+            <Form.Check name="rememberMe" type="checkbox" label="Remember me"
+             defaultChecked={this.props.rememberMe} onChange={this.setForm}/>
           </Form.Group>
           <Row>
             <Col>
