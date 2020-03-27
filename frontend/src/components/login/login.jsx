@@ -37,7 +37,7 @@ class Login extends React.Component {
       password:this.props.password
     }).then(
       (apiResponse)=>{
-        action.value = true;
+        action.payload = true;
         this.props.dispatch(action);
         if(apiResponse.data){
           if(apiResponse.data.status===200){
@@ -49,7 +49,7 @@ class Login extends React.Component {
       }
     ).catch(
       (apiError)=>{
-        action.value = true;
+        action.payload = true;
         this.props.dispatch(action);
         let message = "Something went wrong!"
         if(apiError.data){

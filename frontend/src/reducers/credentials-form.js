@@ -35,33 +35,33 @@ function reducer(state = initialState, action) {
     case FORM_VALID:
       return {
         ...state,
-        formValid:action.value
+        formValid:action.payload
       }
     case AFTER_SUBMIT:
       return {
         ...state,
         afterSubmit:{
-          ...action.value,
-          message:action.value.message || "Something went wrong"
+          ...action.payload,
+          message:action.payload.message || "Something went wrong"
         }
       }
     case FORM_HANDLER:
       return {
         ...state,
-        [action.value.name]:action.value.value
+        [action.payload.name]:action.payload.value
       };
     case FORM_FIELD_ERROR_HANDLER:
       return {
         ...state,
         formErrors:{
-          ...action.value
+          ...action.payload
         }
       }
     case FORM_FIELD_TOUCHED_HANDLER:
       return{
         ...state,
         formTouched:{
-          ...action.value
+          ...action.payload
         }
       }
     default:

@@ -1,6 +1,6 @@
 export class Action{
-    constructor(type,value){
+    constructor(type,payload){
         this.type = type;
-        this.value = value;
+        this.payload = payload;
     }
 }

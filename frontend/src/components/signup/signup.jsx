@@ -59,21 +59,21 @@ class SignUp extends React.Component {
       password:this.props.password
     }).then(
       (apiResponse)=>{
-        action.value = true;
+        action.payload = true;
         this.props.dispatch(action);
         if(apiResponse.data){
           if(apiResponse.data.status===200){
             this.handleConfirmation(true,"success",apiResponse.data.message);
           } else {
             this.handleConfirmation(true,"warning",apiResponse.data.message);
-            action.value = false;
+            action.payload = false;
             this.props.dispatch(action);
           }
         }
       }
     ).catch(
       (apiError)=>{
-        action.value = true;
+        action.payload = true;
         this.props.dispatch(action);
         let message = "Something went wrong!"
         if(apiError.data){
