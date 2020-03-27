@@ -143,78 +143,79 @@ class SignUp extends React.Component {
   }
   render(){
     return(
-     <div className="credentials-bg">
-       <Form className="bg-white p-3 custom-form rounded" onSubmit={this.submitForm}>
-       {this.props.afterSubmit.show && 
-        (<Alert variant={this.props.afterSubmit.variant} 
-        onClose={() => this.handleConfirmation(false)} dismissible>
-          {this.props.afterSubmit.message}
-       </Alert>)}
-       <Form.Row>
-          <Form.Group as={Col} controlId="formGridFirstName">
-            <Form.Label>First Name</Form.Label>
-            <Form.Control name="firstName" type="text" placeholder="First Name" 
-            value={this.props.firstName} 
-            onChange={this.setForm} 
-            isInvalid={this.props.formErrors.firstName}
-            onBlur={this.setTouched} />
-            <Form.Control.Feedback type="invalid">
-              {this.props.formErrors.firstName}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group as={Col} controlId="formGridLastName">
-            <Form.Label>Last Name</Form.Label>
-            <Form.Control name="lastName" type="text" placeholder="Enter last name" 
-            value={this.props.lastName} 
-            onChange={this.setForm}
-            onBlur={this.setTouched} />
-          </Form.Group>
-        </Form.Row>
-        <Form.Group controlId="formBasicEmail">
-          <Form.Label>Email address</Form.Label>
-          <Form.Control name="email" type="email" placeholder="Enter email"
-          value={this.props.email}
-          onChange={this.setForm}
-          isInvalid={this.props.formErrors.email}
-          onBlur={this.setTouched}/>
-          <Form.Control.Feedback type="invalid">
-              {this.props.formErrors.email}
-          </Form.Control.Feedback>
-        </Form.Group>
-        <Form.Group controlId="formBasicPassword">
-          <Form.Label>Password</Form.Label>
-          <Form.Control name="password" type="password" placeholder="Password"
-          value={this.props.password}
-          onChange={this.setForm}
-          isInvalid={this.props.formErrors.password}
+      <>
+     <div className="credentials-bg"></div>
+      <Form className="bg-white p-3 custom-form rounded" onSubmit={this.submitForm}>
+      {this.props.afterSubmit.show && 
+      (<Alert variant={this.props.afterSubmit.variant} 
+      onClose={() => this.handleConfirmation(false)} dismissible>
+        {this.props.afterSubmit.message}
+      </Alert>)}
+      <Form.Row>
+        <Form.Group as={Col} controlId="formGridFirstName">
+          <Form.Label>First Name</Form.Label>
+          <Form.Control name="firstName" type="text" placeholder="First Name" 
+          value={this.props.firstName} 
+          onChange={this.setForm} 
+          isInvalid={this.props.formErrors.firstName}
           onBlur={this.setTouched} />
           <Form.Control.Feedback type="invalid">
-              {this.props.formErrors.password}
+            {this.props.formErrors.firstName}
           </Form.Control.Feedback>
         </Form.Group>
-        <Form.Group controlId="formBasicConfirmPasswod">
-          <Form.Label>Confirm Password</Form.Label>
-          <Form.Control name="confirmPassword" type="password" placeholder="Re-enter password" 
-          value={this.props.confirmPassword} 
-          onChange={this.setForm} 
-          isInvalid={this.props.formErrors.confirmPassword.status==="invalid"}
-          isValid={this.props.formErrors.confirmPassword.status==="valid"}/>
-          <Form.Control.Feedback type={this.props.formErrors.confirmPassword.status}>
-              {this.props.formErrors.confirmPassword.text}
-          </Form.Control.Feedback>
+        <Form.Group as={Col} controlId="formGridLastName">
+          <Form.Label>Last Name</Form.Label>
+          <Form.Control name="lastName" type="text" placeholder="Enter last name" 
+          value={this.props.lastName} 
+          onChange={this.setForm}
+          onBlur={this.setTouched} />
         </Form.Group>
-        <Row>
-          <Col>
-            <Button variant="primary" type="submit" disabled={!this.props.formValid}>
-              Sign Up
-            </Button>
-          </Col>
-          <Col className="d-flex align-items-center justify-content-end">
-            <Link to={"login"}>Already a User?</Link>
-          </Col>
-        </Row>
-      </Form>
-     </div>
+      </Form.Row>
+      <Form.Group controlId="formBasicEmail">
+        <Form.Label>Email address</Form.Label>
+        <Form.Control name="email" type="email" placeholder="Enter email"
+        value={this.props.email}
+        onChange={this.setForm}
+        isInvalid={this.props.formErrors.email}
+        onBlur={this.setTouched}/>
+        <Form.Control.Feedback type="invalid">
+            {this.props.formErrors.email}
+        </Form.Control.Feedback>
+      </Form.Group>
+      <Form.Group controlId="formBasicPassword">
+        <Form.Label>Password</Form.Label>
+        <Form.Control name="password" type="password" placeholder="Password"
+        value={this.props.password}
+        onChange={this.setForm}
+        isInvalid={this.props.formErrors.password}
+        onBlur={this.setTouched} />
+        <Form.Control.Feedback type="invalid">
+            {this.props.formErrors.password}
+        </Form.Control.Feedback>
+      </Form.Group>
+      <Form.Group controlId="formBasicConfirmPasswod">
+        <Form.Label>Confirm Password</Form.Label>
+        <Form.Control name="confirmPassword" type="password" placeholder="Re-enter password" 
+        value={this.props.confirmPassword} 
+        onChange={this.setForm} 
+        isInvalid={this.props.formErrors.confirmPassword.status==="invalid"}
+        isValid={this.props.formErrors.confirmPassword.status==="valid"}/>
+        <Form.Control.Feedback type={this.props.formErrors.confirmPassword.status}>
+            {this.props.formErrors.confirmPassword.text}
+        </Form.Control.Feedback>
+      </Form.Group>
+      <Row>
+        <Col>
+          <Button variant="primary" type="submit" disabled={!this.props.formValid}>
+            Sign Up
+          </Button>
+        </Col>
+        <Col className="d-flex align-items-center justify-content-end">
+          <Link to={"login"}>Already a User?</Link>
+        </Col>
+      </Row>
+    </Form>
+    </>
     )
   }
 }
