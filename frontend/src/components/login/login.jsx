@@ -2,7 +2,7 @@ import React from 'react';
 import {Form,Button,Col,Row,Alert} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import './login.scss';
-import { setFormData, afterFormSubmit,loginApi } from '../../actions/credentials-form';
+import { setFormData, afterFormSubmit,loginApi } from '../../actions/credentials-form.action';
 import { connect } from 'react-redux';
 import { reduxForm,Field,startSubmit,stopSubmit } from 'redux-form';
 import {compose} from 'redux';

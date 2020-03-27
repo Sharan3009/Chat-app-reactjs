@@ -5,7 +5,7 @@ import './signup.scss';
 import { 
   afterFormSubmit,
   setFormData,
-  signUpApi} from '../../actions/credentials-form';
+  signUpApi} from '../../actions/credentials-form.action';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { Field, reduxForm,startSubmit,stopSubmit } from 'redux-form';

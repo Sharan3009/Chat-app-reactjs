@@ -1,5 +1,5 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import credentialsForm from './reducers/credentials-form';
+import credentialsForm from './reducers/credentials-form.reducer';
 import thunk from 'redux-thunk';
 import { reducer as formReducer } from 'redux-form';
 

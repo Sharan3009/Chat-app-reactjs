@@ -1,4 +1,4 @@
-import { AFTER_SUBMIT, FORM_HANDLER} from '../actions/credentials-form';
+import { AFTER_SUBMIT, FORM_HANDLER} from '../actions/credentials-form.action';
 
 const initialState = {
   firstName: "",
