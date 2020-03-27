@@ -1,9 +1,8 @@
 import React from 'react';
 import {Form,Button,Col,Row,Alert} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
-import axios from "axios";
 import './login.scss';
-import { setFormData, afterFormSubmit } from '../../actions/credentials-form';
+import { setFormData, afterFormSubmit,loginApi } from '../../actions/credentials-form';
 import { connect } from 'react-redux';
 import { reduxForm,Field,startSubmit,stopSubmit } from 'redux-form';
 import {compose} from 'redux';
@@ -22,11 +21,7 @@ class Login extends React.Component {
   submitForm = (event) => {
     event.preventDefault();
     this.props.dispatch(startSubmit(formName));
-    axios.post(`${process.env.REACT_APP_DOMAIN || ""}/api/v1/users/login`,
-    {
-      email:this.props.email,
-      password:this.props.password
-    }).then(
+    loginApi(this.props.email,this.props.password).then(
       (apiResponse)=>{
         this.props.dispatch(stopSubmit(formName));
         if(apiResponse.data){

@@ -2,10 +2,10 @@ import React from 'react';
 import { Form, Button, Col,Row, Alert } from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import './signup.scss';
-import axios from "axios";
 import { 
   afterFormSubmit,
-  setFormData} from '../../actions/credentials-form';
+  setFormData,
+  signUpApi} from '../../actions/credentials-form';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { Field, reduxForm,startSubmit,stopSubmit } from 'redux-form';
@@ -25,13 +25,8 @@ class SignUp extends React.Component {
   submitForm = (event) =>{
     event.preventDefault();
     this.props.dispatch(startSubmit(formName));
-    axios.post(`${process.env.REACT_APP_DOMAIN || ""}/api/v1/users/signup`,
-    {
-      firstName:this.props.firstName,
-      lastName:this.props.lastName,
-      email:this.props.email,
-      password:this.props.password
-    }).then(
+    let {firstName,lastName,email,password}=this.props;
+    signUpApi(firstName,lastName,email,password).then(
       (apiResponse)=>{
         this.props.dispatch(stopSubmit(formName));
         if(apiResponse.data){
@@ -133,17 +128,24 @@ const mapStateToProps = ({credentialsForm}) => {
 }
 
 const getFormControlField = ({type,placeholder,label, input ,meta:{error,touched,valid,dirty}})=>{
+  let isError = null;
+  let exceptionField = "confirmPassword"
+  if(error && touched && input.name!==exceptionField){
+    isError = true;
+  } else {
+    isError = false;
+  }
   return (
     <>
       <Form.Label>{label}</Form.Label>
       <Form.Control
       {...input}
       type={type} placeholder={placeholder} 
-      isInvalid={error && touched && input.name!=='confirmPassword'}
-      isValid={input.name==='confirmPassword' && dirty && valid}
+      isInvalid={isError}
+      isValid={input.name===exceptionField && dirty && valid}
       />
       <Form.Control.Feedback type="invalid">
-        {(error && touched && input.name!=="confirmPassword")?error:""}
+        {(isError)?error:""}
       </Form.Control.Feedback>
     </>
   )
