@@ -220,7 +220,14 @@ class SignUp extends React.Component {
 }
 
 const mapStateToProps = ({credentialsForm}) => {
-  return credentialsForm;
+  let { firstName, lastName, email,
+    password, confirmPassword, formValid,
+    afterSubmit, formErrors, formTouched } = credentialsForm;
+  return {
+    firstName, lastName, email,
+    password, confirmPassword, formValid,
+    afterSubmit, formErrors, formTouched
+  }
 }
 
 export default connect(mapStateToProps)(SignUp);

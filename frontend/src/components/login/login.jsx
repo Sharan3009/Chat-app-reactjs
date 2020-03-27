@@ -114,7 +114,14 @@ class Login extends React.Component {
 }
 
 const mapStateToProps = ({credentialsForm}) => {
-  return credentialsForm;
+  let {email,password,rememberMe,formValid,afterSubmit} = credentialsForm;
+  return {
+    email,
+    password,
+    rememberMe,
+    formValid,
+    afterSubmit
+  }
 }
 
 export default connect(mapStateToProps)(Login);
