@@ -13,6 +13,10 @@ class Login extends React.Component {
     this.state = {}
   }
 
+  UNSAFE_componentWillMount(){
+    this.handleConfirmation(false);
+  }
+
   setForm = (event) => {
     const {name,value} = event.target;
     this.props.dispatch(setFormData(name,value))
