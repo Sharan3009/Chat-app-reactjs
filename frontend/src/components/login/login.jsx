@@ -3,9 +3,8 @@ import {Form,Button,Col,Row,Alert} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import axios from "axios";
 import './login.scss';
-import { FORM_VALID,AFTER_SUBMIT,FORM_HANDLER } from '../../actions/credentials-form';
+import { setFormData, setFormValid, afterFormSubmit } from '../../actions/credentials-form';
 import { connect } from 'react-redux';
-import { Action } from '../../classes/Action';
 
 class Login extends React.Component {
   constructor(props){
@@ -15,30 +14,20 @@ class Login extends React.Component {
 
   setForm = (event) => {
     const {name,value} = event.target;
-    this.props.dispatch(this.setFormDispatchPromise(name,value))
+    this.props.dispatch(setFormData(name,value))
     .then(()=>this.validateForm())
   }
 
-  setFormDispatchPromise = (name,value)=>{
-    return function(dispatch){
-      let action = {...new Action(FORM_HANDLER,{name,value})};
-      dispatch(action);
-      return Promise.resolve();
-    }
-  }
-
-  submitForm = (event) =>{
+  submitForm = (event) => {
     event.preventDefault();
-    let action = {...new Action(FORM_VALID,false)};
-    this.props.dispatch(action);
+    this.props.dispatch(setFormValid(false));
     axios.post(`${process.env.REACT_APP_DOMAIN || ""}/api/v1/users/login`,
     {
       email:this.props.email,
       password:this.props.password
     }).then(
       (apiResponse)=>{
-        action.payload = true;
-        this.props.dispatch(action);
+        this.props.dispatch(setFormValid(true));
         if(apiResponse.data){
           if(apiResponse.data.status===200){
           this.props.history.push("/home");
@@ -49,8 +38,7 @@ class Login extends React.Component {
       }
     ).catch(
       (apiError)=>{
-        action.payload = true;
-        this.props.dispatch(action);
+        this.props.dispatch(setFormValid(true));
         let message = "Something went wrong!"
         if(apiError.data){
           message=apiError.data.message;
@@ -65,13 +53,11 @@ class Login extends React.Component {
     if(this.props.email && this.props.password){
       bool = true;
     }
-    let action = {...new Action(FORM_VALID,bool)}
-    this.props.dispatch(action);
+    this.props.dispatch(setFormValid(bool));
   }
 
   handleConfirmation = (show,variant,message) =>{
-    let action = {...new Action(AFTER_SUBMIT,{show,message,variant})}
-    this.props.dispatch(action);
+    this.props.dispatch(afterFormSubmit(show,message,variant));
   }
 
   render(){

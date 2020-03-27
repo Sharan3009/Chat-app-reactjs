@@ -4,12 +4,12 @@ import {Link} from 'react-router-dom';
 import './signup.scss';
 import axios from "axios";
 import { 
-  FORM_VALID,AFTER_SUBMIT,
-  FORM_HANDLER,
-  FORM_FIELD_ERROR_HANDLER,
-  FORM_FIELD_TOUCHED_HANDLER } from '../../actions/credentials-form';
+  setFormValid,
+  afterFormSubmit,
+  setFormData,
+  setFormFieldErrors,
+  setFormFieldTouched} from '../../actions/credentials-form';
 import { connect } from 'react-redux';
-import { Action } from '../../classes/Action';
 
 class SignUp extends React.Component {
   constructor(props){
@@ -19,38 +19,21 @@ class SignUp extends React.Component {
 
   setForm = (event) => {
     const {name,value} = event.target;
-    this.props.dispatch(this.setFormDispatchPromise(FORM_HANDLER,{name,value}))
+    this.props.dispatch(setFormData(name,value))
     .then(()=>this.validateField(name,value))
-  }
-
-  setFormDispatchPromise = (type,data)=>{
-    return function(dispatch){
-      let action = {...new Action(type,data)};
-      dispatch(action);
-      return Promise.resolve();
-    }
   }
 
   setTouched = (event) => {
     const {name,value} = event.target
     let formTouched = this.props.formTouched;
     formTouched[name] = true;
-    this.props.dispatch(this.setFormTouchedDispatchPromise(formTouched))
+    this.props.dispatch(setFormFieldTouched(formTouched))
     .then(()=>this.validateField(name,value));
-  }
-
-  setFormTouchedDispatchPromise = (formTouched)=>{
-    return function(dispatch){
-      let action = {...new Action(FORM_FIELD_TOUCHED_HANDLER,formTouched)};
-      dispatch(action);
-      return Promise.resolve();
-    }
   }
 
   submitForm = (event) =>{
     event.preventDefault();
-    let action = {...new Action(FORM_VALID,false)};
-    this.props.dispatch(action);
+    this.props.dispatch(setFormValid(false));
     axios.post(`${process.env.REACT_APP_DOMAIN || ""}/api/v1/users/signup`,
     {
       firstName:this.props.firstName,
@@ -59,22 +42,19 @@ class SignUp extends React.Component {
       password:this.props.password
     }).then(
       (apiResponse)=>{
-        action.payload = true;
-        this.props.dispatch(action);
+        this.props.dispatch(setFormValid(true));
         if(apiResponse.data){
           if(apiResponse.data.status===200){
             this.handleConfirmation(true,"success",apiResponse.data.message);
           } else {
             this.handleConfirmation(true,"warning",apiResponse.data.message);
-            action.payload = false;
-            this.props.dispatch(action);
+            this.props.dispatch(setFormValid(false));
           }
         }
       }
     ).catch(
       (apiError)=>{
-        action.payload = true;
-        this.props.dispatch(action);
+        this.props.dispatch(setFormValid(true));
         let message = "Something went wrong!"
         if(apiError.data){
           message=apiError.data.message;
@@ -122,7 +102,7 @@ class SignUp extends React.Component {
         break;
     }
     this.props
-    .dispatch(this.setFormDispatchPromise(FORM_FIELD_ERROR_HANDLER,fieldValidationErrors))
+    .dispatch(setFormFieldErrors(fieldValidationErrors))
     .then(()=>this.validateForm())
   }
   
@@ -133,13 +113,11 @@ class SignUp extends React.Component {
       && !formErrors.password && formErrors.confirmPassword.status==="valid"){
       bool = true;
     }
-    let action = {...new Action(FORM_VALID,bool)}
-    this.props.dispatch(action);
+    this.props.dispatch(setFormValid(bool));
   }
 
   handleConfirmation = (show,variant,message) =>{
-    let action = {...new Action(AFTER_SUBMIT,{show,message,variant})}
-    this.props.dispatch(action);
+    this.props.dispatch(afterFormSubmit(show,message,variant));
   }
   render(){
     return(
