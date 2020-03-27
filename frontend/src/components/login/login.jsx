@@ -39,7 +39,7 @@ class Login extends React.Component {
     ).catch(
       (apiError)=>{
         this.props.dispatch(stopSubmit(formName));
-        let message = "Something went wrong!"
+        let message = ""
         if(apiError.data){
           message=apiError.data.message;
         }

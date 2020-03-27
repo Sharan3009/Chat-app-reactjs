@@ -21,7 +21,7 @@ function reducer(state = initialState, action) {
         ...state,
         afterSubmit:{
           ...action.payload,
-          message:action.payload.message || "Something went wrong"
+          message:action.payload.message || process.env.REACT_APP_DEFAULT_ERROR_MESSAGE
         }
       }
     case FORM_HANDLER:
