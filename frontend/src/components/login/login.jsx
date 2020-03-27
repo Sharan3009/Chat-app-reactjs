@@ -3,9 +3,11 @@ import {Form,Button,Col,Row,Alert} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import axios from "axios";
 import './login.scss';
-import { setFormData, setFormValid, afterFormSubmit } from '../../actions/credentials-form';
+import { setFormData, afterFormSubmit } from '../../actions/credentials-form';
 import { connect } from 'react-redux';
-
+import { reduxForm,Field,startSubmit,stopSubmit } from 'redux-form';
+import {compose} from 'redux';
+const formName = "login";
 class Login extends React.Component {
   constructor(props){
     super(props);
@@ -15,19 +17,18 @@ class Login extends React.Component {
   setForm = (event) => {
     const {name,value} = event.target;
     this.props.dispatch(setFormData(name,value))
-    .then(()=>this.validateForm())
   }
 
   submitForm = (event) => {
     event.preventDefault();
-    this.props.dispatch(setFormValid(false));
+    this.props.dispatch(startSubmit(formName));
     axios.post(`${process.env.REACT_APP_DOMAIN || ""}/api/v1/users/login`,
     {
       email:this.props.email,
       password:this.props.password
     }).then(
       (apiResponse)=>{
-        this.props.dispatch(setFormValid(true));
+        this.props.dispatch(stopSubmit(formName));
         if(apiResponse.data){
           if(apiResponse.data.status===200){
           this.props.history.push("/home");
@@ -38,7 +39,7 @@ class Login extends React.Component {
       }
     ).catch(
       (apiError)=>{
-        this.props.dispatch(setFormValid(true));
+        this.props.dispatch(stopSubmit(formName));
         let message = "Something went wrong!"
         if(apiError.data){
           message=apiError.data.message;
@@ -46,14 +47,6 @@ class Login extends React.Component {
         this.handleConfirmation(true,"danger",message);
       }
     );
-  }
-
-  validateForm = () =>{
-    let bool = false;
-    if(this.props.email && this.props.password){
-      bool = true;
-    }
-    this.props.dispatch(setFormValid(bool));
   }
 
   handleConfirmation = (show,variant,message) =>{
@@ -72,13 +65,13 @@ class Login extends React.Component {
       </Alert>)}
         <Form.Group controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
-          <Form.Control name="email" type="email" placeholder="Enter email"
-            value={this.props.email} onChange={this.setForm}/>
+          <Field name="email" type="email" placeholder="Enter email"
+            value={this.props.email} onChange={this.setForm} component={getFormControlField}/>
         </Form.Group>
         <Form.Group controlId="formBasicPassword">
           <Form.Label>Password</Form.Label>
-          <Form.Control name="password" type="password" placeholder="Password"
-            value={this.props.password} onChange={this.setForm}/>
+          <Field name="password" type="password" placeholder="Password"
+            value={this.props.password} onChange={this.setForm} component={getFormControlField}/>
         </Form.Group>
         <Form.Group controlId="formBasicCheckbox">
           <Form.Check name="rememberMe" type="checkbox" label="Remember me"
@@ -86,7 +79,7 @@ class Login extends React.Component {
         </Form.Group>
         <Row>
           <Col>
-            <Button variant="primary" type="submit" disabled={!this.props.formValid}>
+            <Button variant="primary" type="submit" disabled={this.props.invalid|| this.props.submitting}>
               Login
             </Button>
           </Col>
@@ -101,14 +94,40 @@ class Login extends React.Component {
 }
 
 const mapStateToProps = ({credentialsForm}) => {
-  let {email,password,rememberMe,formValid,afterSubmit} = credentialsForm;
+  let {email,password,rememberMe,afterSubmit} = credentialsForm;
   return {
     email,
     password,
     rememberMe,
-    formValid,
     afterSubmit
   }
 }
 
-export default connect(mapStateToProps)(Login);
+function getFormControlField({type,placeholder,input:{name,value,onChange},meta}){
+    return (
+        <Form.Control
+        name={name}
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}/>
+    )
+}
+
+const validate = (values) => {
+  const errors = {};
+  if (!values.email) {
+    errors.email = 'Required';
+  }
+  if (!values.password) {
+    errors.password = 'Required'
+  }
+  return errors;
+};
+
+export default compose(
+  connect(mapStateToProps),
+  reduxForm({ 
+    form: formName,
+    validate })
+)(Login)

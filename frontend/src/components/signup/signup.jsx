@@ -4,12 +4,12 @@ import {Link} from 'react-router-dom';
 import './signup.scss';
 import axios from "axios";
 import { 
-  setFormValid,
   afterFormSubmit,
-  setFormData,
-  setFormFieldErrors,
-  setFormFieldTouched} from '../../actions/credentials-form';
+  setFormData} from '../../actions/credentials-form';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
+import { Field, reduxForm,startSubmit,stopSubmit } from 'redux-form';
+const formName = "signup";
 
 class SignUp extends React.Component {
   constructor(props){
@@ -20,20 +20,11 @@ class SignUp extends React.Component {
   setForm = (event) => {
     const {name,value} = event.target;
     this.props.dispatch(setFormData(name,value))
-    .then(()=>this.validateField(name,value))
-  }
-
-  setTouched = (event) => {
-    const {name,value} = event.target
-    let formTouched = this.props.formTouched;
-    formTouched[name] = true;
-    this.props.dispatch(setFormFieldTouched(formTouched))
-    .then(()=>this.validateField(name,value));
   }
 
   submitForm = (event) =>{
     event.preventDefault();
-    this.props.dispatch(setFormValid(false));
+    this.props.dispatch(startSubmit(formName));
     axios.post(`${process.env.REACT_APP_DOMAIN || ""}/api/v1/users/signup`,
     {
       firstName:this.props.firstName,
@@ -42,19 +33,18 @@ class SignUp extends React.Component {
       password:this.props.password
     }).then(
       (apiResponse)=>{
-        this.props.dispatch(setFormValid(true));
+        this.props.dispatch(stopSubmit(formName));
         if(apiResponse.data){
           if(apiResponse.data.status===200){
             this.handleConfirmation(true,"success",apiResponse.data.message);
           } else {
             this.handleConfirmation(true,"warning",apiResponse.data.message);
-            this.props.dispatch(setFormValid(false));
           }
         }
       }
     ).catch(
       (apiError)=>{
-        this.props.dispatch(setFormValid(true));
+        this.props.dispatch(stopSubmit(formName));
         let message = "Something went wrong!"
         if(apiError.data){
           message=apiError.data.message;
@@ -64,61 +54,10 @@ class SignUp extends React.Component {
     );
   }
 
-  validateField(fieldName, value) {
-    let fieldValidationErrors = this.props.formErrors;
-    switch(fieldName) {
-      case "firstName":
-        if(this.props.formTouched[fieldName]){
-          fieldValidationErrors.firstName = value ? '': 'First Name cannot be empty';
-        }
-      break;
-      case 'email':
-        if(this.props.formTouched[fieldName]){
-          let emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
-          fieldValidationErrors.email = emailValid ? '' : 'Email is invalid';
-        }
-        break;
-      case 'password':
-        if(this.props.formTouched[fieldName]){
-          let passwordValid = value.length >= 8;
-          fieldValidationErrors.password = passwordValid ? '': 'Password is too short';
-        }
-        break;
-      case "confirmPassword":
-        if(value){
-          if(value===this.props.password){
-            fieldValidationErrors.confirmPassword.status = "valid";
-            fieldValidationErrors.confirmPassword.text = "Passwords Matched";
-          } else {
-            fieldValidationErrors.confirmPassword.status = "invalid";
-            fieldValidationErrors.confirmPassword.text = "Passwords do not match";
-          }
-        } else {
-          fieldValidationErrors.confirmPassword.status = "";
-          fieldValidationErrors.confirmPassword.text = "";
-        }
-        break;
-      default:
-        break;
-    }
-    this.props
-    .dispatch(setFormFieldErrors(fieldValidationErrors))
-    .then(()=>this.validateForm())
-  }
-  
-  validateForm() {
-    let formErrors = this.props.formErrors;
-    let bool = false;
-    if(!formErrors.firstName && !formErrors.email 
-      && !formErrors.password && formErrors.confirmPassword.status==="valid"){
-      bool = true;
-    }
-    this.props.dispatch(setFormValid(bool));
-  }
-
   handleConfirmation = (show,variant,message) =>{
     this.props.dispatch(afterFormSubmit(show,message,variant));
   }
+
   render(){
     return(
       <>
@@ -131,60 +70,44 @@ class SignUp extends React.Component {
       </Alert>)}
       <Form.Row>
         <Form.Group as={Col} controlId="formGridFirstName">
-          <Form.Label>First Name</Form.Label>
-          <Form.Control name="firstName" type="text" placeholder="First Name" 
-          value={this.props.firstName} 
-          onChange={this.setForm} 
-          isInvalid={this.props.formErrors.firstName}
-          onBlur={this.setTouched} />
-          <Form.Control.Feedback type="invalid">
-            {this.props.formErrors.firstName}
-          </Form.Control.Feedback>
+          <Field label="First Name" name="firstName" 
+          type="text" placeholder="First Name"
+          value={this.props.firstName}
+          onChange={this.setForm}
+          component={getFormControlField} />
         </Form.Group>
         <Form.Group as={Col} controlId="formGridLastName">
-          <Form.Label>Last Name</Form.Label>
-          <Form.Control name="lastName" type="text" placeholder="Enter last name" 
-          value={this.props.lastName} 
+        <Field label="Last Name" name="lastName" 
+          type="text" placeholder="Last Name"
+          value={this.props.lastName}
           onChange={this.setForm}
-          onBlur={this.setTouched} />
+          component={getFormControlField} />
         </Form.Group>
       </Form.Row>
       <Form.Group controlId="formBasicEmail">
-        <Form.Label>Email address</Form.Label>
-        <Form.Control name="email" type="email" placeholder="Enter email"
-        value={this.props.email}
-        onChange={this.setForm}
-        isInvalid={this.props.formErrors.email}
-        onBlur={this.setTouched}/>
-        <Form.Control.Feedback type="invalid">
-            {this.props.formErrors.email}
-        </Form.Control.Feedback>
+        <Field label="Email address" name="email" 
+          type="email" placeholder="Enter email"
+          value={this.props.firstName}
+          onChange={this.setForm}
+          component={getFormControlField} />
       </Form.Group>
       <Form.Group controlId="formBasicPassword">
-        <Form.Label>Password</Form.Label>
-        <Form.Control name="password" type="password" placeholder="Password"
-        value={this.props.password}
-        onChange={this.setForm}
-        isInvalid={this.props.formErrors.password}
-        onBlur={this.setTouched} />
-        <Form.Control.Feedback type="invalid">
-            {this.props.formErrors.password}
-        </Form.Control.Feedback>
+        <Field label="Password" name="password" 
+          type="password" placeholder="Enter Password"
+          value={this.props.password}
+          onChange={this.setForm}
+          component={getFormControlField} />
       </Form.Group>
       <Form.Group controlId="formBasicConfirmPasswod">
-        <Form.Label>Confirm Password</Form.Label>
-        <Form.Control name="confirmPassword" type="password" placeholder="Re-enter password" 
-        value={this.props.confirmPassword} 
-        onChange={this.setForm} 
-        isInvalid={this.props.formErrors.confirmPassword.status==="invalid"}
-        isValid={this.props.formErrors.confirmPassword.status==="valid"}/>
-        <Form.Control.Feedback type={this.props.formErrors.confirmPassword.status}>
-            {this.props.formErrors.confirmPassword.text}
-        </Form.Control.Feedback>
+        <Field label="Confirm Password" name="confirmPassword" 
+          type="password" placeholder="Re-enter password"
+          value={this.props.confirmPassword}
+          onChange={this.setForm}
+          component={getFormControlField} />
       </Form.Group>
       <Row>
         <Col>
-          <Button variant="primary" type="submit" disabled={!this.props.formValid}>
+          <Button variant="primary" type="submit" disabled={this.props.invalid || this.props.submitting}>
             Sign Up
           </Button>
         </Col>
@@ -209,4 +132,51 @@ const mapStateToProps = ({credentialsForm}) => {
   }
 }
 
-export default connect(mapStateToProps)(SignUp);
+const getFormControlField = ({type,placeholder,label, input ,meta:{error,touched,valid,dirty}})=>{
+  return (
+    <>
+      <Form.Label>{label}</Form.Label>
+      <Form.Control
+      {...input}
+      type={type} placeholder={placeholder} 
+      isInvalid={error && touched && input.name!=='confirmPassword'}
+      isValid={input.name==='confirmPassword' && dirty && valid}
+      />
+      <Form.Control.Feedback type="invalid">
+        {(error && touched && input.name!=="confirmPassword")?error:""}
+      </Form.Control.Feedback>
+    </>
+  )
+}
+
+const validate = ({firstName,email,password,confirmPassword}) => {
+  const errors = {};
+  if (!firstName) {
+    errors.firstName = "First name is required";
+  }
+  if (!email) {
+    errors.email = "Email is required";
+  } else if(!(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/.test(email))){
+    errors.email = "Email is invalid";
+  }
+
+  if (!password) {
+    errors.password = "Password is required";
+  } else if(password.length < 8){
+    errors.password = "Password must be atleast 8 digits";
+  }
+
+  if (!confirmPassword) {
+    errors.confirmPassword = "Password is required";
+  } else if(confirmPassword !== password){
+    errors.confirmPassword = "Passwords do not match";
+  }
+  return errors;
+};
+
+export default compose(
+  connect(mapStateToProps),
+  reduxForm({ 
+    form: formName,
+    validate })
+)(SignUp)
