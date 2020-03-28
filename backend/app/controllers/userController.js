@@ -186,8 +186,8 @@ let loginFunction = (req, res) => {
                             let apiResponse = response.generate(true,'Failed to generate new token',400,null)
                             reject(apiResponse)
                         } else {
+                            res.cookie("authToken",newTokenDetails.authToken);
                             let responseBody = {
-                                authToken : newTokenDetails.authToken,
                                 userDetails : tokenDetails.userDetails
                             }
                             resolve(responseBody)
