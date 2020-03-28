@@ -1,10 +1,10 @@
 class Auth {
     constructor(){
-        this._key = "authToken";
+        this._key = "userDetails";
     }
 
-    login(authToken,cb){
-        localStorage.setItem(this._key,authToken);
+    login(userDetails,cb){
+        localStorage.setItem(this._key,JSON.stringify(userDetails));
         if(cb){
             cb();
         }
@@ -18,7 +18,12 @@ class Auth {
     }
 
     isAuthenticated(){
-        return localStorage.getItem(this._key);
+        try{
+            let userDetails = JSON.parse(localStorage.getItem(this._key));
+            return (userDetails.userId)?true:false;
+        } catch (e){
+            return false;
+        }
     }
 }
 

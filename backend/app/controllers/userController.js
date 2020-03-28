@@ -187,10 +187,7 @@ let loginFunction = (req, res) => {
                             reject(apiResponse)
                         } else {
                             res.cookie("authToken",newTokenDetails.authToken);
-                            let responseBody = {
-                                userDetails : tokenDetails.userDetails
-                            }
-                            resolve(responseBody)
+                            resolve(tokenDetails.userDetails)
                         }
                     })
                 } else {
@@ -204,11 +201,8 @@ let loginFunction = (req, res) => {
                             let apiResponse = response.generate(true,'Failed to generate Token',400,null)
                             reject(apiResponse)
                         } else {
-                            let responseBody = {
-                                authToken : newTokenDetails.authToken,
-                                userDetails : tokenDetails.userDetails
-                            }
-                            resolve(responseBody)
+                            res.cookie("authToken",newTokenDetails.authToken);
+                            resolve(tokenDetails.userDetails)
                         }
                     })
                 } 
