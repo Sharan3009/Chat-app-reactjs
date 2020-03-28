@@ -6,7 +6,8 @@ import Login from "./components/login";
 import SignUp from "./components/signup";
 import Home from './components/home/home';
 import store from './store';
-
+import ProtectedRoute from './components/protected-route';
+import AuthenticatedRedirectRoute from './components/authenticated-redirect-route';
 class App extends React.Component {
 
   render(){
@@ -14,13 +15,10 @@ class App extends React.Component {
       <Provider store={store}>
         <HashRouter>
           <Switch>
-            <Route path="/signup" component={SignUp}>
-            </Route>
-            <Route path="/login" component={Login}>
-            </Route>
-            <Route path="/home" component={Home}>
-            </Route>
-            <Route path="/">
+            <AuthenticatedRedirectRoute exact path="/signup" component={SignUp} />
+            <AuthenticatedRedirectRoute exact path="/login" component={Login} />
+            <ProtectedRoute exact path="/home" component={Home} />
+            <Route exact path="/">
               <Redirect to="/login"></Redirect>
             </Route>
           </Switch>
