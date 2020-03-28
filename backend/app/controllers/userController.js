@@ -340,8 +340,6 @@ let resetPassword = (req,res) => {
     })
 }
 
-
-
 // Logout function.
 let logout = (req, res) => {
     AuthModel.remove({ userId: req.body.userId },(err,result)=>{
