@@ -32,7 +32,8 @@ export function loginApi(email,password){
         {
             email,
             password
-        }
+        },
+        {withCredentials:true}
     )
 }
 
