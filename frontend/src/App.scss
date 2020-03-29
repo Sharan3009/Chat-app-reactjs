@@ -29,3 +29,22 @@ body{
     filter: blur(4px);
     transform:scale(1.2);
 }
+
+.parent-flex, .parent-flex * {
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+    height:100%;
+}
+
+.stop-parent-flex, .stop-parent-flex *,.child-flex *{
+    display:unset;
+    min-height:unset;
+    flex-direction:unset;
+    height:unset;
+}
+
+.child-flex{
+    flex:1;
+    overflow-y:auto;
+}
