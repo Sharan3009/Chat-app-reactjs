@@ -1,5 +1,5 @@
 import React from 'react';
-import './home.scss';
+import style from './home.module.scss';
 
 class Home extends React.Component {
   constructor(props){
@@ -10,7 +10,7 @@ class Home extends React.Component {
 
   render(){
     return(
-      <h1>Welcom to home</h1>
+      <h1>Welcome to home</h1>
     )
   }
 }

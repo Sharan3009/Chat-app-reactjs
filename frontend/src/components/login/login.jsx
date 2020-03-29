@@ -1,7 +1,7 @@
 import React from 'react';
 import {Form,Button,Col,Row,Alert} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
-import './login.scss';
+import style from './login.module.scss';
 import { setFormData, afterFormSubmit,loginApi } from '../../actions/credentials-form.action';
 import { connect } from 'react-redux';
 import { reduxForm,Field,startSubmit,stopSubmit } from 'redux-form';
@@ -95,16 +95,6 @@ class Login extends React.Component {
   }
 }
 
-const mapStateToProps = ({credentialsForm}) => {
-  let {email,password,rememberMe,afterSubmit} = credentialsForm;
-  return {
-    email,
-    password,
-    rememberMe,
-    afterSubmit
-  }
-}
-
 function getFormControlField({type,placeholder,input:{name,value,onChange},meta}){
     return (
         <Form.Control
@@ -126,6 +116,17 @@ const validate = (values) => {
   }
   return errors;
 };
+
+
+const mapStateToProps = ({credentialsForm}) => {
+  let {email,password,rememberMe,afterSubmit} = credentialsForm;
+  return {
+    email,
+    password,
+    rememberMe,
+    afterSubmit
+  }
+}
 
 export default compose(
   connect(mapStateToProps),

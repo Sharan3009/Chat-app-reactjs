@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Button, Col,Row, Alert } from 'react-bootstrap';
 import {Link} from 'react-router-dom';
-import './signup.scss';
+import style from './signup.module.scss';
 import { 
   afterFormSubmit,
   setFormData,
@@ -120,17 +120,6 @@ class SignUp extends React.Component {
   }
 }
 
-const mapStateToProps = ({credentialsForm}) => {
-  let { firstName, lastName, email,
-    password, confirmPassword, formValid,
-    afterSubmit, formErrors, formTouched } = credentialsForm;
-  return {
-    firstName, lastName, email,
-    password, confirmPassword, formValid,
-    afterSubmit, formErrors, formTouched
-  }
-}
-
 const getFormControlField = ({type,placeholder,label, input ,meta:{error,touched,valid,dirty}})=>{
   let isError = null;
   let exceptionField = "confirmPassword"
@@ -179,6 +168,16 @@ const validate = ({firstName,email,password,confirmPassword}) => {
   }
   return errors;
 };
+
+
+const mapStateToProps = ({credentialsForm}) => {
+  let { firstName, lastName, email,
+    password, confirmPassword, afterSubmit } = credentialsForm;
+  return {
+    firstName, lastName, email,
+    password, confirmPassword, afterSubmit
+  }
+}
 
 export default compose(
   connect(mapStateToProps),
