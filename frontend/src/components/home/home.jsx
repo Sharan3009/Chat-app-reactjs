@@ -1,6 +1,7 @@
 import React from 'react';
 import style from './home.module.scss';
-import Side from '../side-component/side-component';
+import Side from '../side-component/';
+import Main from '../main-component/';
 import { Container, Row, Col, Navbar, Button } from 'react-bootstrap';
 
 class Home extends React.Component {
@@ -18,13 +19,11 @@ class Home extends React.Component {
         </Navbar>
         <Container fluid className="parent-flex">
           <Row>
-            <Col lg="4" className="p-0">
+            <Col lg="3" md="4" className="p-0">
               <Side />
             </Col>
-            <Col lg="8" className="parent-flex">
-              <div class="h-100 w-100 text-center">
-                Some text
-              </div>
+            <Col lg="9" md="8" className="parent-flex p-0">
+              <Main />
             </Col>
           </Row>
         </Container>

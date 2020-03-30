@@ -1,4 +1,5 @@
-$scrollbar-color:#888;
+$scrollbar-color:#999;
+$scrollbar-track-bg:#f2f2f2;
 $scrollbar-width:4px;
 
 *::-webkit-scrollbar {
@@ -7,7 +8,7 @@ $scrollbar-width:4px;
   
   /* Track */
 *::-webkit-scrollbar-track {
-    background: #f2f2f2; 
+    background: $scrollbar-track-bg; 
 }
    
   /* Handle */
@@ -18,10 +19,10 @@ $scrollbar-width:4px;
   
   /* Handle on hover */
 *::-webkit-scrollbar-thumb:hover {
-    background: #555; 
+    background: #888; 
 }
 
 body *{
-    scrollbar-color:$scrollbar-color;
-    scrollbar-width:$scrollbar-width;
+    scrollbar-color:$scrollbar-color $scrollbar-track-bg;
+    scrollbar-width:thin;
 }

@@ -44,3 +44,17 @@ body{
     flex:1 !important;
     overflow-y:auto !important;
 }
+
+.text-ellipsis{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.line-height-1\.5{
+    line-height: 1.5;
+}
+
+#main{
+    background-color:#f2f2f2;
+}

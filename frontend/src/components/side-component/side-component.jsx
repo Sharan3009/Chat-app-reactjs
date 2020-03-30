@@ -11,127 +11,17 @@ class Side extends React.Component{
 
     render(){
         return(
-            <div className="parent-flex">
+            <div className="parent-flex" id="side">
                 <div className="list-group child-flex">
-                    <a href="#" className="list-group-item list-group-item-action flex-column align-items-start active">
+                    <a href="#" className="list-group-item list-group-item-action
+                    flex-column align-items-start rounded-0">
                         <div className="d-flex w-100 justify-content-between">
-                        <h5 className="mb-1">List group item heading</h5>
-                        <small>3 days ago</small>
+                            <h5 className="mb-0 text-ellipsis line-height-1.5" title="This is some really big name that should start ellipsing">This is some really big name that should start ellipsing</h5>
                         </div>
-                        <p className="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-                        <small>Donec id elit non mi porta.</small>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action flex-column align-items-start">
-                        <div className="d-flex w-100 justify-content-between">
-                        <h5 className="mb-1">List group item heading</h5>
-                        <small className="text-muted">3 days ago</small>
-                        </div>
-                        <p className="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-                        <small className="text-muted">Donec id elit non mi porta.</small>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action flex-column align-items-start">
-                        <div className="d-flex w-100 justify-content-between">
-                        <h5 className="mb-1">List group item heading</h5>
-                        <small className="text-muted">3 days ago</small>
-                        </div>
-                        <p className="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-                        <small className="text-muted">Donec id elit non mi porta.</small>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action flex-column align-items-start active">
-                        <div className="d-flex w-100 justify-content-between">
-                        <h5 className="mb-1">List group item heading</h5>
-                        <small>3 days ago</small>
-                        </div>
-                        <p className="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-                        <small>Donec id elit non mi porta.</small>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action flex-column align-items-start">
-                        <div className="d-flex w-100 justify-content-between">
-                        <h5 className="mb-1">List group item heading</h5>
-                        <small className="text-muted">3 days ago</small>
-                        </div>
-                        <p className="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-                        <small className="text-muted">Donec id elit non mi porta.</small>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action flex-column align-items-start">
-                        <div className="d-flex w-100 justify-content-between">
-                        <h5 className="mb-1">List group item heading</h5>
-                        <small className="text-muted">3 days ago</small>
-                        </div>
-                        <p className="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-                        <small className="text-muted">Donec id elit non mi porta.</small>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action flex-column align-items-start active">
-                        <div className="d-flex w-100 justify-content-between">
-                        <h5 className="mb-1">List group item heading</h5>
-                        <small>3 days ago</small>
-                        </div>
-                        <p className="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-                        <small>Donec id elit non mi porta.</small>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action flex-column align-items-start">
-                        <div className="d-flex w-100 justify-content-between">
-                        <h5 className="mb-1">List group item heading</h5>
-                        <small className="text-muted">3 days ago</small>
-                        </div>
-                        <p className="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-                        <small className="text-muted">Donec id elit non mi porta.</small>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action flex-column align-items-start">
-                        <div className="d-flex w-100 justify-content-between">
-                        <h5 className="mb-1">List group item heading</h5>
-                        <small className="text-muted">3 days ago</small>
-                        </div>
-                        <p className="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-                        <small className="text-muted">Donec id elit non mi porta.</small>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action flex-column align-items-start active">
-                        <div className="d-flex w-100 justify-content-between">
-                        <h5 className="mb-1">List group item heading</h5>
-                        <small>3 days ago</small>
-                        </div>
-                        <p className="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-                        <small>Donec id elit non mi porta.</small>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action flex-column align-items-start">
-                        <div className="d-flex w-100 justify-content-between">
-                        <h5 className="mb-1">List group item heading</h5>
-                        <small className="text-muted">3 days ago</small>
-                        </div>
-                        <p className="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-                        <small className="text-muted">Donec id elit non mi porta.</small>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action flex-column align-items-start">
-                        <div className="d-flex w-100 justify-content-between">
-                        <h5 className="mb-1">List group item heading</h5>
-                        <small className="text-muted">3 days ago</small>
-                        </div>
-                        <p className="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-                        <small className="text-muted">Donec id elit non mi porta.</small>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action flex-column align-items-start active">
-                        <div className="d-flex w-100 justify-content-between">
-                        <h5 className="mb-1">List group item heading</h5>
-                        <small>3 days ago</small>
-                        </div>
-                        <p className="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-                        <small>Donec id elit non mi porta.</small>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action flex-column align-items-start">
-                        <div className="d-flex w-100 justify-content-between">
-                        <h5 className="mb-1">List group item heading</h5>
-                        <small className="text-muted">3 days ago</small>
-                        </div>
-                        <p className="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-                        <small className="text-muted">Donec id elit non mi porta.</small>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action flex-column align-items-start">
-                        <div className="d-flex w-100 justify-content-between">
-                        <h5 className="mb-1">List group item heading</h5>
-                        <small className="text-muted">3 days ago</small>
-                        </div>
-                        <p className="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-                        <small className="text-muted">Donec id elit non mi porta.</small>
+                        <p className="mb-0">
+                            Joined: 5/10
+                        </p>
+                        <small>Owner: You</small>
                     </a>
                 </div>
             </div>
