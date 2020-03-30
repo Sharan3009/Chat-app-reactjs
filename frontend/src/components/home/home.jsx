@@ -2,7 +2,7 @@ import React from 'react';
 import style from './home.module.scss';
 import Side from '../side-component/';
 import Main from '../main-component/';
-import { Container, Row, Col, Navbar, Button } from 'react-bootstrap';
+import { Container, Row, Col, Navbar, Button, Nav } from 'react-bootstrap';
 
 class Home extends React.Component {
   constructor(props){
@@ -14,8 +14,16 @@ class Home extends React.Component {
   render(){
     return(
       <>
-        <Navbar bg="dark" variant="dark">
-          <Button variant="outline-light ml-auto">Log out</Button>
+        <Navbar bg="dark" variant="dark" expand="lg">
+          <Navbar.Toggle aria-controls="basic-navbar-nav" className="ml-auto" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="ml-auto">
+              <div className="d-flex justify-content-between my-1">
+                <Button variant="success" size="sm" className="mr-2">Create room</Button>
+                <Button variant="outline-light" size="sm">Log out</Button>
+              </div>
+            </Nav>
+          </Navbar.Collapse>
         </Navbar>
         <Container fluid className="parent-flex">
           <Row>
