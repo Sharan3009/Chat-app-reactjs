@@ -1,4 +1,6 @@
-const initialState = {};
+const initialState = {
+  selfRoomsDataStatus : "loading"
+};
 
 function reducer(state = initialState, action) {
   switch(action.type) {

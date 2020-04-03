@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import { selfRoomsApi } from '../../actions/side-component.action';
 import style from './side-component.module.scss';
 import { withRouter } from 'react-router-dom'; 
+import { Spinner } from 'react-bootstrap';
 class Side extends React.Component{
     constructor(props){
         super(props);
@@ -34,28 +35,44 @@ class Side extends React.Component{
         });
     }
 
+    renderElement(){
+        if(this.props.selfRoomsData){
+            return (<div className="list-group child-flex">
+                <a href="#" className="list-group-item list-group-item-action
+                flex-column align-items-start rounded-0">
+                    <div className="d-flex w-100 justify-content-between">
+                        <h5 className="mb-0 text-ellipsis line-height-1.5" title="This is some really big name that should start ellipsing">This is some really big name that should start ellipsing</h5>
+                    </div>
+                    <p className="mb-0">
+                        Joined: 5/10
+                    </p>
+                    <small>Owner: You</small>
+                </a>
+            </div>)
+        } else {
+            if(this.props.selfRoomsDataStatus==='loading'){
+                return <Spinner animation="grow" className="m-auto" />
+            } else if(this.props.selfRoomsDataStatus==='error'){
+                return (
+                    <div className="m-auto">
+                        {process.env.REACT_APP_DEFAULT_ERROR_MESSAGE}
+                    </div>
+                )
+            }
+        }
+    }
+
     render(){
         return(
             <div className="parent-flex" id="side">
-                <div className="list-group child-flex">
-                    <a href="#" className="list-group-item list-group-item-action
-                    flex-column align-items-start rounded-0">
-                        <div className="d-flex w-100 justify-content-between">
-                            <h5 className="mb-0 text-ellipsis line-height-1.5" title="This is some really big name that should start ellipsing">This is some really big name that should start ellipsing</h5>
-                        </div>
-                        <p className="mb-0">
-                            Joined: 5/10
-                        </p>
-                        <small>Owner: You</small>
-                    </a>
-                </div>
+                { this.renderElement() }
             </div>
         )
     }
 }
 
 const mapStateToProps = ({sideComponent}) => {
-    return {sideComponent}
+    return sideComponent;
   }
   
 export default compose(
