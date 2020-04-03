@@ -273,12 +273,8 @@ let setServer = (server) => {
                     */
                     socket.on('create-room', (data) => {
                         data['roomId'] = shortid.generate();
-                        data['userId'] = socket.userId;
-                        data['userName'] = socket.userName;
-                        data['joinees'] = {
-                            userId : socket.userId,
-                            userName: socket.userName
-                        }
+                        data['ownerId'] = socket.userId;
+                        data['ownerName'] = socket.userName;
                         eventEmitter.emit('save-room', data)
                     })
                        /**
