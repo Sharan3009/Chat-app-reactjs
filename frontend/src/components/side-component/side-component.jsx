@@ -1,10 +1,11 @@
 import React from 'react';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import { selfRoomsApi } from '../../actions/side-component.action';
+import { selfRoomsApi, setRoomsDataStatus, setRoomsData } from '../../actions/side-component.action';
 import style from './side-component.module.scss';
 import { withRouter } from 'react-router-dom'; 
 import { Spinner } from 'react-bootstrap';
+
 class Side extends React.Component{
     constructor(props){
         super(props);
@@ -16,48 +17,64 @@ class Side extends React.Component{
     }
 
     getSelfRooms(){
+        this.props.dispatch(setRoomsDataStatus("loading"))
         selfRoomsApi()
         .then(
         (apiResponse)=>{
+            console.log(apiResponse)
             if(apiResponse.data){
                 if(apiResponse.data.status===401){
                     localStorage.clear();
                     this.props.history.push("/login");
+                } else {
+                    this.props.dispatch(setRoomsData(apiResponse.data.data));
                 }
             }
         })
         .catch(
         (apiError)=>{
-            let message = ""
+            let message = "";
             if(apiError.data){
               message=apiError.data.message;
             }
+            this.props.dispatch(setRoomsDataStatus("error"))
         });
     }
 
+    renderErrorElement(ele){
+        return (
+            <div className="m-auto">
+                {ele}
+            </div>
+        )
+    }
+
     renderElement(){
-        if(this.props.selfRoomsData){
-            return (<div className="list-group child-flex">
-                <a href="#" className="list-group-item list-group-item-action
-                flex-column align-items-start rounded-0">
-                    <div className="d-flex w-100 justify-content-between">
-                        <h5 className="mb-0 text-ellipsis line-height-1.5" title="This is some really big name that should start ellipsing">This is some really big name that should start ellipsing</h5>
-                    </div>
-                    <p className="mb-0">
-                        Joined: 5/10
-                    </p>
-                    <small>Owner: You</small>
-                </a>
-            </div>)
+        const {selfRoomsData, selfRoomsDataStatus} = this.props;
+        if(selfRoomsData){
+            if(selfRoomsData.length){
+                return this.props.selfRoomsData.map((room)=>{
+                    return (<div className="list-group child-flex">
+                    <a href="#" className="list-group-item list-group-item-action
+                    flex-column align-items-start rounded-0">
+                        <div className="d-flex w-100 justify-content-between">
+                <h5 className="mb-0 text-ellipsis line-height-1.5" title={room.name}>{room.name}</h5>
+                        </div>
+                        <p className="mb-0">
+                            Joined: {room.joinees?.length || 0}/{room.capacity || 0}
+                        </p>
+                            <small>Owner: {room.ownerName}</small>
+                    </a>
+                </div>)
+                })
+            } else {
+                return this.renderErrorElement("You have not joined or created any room");
+            }
         } else {
-            if(this.props.selfRoomsDataStatus==='loading'){
-                return <Spinner animation="grow" className="m-auto" />
-            } else if(this.props.selfRoomsDataStatus==='error'){
-                return (
-                    <div className="m-auto">
-                        {process.env.REACT_APP_DEFAULT_ERROR_MESSAGE}
-                    </div>
-                )
+            if(selfRoomsDataStatus==='loading'){
+                return this.renderErrorElement(<Spinner animation="grow" />)
+            } else if(selfRoomsDataStatus==='error'){
+                return this.renderErrorElement(process.env.REACT_APP_DEFAULT_ERROR_MESSAGE);
             }
         }
     }
