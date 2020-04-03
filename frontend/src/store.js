@@ -4,6 +4,7 @@ import sideComponent from './reducers/side-component.reducer';
 import mainComponent from './reducers/main-component.reducer';
 import homeComponent from './reducers/home-component.reducer';
 import socketReducer from './reducers/socket.reducer';
+import appNavbar from './reducers/app-navbar.reducer';
 import thunk from 'redux-thunk';
 import { reducer as formReducer } from 'redux-form';
 import SocketClient from './socket';
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
     homeComponent,
     sideComponent,
     mainComponent,
+    appNavbar,
     socketReducer
 })
 const store = createStore(
