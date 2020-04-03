@@ -2,7 +2,8 @@ import React from 'react';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import { selfRoomsApi } from '../../actions/side-component.action';
-import style from './side-component.module.scss'
+import style from './side-component.module.scss';
+import { withRouter } from 'react-router-dom'; 
 class Side extends React.Component{
     constructor(props){
         super(props);
@@ -17,16 +18,18 @@ class Side extends React.Component{
         selfRoomsApi()
         .then(
         (apiResponse)=>{
-            console.log(apiResponse);
             if(apiResponse.data){
-
+                if(apiResponse.data.status===401){
+                    localStorage.clear();
+                    this.props.history.push("/login");
+                }
             }
         })
         .catch(
         (apiError)=>{
-            console.log(apiError);
+            let message = ""
             if(apiError.data){
-
+              message=apiError.data.message;
             }
         });
     }
@@ -52,9 +55,10 @@ class Side extends React.Component{
 }
 
 const mapStateToProps = ({sideComponent}) => {
-    return sideComponent
+    return {sideComponent}
   }
   
 export default compose(
     connect(mapStateToProps),
+    withRouter
 )(Side)
