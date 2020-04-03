@@ -29,7 +29,6 @@ class AppNavbar extends React.Component{
         if(apiError.data){
           message=apiError.data.message;
         }
-        this.handleConfirmation(true,"danger",message);
       })
     }
 
