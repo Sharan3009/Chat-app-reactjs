@@ -8,8 +8,8 @@ const token = require('./../libs/tokenLib')
 const check = require('./../libs/checkLib')
 
 let isAuthorized = (req, res, next) => {
-    if(req.params.authToken || req.query.authToken || req.body.authToken || req.header('authToken')) {
-        Auth.findOne({ authToken : req.header('authToken') || req.params.authToken || req.query.authToken || req.body.authToken },(err,authDetails)=>{
+    if(req.params.authToken || req.query.authToken || req.body.authToken || req.cookies.authToken) {
+        Auth.findOne({ authToken : req.cookies.authToken || req.params.authToken || req.query.authToken || req.body.authToken },(err,authDetails)=>{
             if(err){
                 console.log(err)
                 logger.error(err.message,'Authorization Middleware',10)
@@ -35,7 +35,7 @@ let isAuthorized = (req, res, next) => {
         })
     } else {
         logger.error('Authorization token missing', 'AuthorizationMiddleware',5)
-        let apiResponse = responseLib.generate(true,'Authorization token is missing in request',400,null)
+        let apiResponse = responseLib.generate(true,'Authorization token is missing in request',401,null)
         res.send(apiResponse)
     }
 }

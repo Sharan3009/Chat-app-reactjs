@@ -23,7 +23,8 @@ class Home extends React.Component {
   }
 
   connectSocketAndAuthorize(){
-    this.props.dispatch(socketConnect()).then(
+    this.props.dispatch(socketConnect())
+    .then(
       ()=>{
         this.props.dispatch(socketOn("verifyUser",()=>{
           let authToken = this.getCookieValue("authToken");

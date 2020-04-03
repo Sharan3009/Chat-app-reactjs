@@ -27,7 +27,8 @@ class Login extends React.Component {
   submitForm = (event) => {
     event.preventDefault();
     this.props.dispatch(startSubmit(formName));
-    loginApi(this.props.email,this.props.password).then(
+    loginApi(this.props.email,this.props.password)
+    .then(
       (apiResponse)=>{
         this.props.dispatch(stopSubmit(formName));
         if(apiResponse.data){
@@ -38,8 +39,8 @@ class Login extends React.Component {
             this.handleConfirmation(true,"warning",apiResponse.data.message);
           }
         }
-      }
-    ).catch(
+      })
+      .catch(
       (apiError)=>{
         this.props.dispatch(stopSubmit(formName));
         let message = ""

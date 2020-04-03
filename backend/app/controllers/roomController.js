@@ -1,10 +1,6 @@
 const mongoose = require('mongoose');
-const shortid = require('shortid');
-const time = require('./../libs/timeLib');
-const passwordLib = require('./../libs/generatePasswordLib');
 const response = require('./../libs/responseLib')
 const logger = require('./../libs/loggerLib');
-const validateInput = require('../libs/paramsValidationLib')
 const check = require('../libs/checkLib')
 const token = require('../libs/tokenLib')
 
@@ -81,22 +77,24 @@ let getSingleChatRoom = (req,res) => {
 }
 
 let getYourRooms = (req,res)=>{
-	let validateParams = () => {
-		return new Promise((resolve, reject) => {
-		  if (check.isEmpty(req.params.userId)) {
-			logger.info('parameters missing', 'getYourRooms handler', 9)
-			let apiResponse = response.generate(true, 'parameters missing.', 403, null)
-			reject(apiResponse)
-		  } else {
-			resolve()
-		  }
+	let getUserId=()=>{
+		return new Promise((resolve,reject)=>{
+			token.verifyClaimWithoutSecret(req.cookies.authToken, (err, result) => {
+				if (err) {
+					logger.info('user missing', 'getYourRooms handler', 9)
+					let apiResponse = response.generate(true, 'user missing.', 403, null)
+					reject(apiResponse)
+				} else {
+					resolve(result.data.userId)
+				}
+			})
 		})
-	  }
-	
-	let getYourRooms = () =>{
+	}
+
+	let getYourRooms = (userId) =>{
 		return new Promise((resolve,reject)=>{
 			let findQuery = {
-					'joinees.userId' : req.params.userId
+					'joinees.userId' : userId
 			}
 			RoomModel.find(findQuery)
 				.select('-_id -__v')
@@ -118,8 +116,8 @@ let getYourRooms = (req,res)=>{
 				})
 		})
 	}
-	validateParams(req,res)
-      .then(getYourRooms)
+	getUserId(req,res)
+	  .then(getYourRooms)
       .then((result) => {
         let apiResponse = response.generate(false, 'Rooms Found', 200, result)
         res.send(apiResponse)

@@ -72,7 +72,7 @@ let setRouter = (app) => {
 	    "data": null
 	   }
 	 */
-    app.get(baseUrl + '/yourRooms/:userId',auth.isAuthorized, roomController.getYourRooms)
+    app.get(baseUrl + '/self',auth.isAuthorized, roomController.getYourRooms)
         /**
 	 * @api {get} /api/v1/rooms/yourRooms/:userId Get your rooms
 	 * @apiVersion 0.0.1

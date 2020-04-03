@@ -1,11 +1,34 @@
 import React from 'react';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
+import { selfRoomsApi } from '../../actions/side-component.action';
 import style from './side-component.module.scss'
 class Side extends React.Component{
     constructor(props){
         super(props);
         this.state = {};
+    }
+
+    componentDidMount(){
+        this.getSelfRooms();
+    }
+
+    getSelfRooms(){
+        selfRoomsApi()
+        .then(
+        (apiResponse)=>{
+            console.log(apiResponse);
+            if(apiResponse.data){
+
+            }
+        })
+        .catch(
+        (apiError)=>{
+            console.log(apiError);
+            if(apiError.data){
+
+            }
+        });
     }
 
     render(){
