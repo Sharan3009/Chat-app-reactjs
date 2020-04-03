@@ -11,9 +11,7 @@ class Main extends React.Component{
 
     render(){
         return(
-            <div id="main" className="parent-flex">
-
-            </div>
+            <div id="main" className="parent-flex"></div>
         )
     }
 }

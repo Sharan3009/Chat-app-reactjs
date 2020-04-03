@@ -3,12 +3,39 @@ import style from './home.module.scss';
 import Side from '../side-component/';
 import Main from '../main-component/';
 import { Container, Row, Col, Navbar, Button, Nav } from 'react-bootstrap';
+import { socketConnect, socketDisconnect,socketOn,socketEmit } from '../../actions/socket.action';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
 
 class Home extends React.Component {
   constructor(props){
     super(props);
     this.state = {
     }
+  }
+
+  componentDidMount(){
+    this.connectSocketAndAuthorize();
+  }
+
+  componentWillUnmount(){
+    this.props.dispatch(socketDisconnect());
+  }
+
+  connectSocketAndAuthorize(){
+    this.props.dispatch(socketConnect()).then(
+      ()=>{
+        this.props.dispatch(socketOn("verifyUser",()=>{
+          let authToken = this.getCookieValue("authToken");
+          this.props.dispatch(socketEmit("set-user",authToken))
+        }))
+      }
+    );
+  }
+
+  getCookieValue(name){
+    var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  if (match) return match[2];
   }
 
   render(){
@@ -40,4 +67,10 @@ class Home extends React.Component {
   }
 }
 
-export default Home;
+const mapStateToProps = ({homeComponent}) => {
+  return homeComponent
+}
+
+export default compose(
+  connect(mapStateToProps),
+)(Home)
