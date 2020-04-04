@@ -28,8 +28,7 @@ export function socketOn(event,cb){
 
 export function socketEmit(event, data) {
     return {
-      type: 'socket',
-      types: [SEND, SEND_SUCCESS, SEND_FAIL],
+      ...TYPE,
       promise: (socket) => socket.emit(event, data),
     }
 }

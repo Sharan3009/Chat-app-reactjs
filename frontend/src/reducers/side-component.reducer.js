@@ -1,20 +1,26 @@
-import { SELF_ROOMS_DATA, SELF_ROOMS_DATA_STATUS, START_ADD_ROOM, STOP_ADD_ROOM } from '../actions/side-component.action'; 
+import { SELF_ROOMS_DATA, SELF_ROOMS_DATA_STATUS,
+        START_ADD_ROOM, STOP_ADD_ROOM,
+        ROOM_NAME_INPUT 
+        }
+from '../actions/side-component.action'; 
 
 const selfRoomsDataObj = {};
 
 const initialState = {
   selfRoomsDataStatus : "loading",
   selfRoomsData: null,
-  selfRoomsDataLength: 0
+  selfRoomsDataLength: 0,
+  roomName: ""
 };
 
 function reducer(state = initialState, action) {
   switch(action.type) {
+
     case SELF_ROOMS_DATA:{
-      const { selfRoomsDataLength, selfRoomsData } = state;
+      const { selfRoomsDataLength } = state;
       let obj = {
         selfRoomsDataLength,
-        selfRoomsData
+        selfRoomsData: action.payload
       }
       obj = mapArrToObj(obj);
       return {
@@ -22,8 +28,13 @@ function reducer(state = initialState, action) {
         ...obj
       };
     }
+
+    case ROOM_NAME_INPUT:
+      return {...state, roomName: action.payload };
+
     case SELF_ROOMS_DATA_STATUS:
       return {...state, selfRoomsDataStatus:action.payload};
+
     case START_ADD_ROOM:{
       let rooms = state.selfRoomsData || [];
       let obj = {
@@ -40,6 +51,7 @@ function reducer(state = initialState, action) {
         selfRoomsDataLength: obj.selfRoomsDataLength
       }
     }
+
     case STOP_ADD_ROOM:{
       let keyName = "roomId";
       let selfRoomsDataLength = deleteObj(state.selfRoomsDataLength,selfRoomsDataObj,action.payload[keyName],keyName)
@@ -48,6 +60,7 @@ function reducer(state = initialState, action) {
         selfRoomsDataLength
       }
     }
+
     default:
       return state;
   }
@@ -65,9 +78,9 @@ function mapArrToObj(obj){
       }
       return {};
     })
-    return { selfRoomsDataLength, selfRoomsData };
+    return { selfRoomsDataLength, selfRoomsData:referencedArr };
   }
-  return [];
+  return obj;
 }
 
 function deleteObj(roomLength, referencedObj,key,keyName){

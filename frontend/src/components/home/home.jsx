@@ -42,7 +42,7 @@ class Home extends React.Component {
 
   render(){
     return(
-      <>
+      <div className="parent-flex">
         <AppNavbar />
         <Container fluid className="parent-flex">
           <Row>
@@ -54,7 +54,7 @@ class Home extends React.Component {
             </Col>
           </Row>
         </Container>
-      </>
+      </div>
     )
   }
 }
