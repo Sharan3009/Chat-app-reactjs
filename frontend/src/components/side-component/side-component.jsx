@@ -5,6 +5,7 @@ import { selfRoomsApi, setRoomsDataStatus, setRoomsData } from '../../actions/si
 import style from './side-component.module.scss';
 import { withRouter } from 'react-router-dom'; 
 import { Spinner } from 'react-bootstrap';
+import SelfRoomPlank from '../self-room-plank';
 
 class Side extends React.Component{
     constructor(props){
@@ -55,18 +56,7 @@ class Side extends React.Component{
                 return this.props.selfRoomsData.map((room)=>{
                     return (
                     <div className="list-group child-flex">
-                        <a href="#" className="list-group-item list-group-item-action
-                        flex-column align-items-start rounded-0">
-                            <div className="d-flex w-100 justify-content-between">
-                                <h5 className="mb-0 text-ellipsis line-height-1.5" title={room.name}>
-                                    {room.name}
-                                </h5>
-                            </div>
-                            <p className="mb-0">
-                                Owner: {room.ownerName}
-                            </p>
-                            <small>Joined: {room.joinees?.length || 0}/{room.capacity || 0}</small>
-                        </a>
+                        <SelfRoomPlank props={room}/>
                     </div>
                     )
                 })
