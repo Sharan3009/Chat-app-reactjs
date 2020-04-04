@@ -2,19 +2,22 @@ import React from 'react';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import style from './main-component.module.scss'
-import GlobalRooms from '../global-rooms/global-rooms';
+import GlobalRooms from '../global-rooms';
+import ChatRoom from '../chat-room';
 import { Route, withRouter } from "react-router-dom";
 
 class Main extends React.Component{
     constructor(props){
         super(props);
         this.state = {};
+        console.log(this.props.match)
     }
 
     render(){
         return(
             <div id="main" className="parent-flex">
-                <Route path={`${this.props.match.url}`} component={GlobalRooms} />
+                <Route exact path={`${this.props.match.url}/:roomId`} component={ChatRoom} />
+                <Route exact path={`${this.props.match.url}`} component={GlobalRooms} />
             </div>
         )
     }

@@ -4,6 +4,7 @@ import { socketEmit } from '../../actions/socket.action';
 import { roomNameInput } from '../../actions/side-component.action';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import { withRouter, Link } from 'react-router-dom';
 
 class SelfRoomPlank extends React.Component {
     constructor(props){
@@ -94,14 +95,14 @@ class SelfRoomPlank extends React.Component {
     render(){
         const { room, currentUser } = this.props;
         return(
-            <a href="#" className={`list-group-item list-group-item-action
+            <Link to={`${this.props.match.url}/${room.roomId}`} className={`list-group-item list-group-item-action
                 flex-column align-items-start ${this.props.className}`} onClick={this.onRoomClick} style={this.applyBgColor()}>
                 {this.renderHeaderEle(room.editable)}
                 <p className="mb-0">
                     Owner: {(currentUser.userId===room.ownerId)?'You':room.ownerName}
                 </p>
                 <small>Joined: {room.joinees?.length || 0}/{room.capacity || 0}</small>
-            </a>
+            </Link>
         )
     }
 }
@@ -110,8 +111,9 @@ class SelfRoomPlank extends React.Component {
 
 const mapStateToProps = ({sideComponent}) => {
     return sideComponent;
-  }
+}
   
 export default compose(
-    connect(mapStateToProps)
+    connect(mapStateToProps),
+    withRouter
 )(SelfRoomPlank)
