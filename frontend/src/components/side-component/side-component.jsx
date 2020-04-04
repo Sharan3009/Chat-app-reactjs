@@ -6,6 +6,7 @@ import style from './side-component.module.scss';
 import { withRouter } from 'react-router-dom'; 
 import { Spinner } from 'react-bootstrap';
 import SelfRoomPlank from '../self-room-plank';
+import { getUserDetailsFromStorage } from '../../utils';
 
 class Side extends React.Component{
     constructor(props){
@@ -55,7 +56,7 @@ class Side extends React.Component{
             if(selfRoomsData.length){
                 return (
                 <div className="list-group child-flex">
-                    {this.props.selfRoomsData.map((room)=> <SelfRoomPlank key={room.roomId} room={room}/>)}
+                    {this.props.selfRoomsData.map((room)=> <SelfRoomPlank key={room.roomId} room={room} currentUser={getUserDetailsFromStorage()}/>)}
                 </div>
                 )
             } else {
@@ -63,7 +64,7 @@ class Side extends React.Component{
             }
         } else {
             if(selfRoomsDataStatus==='loading'){
-                return this.renderErrorElement(<Spinner animation="grow" />)
+                return this.renderErrorElement(<Spinner animation="grow"/>)
             } else if(selfRoomsDataStatus==='error'){
                 return this.renderErrorElement(process.env.REACT_APP_DEFAULT_ERROR_MESSAGE);
             }

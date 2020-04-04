@@ -3,13 +3,17 @@ import { FormControl } from 'react-bootstrap';
 
 class SelfRoomPlank extends React.Component {
     constructor(props){
-        super(props)
+        super(props);
+    }
+
+    componentDidMount(){
+        this.inputRef.focus();
     }
 
     renderHeaderEle(editable){
         if(editable){
             return(
-                <FormControl type="text" placeholder="Enter Room Name"/>
+                <FormControl ref={(ref)=>this.inputRef=ref} type="text" placeholder="Enter Room Name" autofocus/>
             )
         } else {
             const {room} = this.props;
@@ -28,7 +32,7 @@ class SelfRoomPlank extends React.Component {
     }
 
     render(){
-        const { room } = this.props;
+        const { room, currentUser } = this.props;
         return(
             <a href="#" className="list-group-item list-group-item-action
                 flex-column align-items-start rounded-0" onClick={this.onRoomClick}>
@@ -36,7 +40,7 @@ class SelfRoomPlank extends React.Component {
                     {this.renderHeaderEle(room.editable)}
                 </div>
                 <p className="mb-0">
-                    Owner: {room.ownerName}
+                    Owner: {(currentUser.userId===room.ownerId)?'You':room.ownerName}
                 </p>
                 <small>Joined: {room.joinees?.length || 0}/{room.capacity || 0}</small>
             </a>
