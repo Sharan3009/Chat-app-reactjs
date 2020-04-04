@@ -17,8 +17,8 @@ class App extends React.Component {
           <Switch>
             <AuthenticatedRedirectRoute exact path="/signup" component={SignUp} />
             <AuthenticatedRedirectRoute exact path="/login" component={Login} />
-            <ProtectedRoute path="/home" component={Home} />
-            <Route exact path="/">
+            <ProtectedRoute path="/rooms" component={Home} />
+            <Route path="/">
               <Redirect to="/login"></Redirect>
             </Route>
           </Switch>

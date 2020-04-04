@@ -34,7 +34,7 @@ class Login extends React.Component {
         if(apiResponse.data){
           if(apiResponse.data.status===200){
           Auth.login(apiResponse.data.data);
-          this.props.history.push("/home");
+          this.props.history.push("/rooms");
           } else {
             this.handleConfirmation(true,"warning",apiResponse.data.message);
           }

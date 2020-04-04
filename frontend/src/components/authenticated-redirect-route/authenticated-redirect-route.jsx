@@ -5,7 +5,7 @@ import Auth from '../../classes/Auth';
 const AuthenticatedRedirectRoute = ({ component: Component, ...rest }) => (
   <Route {...rest}
     render={(props) =>
-      Auth.isAuthenticated() ? <Redirect to={{pathname: "/home"}}/>:<Component {...props} />
+      Auth.isAuthenticated() ? <Redirect to={{pathname: "/rooms"}}/>:<Component {...props} />
     }
   />
 );
