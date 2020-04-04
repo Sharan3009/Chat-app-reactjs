@@ -54,9 +54,9 @@ class Side extends React.Component{
     }
 
     renderElement(){
-        const { selfRoomsData, selfRoomsDataStatus } = this.props;
+        const { selfRoomsData, selfRoomsDataStatus, selfRoomsDataLength } = this.props;
         if(selfRoomsData){
-            if(selfRoomsData.length){
+            if(selfRoomsData && selfRoomsDataLength){
                 return (
                 <div className="list-group child-flex">
                     {this.props.selfRoomsData.filter((room)=>room.roomId).map((room)=> <SelfRoomPlank key={room.roomId} room={room} currentUser={getUserDetailsFromStorage()} deleteRoom={(room)=>this.onDeleteRoom(room)}/>)}

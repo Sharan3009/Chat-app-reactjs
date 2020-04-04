@@ -5,55 +5,78 @@ const selfRoomsDataObj = {};
 const initialState = {
   selfRoomsDataStatus : "loading",
   selfRoomsData: null,
+  selfRoomsDataLength: 0
 };
 
 function reducer(state = initialState, action) {
   switch(action.type) {
-    case SELF_ROOMS_DATA:
+    case SELF_ROOMS_DATA:{
+      const { selfRoomsDataLength, selfRoomsData } = state;
+      let obj = {
+        selfRoomsDataLength,
+        selfRoomsData
+      }
+      obj = mapArrToObj(obj);
       return {
         ...state,
-        selfRoomsData:mapArrToObj(action.payload)
+        ...obj
       };
+    }
     case SELF_ROOMS_DATA_STATUS:
       return {...state, selfRoomsDataStatus:action.payload};
-    case START_ADD_ROOM:
+    case START_ADD_ROOM:{
       let rooms = state.selfRoomsData || [];
+      let obj = {
+        selfRoomsDataLength: state.selfRoomsDataLength,
+        selfRoomsData: [action.payload]
+      }
+      obj = mapArrToObj(obj);
       return {
         ...state, 
         selfRoomsData:[
-          ...mapArrToObj([action.payload]),
+          ...obj.selfRoomsData,
           ...rooms
-        ]
+        ],
+        selfRoomsDataLength: obj.selfRoomsDataLength
       }
-    case STOP_ADD_ROOM:
-      let keyName = "roomId"
-      deleteObj(selfRoomsDataObj,action.payload[keyName],keyName)
-      return {...state, selfRoomsData:[...state.selfRoomsData] }
+    }
+    case STOP_ADD_ROOM:{
+      let keyName = "roomId";
+      let selfRoomsDataLength = deleteObj(state.selfRoomsDataLength,selfRoomsDataObj,action.payload[keyName],keyName)
+      return {...state,
+        selfRoomsData:[...state.selfRoomsData],
+        selfRoomsDataLength
+      }
+    }
     default:
       return state;
   }
 }
 
-function mapArrToObj(arr){
+function mapArrToObj(obj){
+  let { selfRoomsDataLength, selfRoomsData } = obj;
   let referencedArr = [];
-  if(Array.isArray(arr)){
-    referencedArr = arr.map((room)=>{
+  if(Array.isArray(selfRoomsData)){
+    referencedArr = selfRoomsData.map((room)=>{
       if(!(room.roomId in selfRoomsDataObj)){
+        selfRoomsDataLength++;
         selfRoomsDataObj[room.roomId] = room;
         return room;
       }
       return {};
     })
-    return referencedArr;
+    return { selfRoomsDataLength, selfRoomsData };
   }
   return [];
 }
 
-function deleteObj(referencedObj,key,keyName){
+function deleteObj(roomLength, referencedObj,key,keyName){
   if(referencedObj && referencedObj[key]){
     referencedObj[key][keyName] = null;
     delete referencedObj[key];
+    roomLength--
   }
+  return roomLength;
 }
 
  export default reducer;
