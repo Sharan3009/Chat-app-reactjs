@@ -11,7 +11,6 @@ import { getUserDetailsFromStorage } from '../../utils';
 class Side extends React.Component{
     constructor(props){
         super(props);
-        this.state = {};
     }
 
     componentDidMount(){
@@ -51,12 +50,7 @@ class Side extends React.Component{
     }
 
     onDeleteRoom = (room) =>{
-        const { selfRoomsData } = this.props;
-        let index = selfRoomsData.findIndex((r)=>r.roomId===room.roomId);
-        if(~index){
-            selfRoomsData.splice(index,1);
-            this.props.dispatch(stopAddRoom(selfRoomsData))
-        }
+        this.props.dispatch(stopAddRoom(room))
     }
 
     renderElement(){
