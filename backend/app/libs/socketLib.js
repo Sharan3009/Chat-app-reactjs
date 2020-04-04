@@ -482,7 +482,6 @@ let setServer = (server) => {
                     }
                 */
                 myIo.emit(result.ownerId,result)
-                console.log(result.ownerId)
                 /**
                  * @api {listen} room-list Updating room in lobby after creation
                  * @apiVersion 0.0.1
