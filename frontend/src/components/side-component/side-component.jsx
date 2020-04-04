@@ -1,8 +1,9 @@
 import React from 'react';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import { selfRoomsApi, setRoomsDataStatus, setRoomsData, stopAddRoom } from '../../actions/side-component.action';
+import { selfRoomsApi, setRoomsDataStatus, setRoomsData, deleteSelfRoom, addSelfRoom } from '../../actions/side-component.action';
 import style from './side-component.module.scss';
+import { socketOn } from '../../actions/socket.action';
 import { withRouter } from 'react-router-dom'; 
 import { Spinner } from 'react-bootstrap';
 import SelfRoomPlank from '../self-room-plank';
@@ -11,10 +12,23 @@ import { getUserDetailsFromStorage } from '../../utils';
 class Side extends React.Component{
     constructor(props){
         super(props);
+        this.state = {
+            currentUser: getUserDetailsFromStorage()
+        }
     }
 
     componentDidMount(){
         this.getSelfRooms();
+        this.onSocketCreateRoom();
+    }
+
+    onSocketCreateRoom=()=>{
+        this.props.dispatch(
+            socketOn(this.state.currentUser.userId,(data)=>{
+                console.log(data)
+                this.props.dispatch(addSelfRoom(data));
+            })
+        )
     }
 
     getSelfRooms(){
@@ -27,7 +41,7 @@ class Side extends React.Component{
                     localStorage.clear();
                     this.props.history.push("/login");
                 } else {
-                    this.props.dispatch(setRoomsData(apiResponse.data.data));
+                    this.props.dispatch(setRoomsData(apiResponse.data.data.reverse()));
                 }
             }
         })
@@ -50,7 +64,7 @@ class Side extends React.Component{
     }
 
     onDeleteRoom = (room) =>{
-        this.props.dispatch(stopAddRoom(room))
+        this.props.dispatch(deleteSelfRoom(room))
     }
 
     renderElement(){
@@ -59,7 +73,7 @@ class Side extends React.Component{
             if(selfRoomsData && selfRoomsDataLength){
                 return (
                 <div className="list-group child-flex">
-                    {this.props.selfRoomsData.filter((room)=>room.roomId).map((room)=> <SelfRoomPlank key={room.roomId} room={room} currentUser={getUserDetailsFromStorage()} deleteRoom={(room)=>this.onDeleteRoom(room)}/>)}
+                    {this.props.selfRoomsData.filter((room)=>room.roomId).map((room)=> <SelfRoomPlank key={room.roomId} room={room} currentUser={this.state.currentUser} deleteRoom={(room)=>this.onDeleteRoom(room)}/>)}
                 </div>
                 )
             } else {

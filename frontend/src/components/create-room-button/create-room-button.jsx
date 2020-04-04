@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
-import { startAddRoom } from '../../actions/side-component.action';
+import { addSelfRoom } from '../../actions/side-component.action';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { getUserDetailsFromStorage, getFullName } from '../../utils';
@@ -19,7 +19,7 @@ class CreateRoomButton extends React.Component{
         let roomId = "createRoom"
         let room = new Room("",userId,userName,[{userId,userName}],true,roomId);
         selfRoomsData = selfRoomsData || [];
-        this.props.dispatch(startAddRoom(room));
+        this.props.dispatch(addSelfRoom(room));
     }
 
     render(){

@@ -13,9 +13,8 @@ class Home extends React.Component {
     super(props);
     this.state = {
     }
-  }
 
-  componentDidMount(){
+    // moving this to constructor as parent's componentDidMount is called after child's componentDidmount
     this.connectSocketAndAuthorize();
   }
 
@@ -24,6 +23,7 @@ class Home extends React.Component {
   }
 
   connectSocketAndAuthorize(){
+    console.log('home')
     this.props.dispatch(socketConnect())
     .then(
       ()=>{

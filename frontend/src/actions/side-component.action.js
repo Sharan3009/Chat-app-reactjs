@@ -27,7 +27,7 @@ export function setRoomsDataStatus(payload){
     }
 }
 
-export function startAddRoom(payload){
+export function addSelfRoom(payload){
     return {
         type: START_ADD_ROOM,
         payload
@@ -41,7 +41,7 @@ export function roomNameInput(payload){
     }
 }
 
-export function stopAddRoom(payload){
+export function deleteSelfRoom(payload){
     return {
         type: STOP_ADD_ROOM,
         payload
