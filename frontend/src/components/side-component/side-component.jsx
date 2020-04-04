@@ -76,11 +76,12 @@ class Side extends React.Component{
             if(selfRoomsData && selfRoomsDataLength){
                 return (
                 <div className="list-group child-flex">
-                    {this.props.selfRoomsData.filter((room)=>room.roomId).map((room)=>
+                    {selfRoomsData.filter((room)=>room.roomId).map((room)=>
                     <SelfRoomPlank key={room.roomId} room={room} 
                     currentUser={this.state.currentUser} 
                     deleteRoom={(room)=>this.onDeleteRoom(room)}
-                    onSocketCreateRoom={this.onSocketCreateRoom}/>)}
+                    onSocketCreateRoom={this.onSocketCreateRoom}
+                    className="rounded-0"/>)}
                 </div>
                 )
             } else {

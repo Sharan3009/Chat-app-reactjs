@@ -82,8 +82,8 @@ class SelfRoomPlank extends React.Component {
     render(){
         const { room, currentUser } = this.props;
         return(
-            <a href="#" className="list-group-item list-group-item-action
-                flex-column align-items-start rounded-0" onClick={this.onRoomClick}>
+            <a href="#" className={`list-group-item list-group-item-action
+                flex-column align-items-start ${this.props.className}`} onClick={this.onRoomClick}>
                 {this.renderHeaderEle(room.editable)}
                 <p className="mb-0">
                     Owner: {(currentUser.userId===room.ownerId)?'You':room.ownerName}
