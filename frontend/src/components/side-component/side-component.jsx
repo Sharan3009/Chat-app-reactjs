@@ -22,11 +22,13 @@ class Side extends React.Component{
         this.onSocketCreateRoom();
     }
 
-    onSocketCreateRoom=()=>{
+    onSocketCreateRoom=(cb)=>{
         this.props.dispatch(
             socketOn(this.state.currentUser.userId,(data)=>{
-                console.log(data)
                 this.props.dispatch(addSelfRoom(data));
+                if(cb){
+                    cb(data);
+                }
             })
         )
     }
@@ -73,7 +75,11 @@ class Side extends React.Component{
             if(selfRoomsData && selfRoomsDataLength){
                 return (
                 <div className="list-group child-flex">
-                    {this.props.selfRoomsData.filter((room)=>room.roomId).map((room)=> <SelfRoomPlank key={room.roomId} room={room} currentUser={this.state.currentUser} deleteRoom={(room)=>this.onDeleteRoom(room)}/>)}
+                    {this.props.selfRoomsData.filter((room)=>room.roomId).map((room)=>
+                    <SelfRoomPlank key={room.roomId} room={room} 
+                    currentUser={this.state.currentUser} 
+                    deleteRoom={(room)=>this.onDeleteRoom(room)}
+                    onSocketCreateRoom={this.onSocketCreateRoom}/>)}
                 </div>
                 )
             } else {

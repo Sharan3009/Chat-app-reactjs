@@ -17,6 +17,13 @@ class SelfRoomPlank extends React.Component {
         if(this.inputRef){
             this.inputRef.focus();
         }
+        this.onSocketCreateRoom();
+    }
+
+    onSocketCreateRoom(){
+        this.props.onSocketCreateRoom(()=>{
+            this.props.deleteRoom(this.props.room);
+        })
     }
 
     keyDownRoomNameInput=(event)=>{
