@@ -1,4 +1,4 @@
-import { SELF_ROOMS_DATA, SELF_ROOMS_DATA_STATUS, START_ADD_ROOM } from '../actions/side-component.action'; 
+import { SELF_ROOMS_DATA, SELF_ROOMS_DATA_STATUS, START_ADD_ROOM, STOP_ADD_ROOM } from '../actions/side-component.action'; 
 
 const initialState = {
   selfRoomsDataStatus : "loading",
@@ -14,6 +14,8 @@ function reducer(state = initialState, action) {
     case START_ADD_ROOM:
       let rooms = state.selfRoomsData || [];
       return {...state, selfRoomsData:[action.payload,...rooms] }
+    case STOP_ADD_ROOM:
+      return {...state, selfRoomsData:[...action.payload] }
     default:
       return state;
   }

@@ -3,6 +3,7 @@ import axios from 'axios';
 export const SELF_ROOMS_DATA = "SELFS_ROOM_DATA";
 export const SELF_ROOMS_DATA_STATUS = "SELFS_ROOM_DATA_STATUS";
 export const START_ADD_ROOM = "START_ADD_ROOM";
+export const STOP_ADD_ROOM = "STOP_ADD_ROOM";
 
 export function selfRoomsApi(){
     return axios.get(
@@ -28,6 +29,13 @@ export function setRoomsDataStatus(payload){
 export function startAddRoom(payload){
     return {
         type: START_ADD_ROOM,
+        payload
+    }
+}
+
+export function stopAddRoom(payload){
+    return {
+        type: STOP_ADD_ROOM,
         payload
     }
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import { selfRoomsApi, setRoomsDataStatus, setRoomsData } from '../../actions/side-component.action';
+import { selfRoomsApi, setRoomsDataStatus, setRoomsData, stopAddRoom } from '../../actions/side-component.action';
 import style from './side-component.module.scss';
 import { withRouter } from 'react-router-dom'; 
 import { Spinner } from 'react-bootstrap';
@@ -50,13 +50,22 @@ class Side extends React.Component{
         )
     }
 
+    onDeleteRoom = (room) =>{
+        const { selfRoomsData } = this.props;
+        let index = selfRoomsData.findIndex((r)=>r.roomId===room.roomId);
+        if(~index){
+            selfRoomsData.splice(index,1);
+            this.props.dispatch(stopAddRoom(selfRoomsData))
+        }
+    }
+
     renderElement(){
-        const {selfRoomsData, selfRoomsDataStatus} = this.props;
+        const { selfRoomsData, selfRoomsDataStatus } = this.props;
         if(selfRoomsData){
             if(selfRoomsData.length){
                 return (
                 <div className="list-group child-flex">
-                    {this.props.selfRoomsData.map((room)=> <SelfRoomPlank key={room.roomId} room={room} currentUser={getUserDetailsFromStorage()}/>)}
+                    {this.props.selfRoomsData.filter((room)=>room.roomId).map((room)=> <SelfRoomPlank key={room.roomId} room={room} currentUser={getUserDetailsFromStorage()} deleteRoom={(room)=>this.onDeleteRoom(room)}/>)}
                 </div>
                 )
             } else {

@@ -1,6 +1,5 @@
 import React from 'react';
-import { FormControl } from 'react-bootstrap';
-
+import { FormControl, Modal } from 'react-bootstrap';
 class SelfRoomPlank extends React.Component {
     constructor(props){
         super(props);
@@ -13,14 +12,21 @@ class SelfRoomPlank extends React.Component {
     renderHeaderEle(editable){
         if(editable){
             return(
-                <FormControl ref={(ref)=>this.inputRef=ref} type="text" placeholder="Enter Room Name" autofocus/>
+                <>
+                    <Modal.Header closeButton className="px-0 pb-2 pt-0" onHide={(e)=>this.props.deleteRoom(this.props.room)}>
+                        <Modal.Title className="p-0 h5">Create room</Modal.Title>
+                    </Modal.Header>
+                    <FormControl ref={(ref)=>this.inputRef=ref} type="text" placeholder="Enter Room Name"/>
+                </>
             )
         } else {
             const {room} = this.props;
             return (
-                <h5 className="mb-0 text-ellipsis line-height-1.5" title={room.name}>
-                    {room.name}
-                </h5>
+                <div className="d-flex w-100 justify-content-between">
+                    <h5 className="mb-0 text-ellipsis line-height-1.5" title={room.name}>
+                        {room.name}
+                    </h5>
+                </div>
             )
         }
     }
@@ -36,9 +42,7 @@ class SelfRoomPlank extends React.Component {
         return(
             <a href="#" className="list-group-item list-group-item-action
                 flex-column align-items-start rounded-0" onClick={this.onRoomClick}>
-                <div className="d-flex w-100 justify-content-between">
-                    {this.renderHeaderEle(room.editable)}
-                </div>
+                {this.renderHeaderEle(room.editable)}
                 <p className="mb-0">
                     Owner: {(currentUser.userId===room.ownerId)?'You':room.ownerName}
                 </p>
