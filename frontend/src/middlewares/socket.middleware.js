@@ -17,6 +17,11 @@ export default function socketMiddleware(socket) {
         // Move on! Not a socket request or a badly formed one.
         return next(action);
       }  
+
+      /*
+      REQUEST, SUCCESS, FAILURE are currently not in use.
+      Check comment 1 in socket.action.js for explanation
+      */
       const [REQUEST, SUCCESS, FAILURE] = types;
       next({...rest, type: REQUEST});
       return promise(socket)
