@@ -75,8 +75,8 @@ class GlobalRooms extends React.Component{
                 <Container fluid>
                     <Row>
                         {globalRoomsData.filter((room)=>room.roomId).map((room)=>
-                        <Col lg="4" md="3" sm="12" className="p-2">
-                            <SelfRoomPlank key={room.roomId} room={room} 
+                        <Col lg="4" md="3" sm="12" className="p-2" key={room.roomId}>
+                            <SelfRoomPlank room={room} 
                             currentUser={this.state.currentUser} 
                             onSocketCreateRoom={this.onSocketCreateRoom}
                             className="rounded"

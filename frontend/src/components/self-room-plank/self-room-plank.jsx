@@ -85,7 +85,7 @@ class SelfRoomPlank extends React.Component {
     }
 
     applyBgColor(){
-        if(this.props.randomizeColor){
+        if(this.props.randomizeColor || this.props.room.roomId === "createRoom"){
             return {backgroundColor:this.randomRGB()};
         }
         return null

@@ -1,6 +1,6 @@
 import {
     GLOBAL_ROOMS_DATA, GLOBAL_ROOMS_DATA_STATUS,
-    RESET_ROOMS_DATA_OBJ
+    RESET_ROOMS_DATA_OBJ, START_ADD_ROOM
 }
 from '../actions/global-rooms.action';
 
@@ -26,6 +26,23 @@ function reducer(state = initialState, action) {
                 ...state,
                 ...obj
             };
+        }
+
+            case START_ADD_ROOM:{
+            let rooms = state.globalRoomsData || [];
+            let obj = {
+                globalRoomsDataLength: state.globalRoomsDataLength,
+                globalRoomsData: [action.payload]
+            }
+            obj = mapArrToObj(obj,state.globalRoomsDataObj);
+            return {
+                ...state, 
+                globalRoomsData:[
+                ...obj.globalRoomsData,
+                ...rooms
+                ],
+                globalRoomsDataLength: obj.globalRoomsDataLength
+            }
         }
 
         case GLOBAL_ROOMS_DATA_STATUS:

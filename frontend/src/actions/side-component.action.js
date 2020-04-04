@@ -2,10 +2,10 @@ import axios from 'axios';
 
 export const SELF_ROOMS_DATA = "SELF_ROOMS_DATA";
 export const SELF_ROOMS_DATA_STATUS = "SELF_ROOMS_DATA_STATUS";
-export const START_ADD_ROOM = "START_ADD_ROOM";
-export const STOP_ADD_ROOM = "STOP_ADD_ROOM";
+export const START_ADD_ROOM = "START_SELF_ADD_ROOM";
+export const STOP_ADD_ROOM = "STOP_SELF_ADD_ROOM";
 export const ROOM_NAME_INPUT = "ROOM_NAME_INPUT";
-export const RESET_ROOMS_DATA_OBJ = "RESET_ROOMS_DATA_OBJ";
+export const RESET_ROOMS_DATA_OBJ = "RESET_SELF_ROOMS_DATA_OBJ";
 
 export function selfRoomsApi(){
     return axios.get(

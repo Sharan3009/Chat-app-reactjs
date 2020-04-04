@@ -2,8 +2,8 @@ import axios from 'axios';
 
 export const GLOBAL_ROOMS_DATA = "GLOBAL_ROOMS_DATA";
 export const GLOBAL_ROOMS_DATA_STATUS = "GLOBAL_ROOMS_DATA_STATUS";
-export const RESET_ROOMS_DATA_OBJ = "RESET_ROOMS_DATA_OBJ";
-export const START_ADD_ROOM = "START_ADD_ROOM";
+export const RESET_ROOMS_DATA_OBJ = "RESET_GLOBAL_ROOMS_DATA_OBJ";
+export const START_ADD_ROOM = "START_ADD_GLOBAL_ROOM";
 
 export function globalRoomsApi(){
     return axios.get(
