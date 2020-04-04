@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Navbar, Button, Nav, Spinner } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import { logoutApi,startLogout,stopLogout } from '../../actions/app-navbar.action';
+import CreateRoomButton from '../create-room-button';
 
 class AppNavbar extends React.Component{
 
@@ -39,7 +40,7 @@ class AppNavbar extends React.Component{
                 <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="ml-auto">
                     <div className="d-flex justify-content-between my-1">
-                    <Button variant="success" size="sm" className="mr-2">Create room</Button>
+                    <CreateRoomButton className="mr-2"/>
                     <Button variant="outline-light" size="sm" onClick={this.logout.bind(this)} disabled={this.props.logoutStatus==='start'}>
                     {
                         (this.props.logoutStatus==="start")?(

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route,Redirect } from 'react-router-dom';
-import Auth from '../../classes/Auth/Auth';
+import Auth from '../../classes/Auth';
 
 const AuthenticatedRedirectRoute = ({ component: Component, ...rest }) => (
   <Route {...rest}

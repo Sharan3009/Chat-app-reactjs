@@ -22,12 +22,12 @@ class SelfRoomPlank extends React.Component {
     }
 
     render(){
-        const { room, editable } = this.props;
+        const { room } = this.props;
         return(
             <a href="#" className="list-group-item list-group-item-action
                 flex-column align-items-start rounded-0">
                 <div className="d-flex w-100 justify-content-between">
-                    {this.renderHeaderEle(editable)}
+                    {this.renderHeaderEle(room.editable)}
                 </div>
                 <p className="mb-0">
                     Owner: {room.ownerName}

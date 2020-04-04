@@ -53,13 +53,11 @@ class Side extends React.Component{
         const {selfRoomsData, selfRoomsDataStatus} = this.props;
         if(selfRoomsData){
             if(selfRoomsData.length){
-                return this.props.selfRoomsData.map((room)=>{
-                    return (
-                    <div className="list-group child-flex">
-                        <SelfRoomPlank props={room}/>
-                    </div>
-                    )
-                })
+                return (
+                <div className="list-group child-flex">
+                    {this.props.selfRoomsData.map((room)=> <SelfRoomPlank key={room.roomId} room={room}/>)}
+                </div>
+                )
             } else {
                 return this.renderErrorElement("You have not joined or created any room");
             }

@@ -106,8 +106,7 @@ let getYourRooms = (req,res)=>{
 						reject(apiResponse)
 					} else if (check.isEmpty(result)) {
 						logger.info('No Room Found', 'Room Controller: getYourRooms', 5)
-						let apiResponse = response.generate(true, 'No Room Found', 404, null)
-						console.log(apiResponse)
+						let apiResponse = response.generate(true, 'No Room Found', 404, result)
 						reject(apiResponse)
 					} else {
 						logger.info('Room Found', 'Room Controller: getYourRooms', 5)
