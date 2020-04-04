@@ -1,16 +1,16 @@
 import { SELF_ROOMS_DATA, SELF_ROOMS_DATA_STATUS,
         START_ADD_ROOM, STOP_ADD_ROOM,
-        ROOM_NAME_INPUT 
+        ROOM_NAME_INPUT, RESET_ROOMS_DATA_OBJ
         }
 from '../actions/side-component.action'; 
-
-const selfRoomsDataObj = {};
 
 const initialState = {
   selfRoomsDataStatus : "loading",
   selfRoomsData: null,
   selfRoomsDataLength: 0,
-  roomName: ""
+  roomName: "",
+  // dont use this in component, it just for O1 performance and should be inside state because other wise object doesnt refresh
+  selfRoomsDataObj: {}
 };
 
 function reducer(state = initialState, action) {
@@ -22,7 +22,7 @@ function reducer(state = initialState, action) {
         selfRoomsDataLength,
         selfRoomsData: action.payload
       }
-      obj = mapArrToObj(obj);
+      obj = mapArrToObj(obj,state.selfRoomsDataObj);
       return {
         ...state,
         ...obj
@@ -41,7 +41,7 @@ function reducer(state = initialState, action) {
         selfRoomsDataLength: state.selfRoomsDataLength,
         selfRoomsData: [action.payload]
       }
-      obj = mapArrToObj(obj);
+      obj = mapArrToObj(obj,state.selfRoomsDataObj);
       return {
         ...state, 
         selfRoomsData:[
@@ -52,9 +52,15 @@ function reducer(state = initialState, action) {
       }
     }
 
+    case RESET_ROOMS_DATA_OBJ:
+      return {
+        ...state,
+        selfRoomsDataObj: {}
+      }
+
     case STOP_ADD_ROOM:{
       let keyName = "roomId";
-      let selfRoomsDataLength = deleteObj(state.selfRoomsDataLength,selfRoomsDataObj,action.payload[keyName],keyName)
+      let selfRoomsDataLength = deleteObj(state.selfRoomsDataLength,state.selfRoomsDataObj,action.payload[keyName],keyName)
       return {...state,
         selfRoomsData:[...state.selfRoomsData],
         selfRoomsDataLength
@@ -66,14 +72,14 @@ function reducer(state = initialState, action) {
   }
 }
 
-function mapArrToObj(obj){
+function mapArrToObj(obj,referencedObj){
   let { selfRoomsDataLength, selfRoomsData } = obj;
   let referencedArr = [];
   if(Array.isArray(selfRoomsData)){
     referencedArr = selfRoomsData.map((room)=>{
-      if(!(room.roomId in selfRoomsDataObj)){
+      if(!(room.roomId in referencedObj)){
         selfRoomsDataLength++;
-        selfRoomsDataObj[room.roomId] = room;
+        referencedObj[room.roomId] = room;
         return room;
       }
       return {};

@@ -5,6 +5,7 @@ export const SELF_ROOMS_DATA_STATUS = "SELFS_ROOM_DATA_STATUS";
 export const START_ADD_ROOM = "START_ADD_ROOM";
 export const STOP_ADD_ROOM = "STOP_ADD_ROOM";
 export const ROOM_NAME_INPUT = "ROOM_NAME_INPUT";
+export const RESET_ROOMS_DATA_OBJ = "RESET_ROOMS_DATA_OBJ";
 
 export function selfRoomsApi(){
     return axios.get(
@@ -45,5 +46,11 @@ export function deleteSelfRoom(payload){
     return {
         type: STOP_ADD_ROOM,
         payload
+    }
+}
+
+export function resetSelfRoomsDataObj(){
+    return {
+        type: RESET_ROOMS_DATA_OBJ
     }
 }

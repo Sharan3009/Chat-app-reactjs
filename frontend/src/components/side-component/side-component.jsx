@@ -1,7 +1,7 @@
 import React from 'react';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
-import { selfRoomsApi, setRoomsDataStatus, setRoomsData, deleteSelfRoom, addSelfRoom } from '../../actions/side-component.action';
+import { selfRoomsApi, setRoomsDataStatus, setRoomsData, deleteSelfRoom, addSelfRoom, resetSelfRoomsDataObj } from '../../actions/side-component.action';
 import style from './side-component.module.scss';
 import { socketOn } from '../../actions/socket.action';
 import { withRouter } from 'react-router-dom'; 
@@ -18,6 +18,7 @@ class Side extends React.Component{
     }
 
     componentDidMount(){
+        this.props.dispatch(resetSelfRoomsDataObj())
         this.getSelfRooms();
         this.onSocketCreateRoom();
     }
@@ -43,7 +44,7 @@ class Side extends React.Component{
                     localStorage.clear();
                     this.props.history.push("/login");
                 } else {
-                    this.props.dispatch(setRoomsData(apiResponse.data.data.reverse()));
+                    this.props.dispatch(setRoomsData(apiResponse.data.data));
                 }
             }
         })
