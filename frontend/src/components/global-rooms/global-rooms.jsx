@@ -79,7 +79,8 @@ class GlobalRooms extends React.Component{
                             <SelfRoomPlank key={room.roomId} room={room} 
                             currentUser={this.state.currentUser} 
                             onSocketCreateRoom={this.onSocketCreateRoom}
-                            className="rounded"/>
+                            className="rounded"
+                            randomizeColor={true}/>
                         </Col>)}
                     </Row>
                 </Container>

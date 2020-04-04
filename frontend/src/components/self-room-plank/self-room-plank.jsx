@@ -79,11 +79,23 @@ class SelfRoomPlank extends React.Component {
         }
     }
 
+    randomRGB() {
+        let o = Math.round, r = Math.random, s = 255;
+        return `rgba(${o(r()*s)}, ${o(r()*s)}, ${o(r()*s)},0.2)`;
+    }
+
+    applyBgColor(){
+        if(this.props.randomizeColor){
+            return {backgroundColor:this.randomRGB()};
+        }
+        return null
+    }
+    
     render(){
         const { room, currentUser } = this.props;
         return(
             <a href="#" className={`list-group-item list-group-item-action
-                flex-column align-items-start ${this.props.className}`} onClick={this.onRoomClick}>
+                flex-column align-items-start ${this.props.className}`} onClick={this.onRoomClick} style={this.applyBgColor()}>
                 {this.renderHeaderEle(room.editable)}
                 <p className="mb-0">
                     Owner: {(currentUser.userId===room.ownerId)?'You':room.ownerName}
