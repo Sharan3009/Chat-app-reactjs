@@ -9,7 +9,7 @@ class SelfRoomPlank extends React.Component {
     renderHeaderEle(editable){
         if(editable){
             return(
-                <FormControl type="text" placeholder="Enter Room Name" />
+                <FormControl type="text" placeholder="Enter Room Name"/>
             )
         } else {
             const {room} = this.props;
@@ -21,11 +21,17 @@ class SelfRoomPlank extends React.Component {
         }
     }
 
+    onRoomClick = (event) =>{
+        if(this.props.room.editable){
+            event.preventDefault();
+        }
+    }
+
     render(){
         const { room } = this.props;
         return(
             <a href="#" className="list-group-item list-group-item-action
-                flex-column align-items-start rounded-0">
+                flex-column align-items-start rounded-0" onClick={this.onRoomClick}>
                 <div className="d-flex w-100 justify-content-between">
                     {this.renderHeaderEle(room.editable)}
                 </div>

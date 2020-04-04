@@ -13,10 +13,16 @@ class CreateRoomButton extends React.Component{
 
     startCreateRoom=()=>{
         let currentUser = getUserDetailsFromStorage();
+        let { selfRoomsData } = this.props;
         let { userId } = currentUser;
         let userName = getFullName(currentUser);
-        let room = new Room("",userId,userName,[{userId,userName}],true,"createRoom");
-        this.props.dispatch(startAddRoom(room));
+        let roomId = "createRoom"
+        let room = new Room("",userId,userName,[{userId,userName}],true,roomId);
+        selfRoomsData = selfRoomsData || [];
+        let index = selfRoomsData.findIndex((room)=>room.roomId===roomId);
+        if(!~index){
+            this.props.dispatch(startAddRoom(room));
+        }
     }
 
     render(){

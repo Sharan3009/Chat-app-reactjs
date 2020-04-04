@@ -13,7 +13,7 @@ function reducer(state = initialState, action) {
       return {...state, selfRoomsDataStatus:action.payload};
     case START_ADD_ROOM:
       let rooms = state.selfRoomsData || [];
-      return {...state, selfRoomsData:rooms.concat(action.payload) }
+      return {...state, selfRoomsData:[action.payload,...rooms] }
     default:
       return state;
   }
