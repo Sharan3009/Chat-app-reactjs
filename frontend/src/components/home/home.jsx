@@ -23,7 +23,6 @@ class Home extends React.Component {
   }
 
   connectSocketAndAuthorize(){
-    console.log('home')
     this.props.dispatch(socketConnect())
     .then(
       ()=>{

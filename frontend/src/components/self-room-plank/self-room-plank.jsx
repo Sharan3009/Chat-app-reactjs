@@ -21,8 +21,12 @@ class SelfRoomPlank extends React.Component {
     }
 
     onSocketCreateRoom(){
+        const {room} = this.props;
         this.props.onSocketCreateRoom(()=>{
-            this.props.deleteRoom(this.props.room);
+            if(room && room.editable){
+                this.props.dispatch(roomNameInput(""));
+                this.props.deleteRoom(room);
+            }
         })
     }
 
