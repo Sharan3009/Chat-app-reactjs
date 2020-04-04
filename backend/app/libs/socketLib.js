@@ -274,6 +274,7 @@ let setServer = (server) => {
                     socket.on('create-room', (data) => {
                         data['roomId'] = shortid.generate();
                         data['ownerId'] = socket.userId;
+                        data['capacity'] = 50;
                         data['ownerName'] = socket.userName;
                         eventEmitter.emit('save-room', data)
                     })

@@ -21,7 +21,6 @@ class Side extends React.Component{
         selfRoomsApi()
         .then(
         (apiResponse)=>{
-            console.log(apiResponse)
             if(apiResponse.data){
                 if(apiResponse.data.status===401){
                     localStorage.clear();
@@ -54,18 +53,22 @@ class Side extends React.Component{
         if(selfRoomsData){
             if(selfRoomsData.length){
                 return this.props.selfRoomsData.map((room)=>{
-                    return (<div className="list-group child-flex">
-                    <a href="#" className="list-group-item list-group-item-action
-                    flex-column align-items-start rounded-0">
-                        <div className="d-flex w-100 justify-content-between">
-                <h5 className="mb-0 text-ellipsis line-height-1.5" title={room.name}>{room.name}</h5>
-                        </div>
-                        <p className="mb-0">
-                            Joined: {room.joinees?.length || 0}/{room.capacity || 0}
-                        </p>
-                            <small>Owner: {room.ownerName}</small>
-                    </a>
-                </div>)
+                    return (
+                    <div className="list-group child-flex">
+                        <a href="#" className="list-group-item list-group-item-action
+                        flex-column align-items-start rounded-0">
+                            <div className="d-flex w-100 justify-content-between">
+                                <h5 className="mb-0 text-ellipsis line-height-1.5" title={room.name}>
+                                    {room.name}
+                                </h5>
+                            </div>
+                            <p className="mb-0">
+                                Owner: {room.ownerName}
+                            </p>
+                            <small>Joined: {room.joinees?.length || 0}/{room.capacity || 0}</small>
+                        </a>
+                    </div>
+                    )
                 })
             } else {
                 return this.renderErrorElement("You have not joined or created any room");
