@@ -12,7 +12,7 @@ const AuthModel = mongoose.model('Auth')
 let getAllChatRooms = (req,res) => {
     RoomModel.find()
 		.select('-_id -__v')
-		.sort({"_id": 1})
+		.sort({"_id": -1})
 		.limit(100)
 		.lean()
 		.exec((err, result) => {
@@ -100,7 +100,7 @@ let getYourRooms = (req,res)=>{
 			}
 			RoomModel.find(findQuery)
 				.select('-_id -__v')
-				.sort({"_id": 1})
+				.sort({"_id": -1})
 				.limit(100)
 				.lean()
 				.exec((err, result) => {
