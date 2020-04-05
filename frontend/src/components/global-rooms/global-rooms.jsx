@@ -72,8 +72,8 @@ class GlobalRooms extends React.Component{
         if(globalRoomsData){
             if(globalRoomsData && globalRoomsDataLength){
                 return (
-                <Container fluid>
-                    <Row>
+                <Container fluid className="parent-flex">
+                    <Row className="child-flex">
                         {globalRoomsData.filter((room)=>room.roomId).map((room)=>
                         <Col lg="4" md="3" sm="12" className="p-2" key={room.roomId}>
                             <SelfRoomPlank room={room} 

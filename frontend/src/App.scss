@@ -31,11 +31,11 @@ body{
     transform:scale(1.2);
 }
 
-.parent-flex ,.parent-flex>.row>[class*='col-']{
+.parent-flex ,.container-parent-flex,.container-parent-flex>.row>[class*='col-']{
     @include parent-flex;
 }
 
-.parent-flex>.row {
+.container-parent-flex>.row {
     @include parent-flex();
     flex-direction:row;
 }
