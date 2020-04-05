@@ -2,7 +2,7 @@ import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Navbar, Button, Nav, Spinner } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { logoutApi,startLogout,stopLogout } from '../../actions/app-navbar.action';
 import CreateRoomButton from '../create-room-button';
 
@@ -36,8 +36,9 @@ class AppNavbar extends React.Component{
     render(){
         return(
             <Navbar bg="dark" variant="dark" expand="lg">
-                <Navbar.Toggle aria-controls="basic-navbar-nav" className="ml-auto" />
-                <Navbar.Collapse id="basic-navbar-nav">
+              <Link to="/rooms" className="navbar-brand">Home</Link>
+              <Navbar.Toggle aria-controls="basic-navbar-nav" className="ml-auto" />
+              <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="ml-auto">
                     <div className="d-flex justify-content-between my-1">
                     <CreateRoomButton className="mr-2"/>
@@ -50,8 +51,8 @@ class AppNavbar extends React.Component{
                     } Log out</Button>
                     </div>
                 </Nav>
-                </Navbar.Collapse>
-        </Navbar>
+              </Navbar.Collapse>
+            </Navbar>
         )
     }
 }
