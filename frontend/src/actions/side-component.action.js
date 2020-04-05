@@ -5,6 +5,7 @@ export const SELF_ROOMS_DATA_STATUS = "SELF_ROOMS_DATA_STATUS";
 export const START_ADD_ROOM = "START_SELF_ADD_ROOM";
 export const STOP_ADD_ROOM = "STOP_SELF_ADD_ROOM";
 export const RESET_ROOMS_DATA_OBJ = "RESET_SELF_ROOMS_DATA_OBJ";
+export const CURRENT_ROOM_ID = "CURRENT_ROOM_ID";
 
 export function selfRoomsApi(){
     return axios.get(
@@ -44,5 +45,12 @@ export function deleteSelfRoom(payload){
 export function resetSelfRoomsDataObj(){
     return {
         type: RESET_ROOMS_DATA_OBJ
+    }
+}
+
+export function updateCurrentRoomId(roomId){
+    return {
+        type:CURRENT_ROOM_ID,
+        payload:roomId
     }
 }

@@ -80,6 +80,14 @@ class SelfRoomPlank extends React.Component {
         }
     }
 
+    ifActive=()=>{
+        const { room, currentRoomId } = this.props;
+        if(room.roomId===currentRoomId){
+            return "active";
+        }
+        return "";
+    }
+
     onRoomClick = (event) =>{
         if(this.props.room.editable){
             event.preventDefault();
@@ -90,7 +98,7 @@ class SelfRoomPlank extends React.Component {
         const { room, currentUser } = this.props;
         return(
             <Link to={`${this.props.match.url}/${room.roomId}`} className={`list-group-item list-group-item-action
-                flex-column align-items-start ${this.props.className}`} onClick={this.onRoomClick} style={{backgroundColor:this.state.backgroundColor}}>
+                flex-column align-items-start ${this.props.className} ${this.ifActive()}`} onClick={this.onRoomClick} style={{backgroundColor:this.state.backgroundColor}}>
                 {this.renderHeaderEle(room.editable)}
                 <p className="mb-0">
                     Owner: {(currentUser.userId===room.ownerId)?'You':room.ownerName}

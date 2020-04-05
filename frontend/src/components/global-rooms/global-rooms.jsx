@@ -7,8 +7,9 @@ import { globalRoomsApi, setRoomsDataStatus,
     addGlobalRoom } from '../../actions/global-rooms.action';
 import { socketOn } from '../../actions/socket.action';
 import { withRouter } from 'react-router-dom'; 
-import { Container,Row,Col,Spinner } from 'react-bootstrap';
+import { Col,Spinner } from 'react-bootstrap';
 import { userDetails } from '../../higher-order-components/user';
+import { childRouteParam } from '../../higher-order-components/child-route-param';
 
 class GlobalRooms extends React.Component{
     constructor(props){
@@ -107,5 +108,6 @@ const mapStateToProps = ({globalRooms}) => {
 export default compose(
     connect(mapStateToProps),
     withRouter,
-    userDetails
+    userDetails,
+    childRouteParam
 )(GlobalRooms)

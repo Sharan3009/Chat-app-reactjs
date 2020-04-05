@@ -75,6 +75,7 @@ class Side extends React.Component{
                 <div className="list-group child-flex">
                     {selfRoomsData.filter((room)=>room.roomId).map((room)=>
                     <SelfRoomPlank key={room.roomId} room={room} 
+                    currentRoomId={this.props.currentRoomId}
                     deleteRoom={(room)=>this.onDeleteRoom(room)}
                     onSocketCreateRoom={this.onSocketCreateRoom}
                     className="rounded-0"
