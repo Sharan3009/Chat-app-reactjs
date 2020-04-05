@@ -18,6 +18,18 @@ class SelfRoomPlank extends React.Component {
     componentDidMount(){
         this.onSocketCreateRoom();
         this.setBgColor();
+        this.addRemoveKeyDownEventListner(document.addEventListener);
+    }
+
+     onKeyDown=(event)=>{
+        if(event.keyCode === 27) {
+            this.deleteRoom();
+        }
+    }
+    addRemoveKeyDownEventListner(listener){
+        if(this.props.room.editable){
+            listener("keydown", this.onKeyDown, false);
+        }
     }
 
     setBgColor(){
@@ -29,8 +41,8 @@ class SelfRoomPlank extends React.Component {
     onSocketCreateRoom=(cb)=>{
         const {room} = this.props;
         this.props.onSocketCreateRoom(()=>{
+            this.deleteRoom();
             if(room && room.editable){
-                this.props.deleteRoom(room);
                 if(cb){
                     cb(room)
                 }
@@ -38,11 +50,15 @@ class SelfRoomPlank extends React.Component {
         })
     }
 
+    deleteRoom=()=>{
+        this.props.deleteRoom(this.props.room);
+    }
+
     renderHeaderEle(editable){
         if(editable){
             return(
                 <>
-                    <Modal.Header closeButton className="px-0 pb-2 pt-0" onHide={(e)=>this.props.deleteRoom(this.props.room)}>
+                    <Modal.Header closeButton className="px-0 pb-2 pt-0" onHide={this.deleteRoom}>
                         <Modal.Title className="p-0 h5">Create room</Modal.Title>
                     </Modal.Header>
                     <RoomNameInput maxRoomLengthName={this.state.maxRoomLengthName}
@@ -79,6 +95,10 @@ class SelfRoomPlank extends React.Component {
                 <small>Joined: {room.joinees?.length || 0}/{room.capacity || 0}</small>
             </Link>
         )
+    }
+
+    componentWillUnmount(){
+        this.addRemoveKeyDownEventListner(document.removeEventListener);
     }
 }
 
