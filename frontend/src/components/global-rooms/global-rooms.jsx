@@ -69,17 +69,15 @@ class GlobalRooms extends React.Component{
         if(globalRoomsData){
             if(globalRoomsData && globalRoomsDataLength){
                 return (
-                <Container fluid className="parent-flex">
-                    <Row className="child-flex">
+                    <div className="child-flex" >
                         {globalRoomsData.filter((room)=>room.roomId).map((room)=>
-                        <Col lg="4" md="3" sm="12" className="p-2" key={room.roomId}>
+                        <Col lg="4" md="6" sm="12" className="p-2 d-inline-block" key={room.roomId}>
                             <SelfRoomPlank room={room} 
                             onSocketCreateRoom={this.onSocketCreateRoom}
                             className="rounded"
                             applyColorScheme={true}/>
                         </Col>)}
-                    </Row>
-                </Container>
+                    </div>
                 )
             } else {
                 return this.renderErrorElement("Oops! Nobody has created a room yet.");

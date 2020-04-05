@@ -35,7 +35,6 @@ export function userDetails(WrappedComponent) {
 
       isAuthenticated=()=>{
         let user = this.getUserDetailsFromStorage();
-        console.log(user)
         if(user.userId){
           return true;
         }

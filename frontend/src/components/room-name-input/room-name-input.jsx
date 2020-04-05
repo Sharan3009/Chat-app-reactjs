@@ -13,17 +13,11 @@ class RoomNameInput extends React.Component{
 
     componentDidMount(){
         this.textInput.current.focus();
-        this.onSocketCreateRoom();
+        this.props.dispatch(roomNameInput(""));
     }
 
     handleRoomNameOnChange=(e)=>{
         this.props.dispatch(roomNameInput(e.target.value));
-    }
-
-    onSocketCreateRoom=()=>{
-        this.props.onSocketCreateRoom((room)=>{
-            this.props.dispatch(roomNameInput(""));
-        })
     }
 
     keyDownRoomNameInput=(event)=>{
@@ -45,7 +39,13 @@ class RoomNameInput extends React.Component{
 
     render(){
         return(
-            <FormControl ref={this.textInput} value={this.props.roomName} onChange={this.handleRoomNameOnChange} type="text" placeholder="Enter Room Name" onKeyDown={this.keyDownRoomNameInput} maxLength={this.props.maxRoomLengthName}/>
+            <FormControl ref={this.textInput}
+             value={this.props.roomName}
+             onChange={this.handleRoomNameOnChange}
+             type="text" 
+             placeholder="Enter Room Name" 
+             onKeyDown={this.keyDownRoomNameInput} 
+             maxLength={this.props.maxRoomLengthName}/>
         )
     }
 }

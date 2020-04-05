@@ -43,20 +43,17 @@ class SelfRoomPlank extends React.Component {
         }
     }
 
-    onSocketCreateRoom=(cb)=>{
+    onSocketCreateRoom=()=>{
         const {room} = this.props;
         this.props.onSocketCreateRoom(()=>{
             this.deleteRoom();
-            if(room && room.editable){
-                if(cb){
-                    cb(room)
-                }
-            }
         })
     }
 
     deleteRoom=()=>{
-        this.props.deleteRoom(this.props.room);
+        if(this.props.room.editable){
+            this.props.deleteRoom(this.props.room);
+        }
     }
 
     renderHeaderEle(editable){
@@ -66,8 +63,9 @@ class SelfRoomPlank extends React.Component {
                     <Modal.Header closeButton className="px-0 pb-2 pt-0" onHide={this.deleteRoom}>
                         <Modal.Title className="p-0 h5">Create room</Modal.Title>
                     </Modal.Header>
-                    <RoomNameInput maxRoomLengthName={this.state.maxRoomLengthName}
-                    onSocketCreateRoom={this.onSocketCreateRoom} />
+                    <RoomNameInput 
+                    roomName={this.props.room.roomName}
+                    maxRoomLengthName={this.state.maxRoomLengthName}/>
                 </>
             )
         } else {
