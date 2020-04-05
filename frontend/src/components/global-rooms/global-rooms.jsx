@@ -86,7 +86,7 @@ class GlobalRooms extends React.Component{
                 </Container>
                 )
             } else {
-                return this.renderErrorElement("You have not joined or created any room");
+                return this.renderErrorElement("Oops! Nobody has created a room yet.");
             }
         } else {
             if(globalRoomsDataStatus==='loading'){
