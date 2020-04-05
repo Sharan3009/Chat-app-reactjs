@@ -7,7 +7,7 @@ import { socketOn } from '../../actions/socket.action';
 import { withRouter } from 'react-router-dom'; 
 import { Spinner } from 'react-bootstrap';
 import SelfRoomPlank from '../self-room-plank';
-import { getUserDetailsFromStorage } from '../../utils';
+import { getUserDetailsFromStorage, randomRGB } from '../../utils';
 
 class Side extends React.Component{
     constructor(props){
@@ -81,7 +81,8 @@ class Side extends React.Component{
                     currentUser={this.state.currentUser} 
                     deleteRoom={(room)=>this.onDeleteRoom(room)}
                     onSocketCreateRoom={this.onSocketCreateRoom}
-                    className="rounded-0"/>)}
+                    className="rounded-0"
+                    backgroundColor={randomRGB(room.roomId==="createRoom")}/>)}
                 </div>
                 )
             } else {

@@ -39,6 +39,14 @@ function getFullName(user){
     return "";
 }
 
+function randomRGB(bool=true) {
+    if(bool){
+        let o = Math.round, r = Math.random, s = 255;
+        return `rgba(${o(r()*s)}, ${o(r()*s)}, ${o(r()*s)},0.2)`;
+    }
+    return null;
+}
+
 module.exports = {
     USER_DETAILS_KEY,
     getDataFromStorage,
@@ -47,4 +55,5 @@ module.exports = {
     clearStorage,
     getUserDetailsFromStorage,
     getFullName,
+    randomRGB
 }

@@ -8,7 +8,7 @@ import { globalRoomsApi, setRoomsDataStatus,
 import { socketOn } from '../../actions/socket.action';
 import { withRouter } from 'react-router-dom'; 
 import { Container,Row,Col,Spinner } from 'react-bootstrap';
-import { getUserDetailsFromStorage } from '../../utils';
+import { getUserDetailsFromStorage,randomRGB } from '../../utils';
 
 class GlobalRooms extends React.Component{
     constructor(props){
@@ -80,7 +80,7 @@ class GlobalRooms extends React.Component{
                             currentUser={this.state.currentUser} 
                             onSocketCreateRoom={this.onSocketCreateRoom}
                             className="rounded"
-                            randomizeColor={true}/>
+                            backgroundColor = {randomRGB()}/>
                         </Col>)}
                     </Row>
                 </Container>
