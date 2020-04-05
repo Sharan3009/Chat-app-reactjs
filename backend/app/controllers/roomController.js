@@ -22,7 +22,7 @@ let getAllChatRooms = (req,res) => {
 				res.send(apiResponse)
 			} else if (check.isEmpty(result)) {
 				logger.info('No Room Found', 'Room Controller: getAllChatRooms', 5)
-				let apiResponse = response.generate(true, 'No Rooms Found', 404, null)
+				let apiResponse = response.generate(true, 'No Rooms Found', 404, result)
 				console.log(apiResponse)
 				res.send(apiResponse)
 			} else {
@@ -57,7 +57,7 @@ let getSingleChatRoom = (req,res) => {
 					reject(apiResponse)
 				} else if (check.isEmpty(result)) {
 					logger.info('No Room Found', 'Room Controller: getSingleChatRoom', 5)
-					let apiResponse = response.generate(true, 'No Room Found', 404, null)
+					let apiResponse = response.generate(true, 'No Room Found', 404, result)
 					reject(apiResponse)
 				} else {
 					logger.info('Room Found', 'Room Controller: getSingleChatRoom', 5)

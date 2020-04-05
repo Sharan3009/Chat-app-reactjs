@@ -45,7 +45,7 @@ let getGroupChat = (req, res) => {
               reject(apiResponse)
             } else if (check.isEmpty(result)) {
               logger.info('No Chat Found', 'Chat Controller: getUsersChat')
-              let apiResponse = response.generate(true, 'No Chat Found', 404, null)
+              let apiResponse = response.generate(true, 'No Chat Found', 404, result)
               reject(apiResponse)
             } else {
               resolve(result.reverse())
