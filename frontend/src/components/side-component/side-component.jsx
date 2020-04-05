@@ -7,14 +7,11 @@ import { socketOn } from '../../actions/socket.action';
 import { withRouter } from 'react-router-dom'; 
 import { Spinner } from 'react-bootstrap';
 import SelfRoomPlank from '../self-room-plank';
-import { getUserDetailsFromStorage, randomRGB } from '../../utils';
+import { userDetails } from '../../higher-order-components/user';
 
 class Side extends React.Component{
     constructor(props){
         super(props);
-        this.state = {
-            currentUser: getUserDetailsFromStorage()
-        }
     }
 
     componentDidMount(){
@@ -25,7 +22,7 @@ class Side extends React.Component{
 
     onSocketCreateRoom=(cb)=>{
         this.props.dispatch(
-            socketOn(this.state.currentUser.userId,(data)=>{
+            socketOn(this.props.currentUser.userId,(data)=>{
                 this.props.dispatch(addSelfRoom(data));
                 if(cb){
                     cb(data);
@@ -78,7 +75,6 @@ class Side extends React.Component{
                 <div className="list-group child-flex">
                     {selfRoomsData.filter((room)=>room.roomId).map((room)=>
                     <SelfRoomPlank key={room.roomId} room={room} 
-                    currentUser={this.state.currentUser} 
                     deleteRoom={(room)=>this.onDeleteRoom(room)}
                     onSocketCreateRoom={this.onSocketCreateRoom}
                     className="rounded-0"
@@ -112,5 +108,6 @@ const mapStateToProps = ({sideComponent}) => {
   
 export default compose(
     connect(mapStateToProps),
-    withRouter
+    withRouter,
+    userDetails
 )(Side)

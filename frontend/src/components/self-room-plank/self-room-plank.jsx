@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { withRouter, Link } from 'react-router-dom';
 import RoomNameInput from '../room-name-input';
-import { randomRGB } from '../../utils';
+import { userDetails } from '../../higher-order-components/user';
 
 class SelfRoomPlank extends React.Component {
     constructor(props){
@@ -31,10 +31,15 @@ class SelfRoomPlank extends React.Component {
             listener("keydown", this.onKeyDown, false);
         }
     }
+    
+    randomRGB() {
+        let o = Math.round, r = Math.random, s = 255;
+        return `rgba(${o(r()*s)}, ${o(r()*s)}, ${o(r()*s)},0.2)`;
+    }
 
     setBgColor(){
         if(this.props.applyColorScheme){
-            this.setState({backgroundColor:randomRGB()})
+            this.setState({backgroundColor:this.randomRGB()})
         }
     }
 
@@ -110,5 +115,6 @@ const mapStateToProps = ({sideComponent}) => {
   
 export default compose(
     connect(mapStateToProps),
-    withRouter
+    withRouter,
+    userDetails
 )(SelfRoomPlank)

@@ -8,14 +8,11 @@ import { globalRoomsApi, setRoomsDataStatus,
 import { socketOn } from '../../actions/socket.action';
 import { withRouter } from 'react-router-dom'; 
 import { Container,Row,Col,Spinner } from 'react-bootstrap';
-import { getUserDetailsFromStorage } from '../../utils';
+import { userDetails } from '../../higher-order-components/user';
 
 class GlobalRooms extends React.Component{
     constructor(props){
         super(props);
-        this.state = {
-            currentUser: getUserDetailsFromStorage()
-        }
     }
 
     componentDidMount(){
@@ -26,7 +23,7 @@ class GlobalRooms extends React.Component{
 
     onSocketCreateRoom=(cb)=>{
         this.props.dispatch(
-            socketOn(this.state.currentUser.userId,(data)=>{
+            socketOn(this.props.currentUser.userId,(data)=>{
                 this.props.dispatch(addGlobalRoom(data));
                 if(cb){
                     cb(data);
@@ -77,7 +74,6 @@ class GlobalRooms extends React.Component{
                         {globalRoomsData.filter((room)=>room.roomId).map((room)=>
                         <Col lg="4" md="3" sm="12" className="p-2" key={room.roomId}>
                             <SelfRoomPlank room={room} 
-                            currentUser={this.state.currentUser} 
                             onSocketCreateRoom={this.onSocketCreateRoom}
                             className="rounded"
                             applyColorScheme={true}/>
@@ -112,5 +108,6 @@ const mapStateToProps = ({globalRooms}) => {
   
 export default compose(
     connect(mapStateToProps),
-    withRouter
+    withRouter,
+    userDetails
 )(GlobalRooms)

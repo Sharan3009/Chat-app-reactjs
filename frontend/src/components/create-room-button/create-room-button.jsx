@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap';
 import { addSelfRoom } from '../../actions/side-component.action';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { getUserDetailsFromStorage, getFullName } from '../../utils';
+import { userDetails } from '../../higher-order-components/user';
 import Room from '../../classes/Room';
 
 class CreateRoomButton extends React.Component{
@@ -12,10 +12,9 @@ class CreateRoomButton extends React.Component{
     }
 
     startCreateRoom=()=>{
-        let currentUser = getUserDetailsFromStorage();
+        let currentUser = this.props.currentUser;
         let { selfRoomsData } = this.props;
-        let { userId } = currentUser;
-        let userName = getFullName(currentUser);
+        let { userId, userName } = currentUser;
         let roomId = "createRoom"
         let room = new Room("",userId,userName,[{userId,userName}],true,roomId);
         selfRoomsData = selfRoomsData || [];
@@ -35,4 +34,5 @@ const mapStateToProps = ({sideComponent}) => {
   
 export default compose(
     connect(mapStateToProps),
+    userDetails
 )(CreateRoomButton)
