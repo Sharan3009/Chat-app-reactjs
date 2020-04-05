@@ -82,7 +82,7 @@ class Side extends React.Component{
                     deleteRoom={(room)=>this.onDeleteRoom(room)}
                     onSocketCreateRoom={this.onSocketCreateRoom}
                     className="rounded-0"
-                    backgroundColor={randomRGB(room.roomId==="createRoom")}/>)}
+                    applyColorScheme={room.roomId==="createRoom"}/>)}
                 </div>
                 )
             } else {

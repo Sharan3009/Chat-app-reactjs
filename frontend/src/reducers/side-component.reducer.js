@@ -1,6 +1,6 @@
 import { SELF_ROOMS_DATA, SELF_ROOMS_DATA_STATUS,
         START_ADD_ROOM, STOP_ADD_ROOM,
-        ROOM_NAME_INPUT, RESET_ROOMS_DATA_OBJ
+        RESET_ROOMS_DATA_OBJ
         }
 from '../actions/side-component.action'; 
 
@@ -8,7 +8,6 @@ const initialState = {
   selfRoomsDataStatus : "loading",
   selfRoomsData: null,
   selfRoomsDataLength: 0,
-  roomName: "",
   // dont use this in component, it just for O1 performance and should be inside state because other wise object doesnt refresh
   selfRoomsDataObj: {}
 };
@@ -28,9 +27,6 @@ function reducer(state = initialState, action) {
         ...obj
       };
     }
-
-    case ROOM_NAME_INPUT:
-      return {...state, roomName: action.payload };
 
     case SELF_ROOMS_DATA_STATUS:
       return {...state, selfRoomsDataStatus:action.payload};

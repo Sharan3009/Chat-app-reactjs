@@ -7,6 +7,7 @@ import socketReducer from './reducers/socket.reducer';
 import appNavbar from './reducers/app-navbar.reducer';
 import globalRooms from './reducers/global-rooms.reducer';
 import chatRoom from './reducers/chat-room.reducer';
+import roomNameInput from './reducers/room-name-input.reducer';
 import thunk from 'redux-thunk';
 import { reducer as formReducer } from 'redux-form';
 import SocketClient from './socket';
@@ -23,7 +24,8 @@ const rootReducer = combineReducers({
     appNavbar,
     socketReducer,
     globalRooms,
-    chatRoom
+    chatRoom,
+    roomNameInput
 })
 const store = createStore(
     rootReducer,

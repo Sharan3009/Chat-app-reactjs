@@ -4,7 +4,6 @@ export const SELF_ROOMS_DATA = "SELF_ROOMS_DATA";
 export const SELF_ROOMS_DATA_STATUS = "SELF_ROOMS_DATA_STATUS";
 export const START_ADD_ROOM = "START_SELF_ADD_ROOM";
 export const STOP_ADD_ROOM = "STOP_SELF_ADD_ROOM";
-export const ROOM_NAME_INPUT = "ROOM_NAME_INPUT";
 export const RESET_ROOMS_DATA_OBJ = "RESET_SELF_ROOMS_DATA_OBJ";
 
 export function selfRoomsApi(){
@@ -31,13 +30,6 @@ export function setRoomsDataStatus(payload){
 export function addSelfRoom(payload){
     return {
         type: START_ADD_ROOM,
-        payload
-    }
-}
-
-export function roomNameInput(payload){
-    return {
-        type: ROOM_NAME_INPUT,
         payload
     }
 }

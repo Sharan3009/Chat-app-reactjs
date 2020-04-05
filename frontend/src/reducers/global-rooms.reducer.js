@@ -4,6 +4,8 @@ import {
 }
 from '../actions/global-rooms.action';
 
+import { randomRGB } from '../utils';
+
 const initialState = {
     globalRoomsDataStatus: "loading",
     globalRoomsData: null,

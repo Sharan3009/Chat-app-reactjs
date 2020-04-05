@@ -1,55 +1,41 @@
 import React from 'react';
-import { FormControl, Modal } from 'react-bootstrap';
-import { socketEmit } from '../../actions/socket.action';
-import { roomNameInput } from '../../actions/side-component.action';
+import { Modal } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { withRouter, Link } from 'react-router-dom';
+import RoomNameInput from '../room-name-input';
+import { randomRGB } from '../../utils';
 
 class SelfRoomPlank extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            maxRoomLengthName : 50
+            maxRoomLengthName : 50,
+            backgroundColor: null
         }
     }
 
     componentDidMount(){
-        if(this.inputRef){
-            this.inputRef.focus();
-        }
         this.onSocketCreateRoom();
+        this.setBgColor();
     }
 
-    onSocketCreateRoom(){
+    setBgColor(){
+        if(this.props.applyColorScheme){
+            this.setState({backgroundColor:randomRGB()})
+        }
+    }
+
+    onSocketCreateRoom=(cb)=>{
         const {room} = this.props;
         this.props.onSocketCreateRoom(()=>{
             if(room && room.editable){
-                this.props.dispatch(roomNameInput(""));
                 this.props.deleteRoom(room);
+                if(cb){
+                    cb(room)
+                }
             }
         })
-    }
-
-    keyDownRoomNameInput=(event)=>{
-        if(event.keyCode===13){
-            this.createRoom();
-        }
-    }
-
-    createRoom=()=>{
-        let roomName = this.props.roomName;
-        if(roomName){
-            roomName = roomName.slice(0,this.state.maxRoomLengthName)
-            let data = {
-                roomName
-            }
-            this.props.dispatch(socketEmit("create-room",data))
-        }
-    }
-
-    handleRoomNameOnChange=(e)=>{
-        this.props.dispatch(roomNameInput(e.target.value));
     }
 
     renderHeaderEle(editable){
@@ -59,7 +45,8 @@ class SelfRoomPlank extends React.Component {
                     <Modal.Header closeButton className="px-0 pb-2 pt-0" onHide={(e)=>this.props.deleteRoom(this.props.room)}>
                         <Modal.Title className="p-0 h5">Create room</Modal.Title>
                     </Modal.Header>
-                    <FormControl ref={(ref)=>this.inputRef=ref} value={this.props.roomName} onChange={this.handleRoomNameOnChange} type="text" placeholder="Enter Room Name" onKeyDown={this.keyDownRoomNameInput} maxLength={this.state.maxRoomLengthName}/>
+                    <RoomNameInput maxRoomLengthName={this.state.maxRoomLengthName}
+                    onSocketCreateRoom={this.onSocketCreateRoom} />
                 </>
             )
         } else {
@@ -84,7 +71,7 @@ class SelfRoomPlank extends React.Component {
         const { room, currentUser } = this.props;
         return(
             <Link to={`${this.props.match.url}/${room.roomId}`} className={`list-group-item list-group-item-action
-                flex-column align-items-start ${this.props.className}`} onClick={this.onRoomClick} style={{backgroundColor:this.props.backgroundColor}}>
+                flex-column align-items-start ${this.props.className}`} onClick={this.onRoomClick} style={{backgroundColor:this.state.backgroundColor}}>
                 {this.renderHeaderEle(room.editable)}
                 <p className="mb-0">
                     Owner: {(currentUser.userId===room.ownerId)?'You':room.ownerName}
