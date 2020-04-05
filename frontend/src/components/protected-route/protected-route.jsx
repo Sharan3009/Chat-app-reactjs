@@ -1,13 +1,13 @@
 import React from 'react';
 import { Route,Redirect } from 'react-router-dom';
-import Auth from '../../classes/Auth';
+import { userDetails } from '../../higher-order-components/user';
 
 const ProtectedRoute = ({ component: Component, ...rest }) => (
   <Route {...rest}
     render={(props) =>
-      Auth.isAuthenticated() ? <Component {...props} />:<Redirect to={{pathname: "/"}}/>
+      rest.isAuthenticated() ? <Component {...props} />:<Redirect to={{pathname: "/"}}/>
     }
   />
 );
 
-export default ProtectedRoute
+export default userDetails(ProtectedRoute)

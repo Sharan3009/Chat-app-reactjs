@@ -1,5 +1,5 @@
 import React from 'react';
-import { getDataFromStorage } from './local-storage';
+import { getDataFromStorage, setDataInStorage } from './local-storage';
 export function userDetails(WrappedComponent) {
     // ...and returns another component...
     return class extends React.Component {
@@ -12,15 +12,17 @@ export function userDetails(WrappedComponent) {
       getUserDetailsFromStorage(){
         let user = getDataFromStorage(this.key);
         if(user && user.userId){
-            user.userName = this.getFullName(user);
             return user;
         } else {
             return {};
         }
       }
 
-      setUserDetailsInStorage(data){
-        this.props.setDataInStorage(this.key,JSON.stringify(data));
+      setUserDetailsInStorage=(data)=>{
+        if(data){
+          data.userName = this.getFullName(data)
+          setDataInStorage(this.key,data);
+        }
       }
 
       
@@ -30,11 +32,21 @@ export function userDetails(WrappedComponent) {
         }
         return "";
       }
+
+      isAuthenticated=()=>{
+        let user = this.getUserDetailsFromStorage();
+        console.log(user)
+        if(user.userId){
+          return true;
+        }
+        return false;
+      }
   
       render() {
         return <WrappedComponent currentUser={this.currentUser}
          getFullName={this.getFullName}
          setUserDetailsInStorage={this.setUserDetailsInStorage}
+         isAuthenticated={this.isAuthenticated}
          {...this.props} />;
       }
     };

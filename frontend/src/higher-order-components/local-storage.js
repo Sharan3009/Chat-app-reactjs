@@ -12,8 +12,7 @@ export function withStorage(WrappedComponent) {
         }
     
         setDataInStorage(key,value){
-            let data = JSON.stringify(value);
-            localStorage.setItem(key,data);
+            setDataInStorage(key,value)
         }
         
         removeDataFromStorage(key){
@@ -45,4 +44,9 @@ export function getDataFromStorage(key){
     } catch (e){
         return data;
     }
+}
+
+export function setDataInStorage(key,value){
+    let data = JSON.stringify(value);
+    localStorage.setItem(key,data);
 }
