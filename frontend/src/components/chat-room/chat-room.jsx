@@ -3,6 +3,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { childRouteParam } from '../../higher-order-components/child-route-param';
+import ChatInputBox from '../chat-input-box';
 
 class ChatRoom extends React.Component{
     constructor(props){
@@ -11,7 +12,12 @@ class ChatRoom extends React.Component{
 
     render(){
         return(
-        <div>Room {this.props.match.params.roomId}</div>
+            <>
+                <div className="child-flex">
+
+                </div>
+                <ChatInputBox />
+            </>
         )
     }
 }

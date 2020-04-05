@@ -8,15 +8,16 @@ import appNavbar from './reducers/app-navbar.reducer';
 import globalRooms from './reducers/global-rooms.reducer';
 import chatRoom from './reducers/chat-room.reducer';
 import roomNameInput from './reducers/room-name-input.reducer';
+import chatInputBox from './reducers/chat-input-box.reducer';
 import thunk from 'redux-thunk';
-import { reducer as formReducer } from 'redux-form';
+import { reducer as form } from 'redux-form';
 import SocketClient from './socket';
 import socketMiddleware from './middlewares/socket.middleware';
 
 const socketClient = new SocketClient();
 const middlewares = [thunk,socketMiddleware(socketClient)]
 const rootReducer = combineReducers({
-    form: formReducer,
+    form,
     credentialsForm,
     homeComponent,
     sideComponent,
@@ -25,7 +26,8 @@ const rootReducer = combineReducers({
     socketReducer,
     globalRooms,
     chatRoom,
-    roomNameInput
+    roomNameInput,
+    chatInputBox
 })
 const store = createStore(
     rootReducer,
