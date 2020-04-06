@@ -28,6 +28,20 @@ function reducer(state=initialState,action){
       
         case CHAT_ROOM_DATA_STATUS:
             return {...state, chatRoomDataStatus:action.payload};
+
+        case UPDATE_CHAT:{
+            const {ack,chatId,message} = action.payload;
+            let chatObj = state.chatRoomDataObj[ack || chatId];
+            if(chatObj){
+              chatObj.message = message;
+              return {
+                ...state,
+                chatRoomData: [
+                  ...state.chatRoomData
+                ]
+              };
+            }
+          }
       
         case ADD_CHAT:{
             let chats = state.chatRoomData || [];
@@ -51,17 +65,6 @@ function reducer(state=initialState,action){
             ...state,
             chatRoomDataObj: {}
           }
-
-        case UPDATE_CHAT:{
-          const {ack,chatId,message} = action.payload;
-          state.chatRoomDataObj[ack || chatId].message = message;
-          return {
-            ...state,
-            chatRoomData: [
-              ...state.chatRoomData
-            ]
-          };
-        }
         
         case SET_INITIAL_PROPS:
           return {

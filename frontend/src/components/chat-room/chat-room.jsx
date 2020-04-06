@@ -111,10 +111,10 @@ class ChatRoom extends React.Component{
                 )
             } else {
                 return (
-                    <>
+                    <div className="parent-flex px-2 pb-2">
                         {this.renderErrorElement("No conversation has been started.")}
                         <ChatInputBox addNewChat={this.addNewChat}/>
-                    </>
+                    </div>
                     )
             }
         } else {

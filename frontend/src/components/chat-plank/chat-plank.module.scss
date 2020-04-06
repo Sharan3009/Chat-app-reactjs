@@ -1,0 +1,23 @@
+.chatBubble {
+    max-width:75%;
+    padding:0 0.25em;
+    line-height:2;
+    margin:0.25em;
+    border-radius: 5px;
+    clear:both;
+    min-width:50px;
+}
+
+.senderBubble{
+    @extend .chatBubble;
+    background-color: #8bda5e;
+    color:#fff;
+    float:right;
+}
+
+.receiverBubble{
+    @extend .chatBubble;
+    background-color:#fff;
+    color:#000;
+    float:left;
+}
