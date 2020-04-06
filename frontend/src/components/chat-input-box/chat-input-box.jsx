@@ -51,7 +51,7 @@ class ChatInputBox extends React.Component{
              onChange={this.onChatInputChange}
              type="text" 
              placeholder="Enter a message"
-             className="m-2 w-auto" 
+             className="w-auto" 
              onKeyDown={this.keyDownChatInput} />
         )
     }

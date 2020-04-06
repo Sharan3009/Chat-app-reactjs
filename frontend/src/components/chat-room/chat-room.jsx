@@ -7,7 +7,8 @@ import ChatInputBox from '../chat-input-box';
 import { Spinner } from 'react-bootstrap';
 import { getRoomChatsApi, setRoomDataStatus,
     setRoomData, setInitialProps } from '../../actions/chat-room.action';
-import ChatPlank from '../chat-plank'
+import ChatPlank from '../chat-plank';
+import style from './chat-room.module.scss';
 
 class ChatRoom extends React.Component{
     constructor(props){
@@ -64,11 +65,14 @@ class ChatRoom extends React.Component{
         if(chatRoomData){
             if(chatRoomData && chatRoomDataLength){
                 return (
-                    <>
-                        <div className="child-flex">
-                            {chatRoomData.map((chat)=><ChatPlank key={chat.chatId} chat={chat}/>)}
+                    <div className="parent-flex px-2 pb-2">
+                        <div className="child-flex position-relative">
+                            <div className={style.shiftToEnd}>
+                                {chatRoomData.map((chat)=><ChatPlank key={chat.chatId} chat={chat}/>)}
+                            </div>
                         </div>
-                    </>
+                        <ChatInputBox />
+                    </div>
                 )
             } else {
                 return (
