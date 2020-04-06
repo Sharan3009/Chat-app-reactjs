@@ -28,7 +28,7 @@ class ChatPlank extends React.Component{
     render(){
         const { chat } = this.props;
         return(
-            <div className={`${this.state.plankClass} text-center`}>
+            <div className={`${this.state.plankClass} text-center shadow`}>
                 {chat.message}
             </div>
         )
