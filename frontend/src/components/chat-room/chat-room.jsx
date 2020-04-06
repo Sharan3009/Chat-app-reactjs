@@ -5,7 +5,9 @@ import { withRouter } from 'react-router-dom';
 import { childRouteParam } from '../../higher-order-components/child-route-param';
 import ChatInputBox from '../chat-input-box';
 import { Spinner } from 'react-bootstrap';
-import { getRoomChatsApi, setRoomDataStatus, setRoomData, setInitialProps } from '../../actions/chat-room.action';
+import { getRoomChatsApi, setRoomDataStatus,
+    setRoomData, setInitialProps } from '../../actions/chat-room.action';
+import ChatPlank from '../chat-plank'
 
 class ChatRoom extends React.Component{
     constructor(props){
@@ -64,7 +66,7 @@ class ChatRoom extends React.Component{
                 return (
                     <>
                         <div className="child-flex">
-
+                            {chatRoomData.map((chat)=><ChatPlank key={chat.chatId} chat={chat}/>)}
                         </div>
                     </>
                 )

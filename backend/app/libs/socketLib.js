@@ -405,7 +405,7 @@ let setServer = (server) => {
                     */
                     socket.on('room-chat-msg', (data) => {
                         data['chatId'] = shortid.generate()
-                        setTimeout(function(){eventEmitter.emit('save-chat',data)},2000)
+                        setTimeout(function(){eventEmitter.emit('save-chat',data)})
                          /**
                              * @api {listen} receive-message Receiving message by other users in the chatroom
                              * @apiVersion 0.0.1
