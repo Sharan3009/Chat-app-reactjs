@@ -6,8 +6,9 @@ class ChatPlank extends React.Component{
     }
 
     render(){
+        const { chat } = this.props;
         return(
-            <div>chat</div>
+            <div>{chat.message}</div>
         )
     }
 }

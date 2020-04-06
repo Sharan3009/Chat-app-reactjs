@@ -33,10 +33,10 @@ let getGroupChat = (req, res) => {
   
         ChatModel.find(findQuery)
           .select('-_id -__v')
-          .sort('-createdOn')
+          .sort({createdOn:-1})
           .skip(parseInt(req.query.skip) || 0)
           .lean()
-          .limit(20)
+          .limit(100)
           .exec((err, result) => {
             if (err) {
               console.log(err)

@@ -6,9 +6,12 @@ import { childRouteParam } from '../../higher-order-components/child-route-param
 import ChatInputBox from '../chat-input-box';
 import { Spinner } from 'react-bootstrap';
 import { getRoomChatsApi, setRoomDataStatus,
-    setRoomData, setInitialProps } from '../../actions/chat-room.action';
+    setRoomData, setInitialProps, addChatToChatRoom,
+    updateChatInChatRoom } from '../../actions/chat-room.action';
 import ChatPlank from '../chat-plank';
 import style from './chat-room.module.scss';
+import { socketOn, socketEmit } from '../../actions/socket.action';
+import { userDetails } from '../../higher-order-components/user';
 
 class ChatRoom extends React.Component{
     constructor(props){
@@ -16,14 +19,46 @@ class ChatRoom extends React.Component{
     }
 
     componentDidMount(){
-        this.getChats()
+        this.joinRoom();
+        this.getChats();
+        this.onSocketReceiveMessage();
+    }
+
+    componentWillUnmount(){
+        this.leaveRoom(this.props.match.params.roomId);
+    }
+
+    onSocketReceiveMessage=()=>{
+        this.props.dispatch(
+            socketOn('receive-message',(data)=>{
+                this.props.dispatch(updateChatInChatRoom(data));
+            })
+        )
+    }
+
+    addNewChat=(data)=>{
+        this.props.dispatch(addChatToChatRoom(data));
     }
 
     componentDidUpdate(prevProps,prevStates,segment){
         if(prevProps.match.params.roomId!==this.props.match.params.roomId){
-            this.getChats()
+            this.getChats();
+            this.leaveRoom(prevProps.match.params.roomId);
         }
         return null;
+    }
+
+    joinRoom = () =>{
+        this.props.dispatch(socketOn('start-room',()=>{
+            const roomId = this.props.match.params.roomId;
+            const { userId, userName } = this.props.currentUser;
+            this.props.dispatch(socketEmit('join-room',{roomId,userId,userName}));
+        }))
+    }
+
+    leaveRoom = (roomId) =>{
+        const { userId, userName } = this.props.currentUser;
+        this.props.dispatch(socketEmit('leave-room',{roomId,userId,userName}));
     }
 
     getChats(){
@@ -68,17 +103,17 @@ class ChatRoom extends React.Component{
                     <div className="parent-flex px-2 pb-2">
                         <div className="child-flex position-relative">
                             <div className={style.shiftToEnd}>
-                                {chatRoomData.map((chat)=><ChatPlank key={chat.chatId} chat={chat}/>)}
+                                {chatRoomData.filter(chat=>chat.chatId || chat.ack).map((chat)=><ChatPlank key={chat.chatId || chat.ack} chat={chat}/>)}
                             </div>
                         </div>
-                        <ChatInputBox />
+                        <ChatInputBox addNewChat={this.addNewChat}/>
                     </div>
                 )
             } else {
                 return (
                     <>
                         {this.renderErrorElement("No conversation has been started.")}
-                        <ChatInputBox />
+                        <ChatInputBox addNewChat={this.addNewChat}/>
                     </>
                     )
             }
@@ -99,5 +134,6 @@ const mapStateToProps = ({chatRoom}) => {
 export default compose(
     connect(mapStateToProps),
     withRouter,
-    childRouteParam
+    childRouteParam,
+    userDetails
 )(ChatRoom)

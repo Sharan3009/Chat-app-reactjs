@@ -1,6 +1,6 @@
 import { CHAT_ROOM_DATA, CHAT_ROOM_DATA_STATUS,
      ADD_CHAT, RESET_ROOMS_DATA_OBJ,
-     SET_INITIAL_PROPS
+     SET_INITIAL_PROPS, UPDATE_CHAT
     }
 from '../actions/chat-room.action'; 
 
@@ -30,7 +30,7 @@ function reducer(state=initialState,action){
             return {...state, chatRoomDataStatus:action.payload};
       
         case ADD_CHAT:{
-            let rooms = state.chatRoomData || [];
+            let chats = state.chatRoomData || [];
             let obj = {
               chatRoomDataLength: state.chatRoomDataLength,
               chatRoomData: [action.payload]
@@ -39,8 +39,8 @@ function reducer(state=initialState,action){
             return {
               ...state, 
               chatRoomData:[
+                ...chats,
                 ...obj.chatRoomData,
-                ...rooms
               ],
               chatRoomDataLength: obj.chatRoomDataLength
             }
@@ -51,6 +51,17 @@ function reducer(state=initialState,action){
             ...state,
             chatRoomDataObj: {}
           }
+
+        case UPDATE_CHAT:{
+          const {ack,chatId,message} = action.payload;
+          state.chatRoomDataObj[ack || chatId].message = message;
+          return {
+            ...state,
+            chatRoomData: [
+              ...state.chatRoomData
+            ]
+          };
+        }
         
         case SET_INITIAL_PROPS:
           return {
@@ -66,11 +77,15 @@ function mapArrToObj(obj,referencedObj){
     let { chatRoomDataLength, chatRoomData } = obj;
     let referencedArr = [];
     if(Array.isArray(chatRoomData)){
-      referencedArr = chatRoomData.map((room)=>{
-        if(!(room.roomId in referencedObj)){
+      referencedArr = chatRoomData.map((chat)=>{
+        if (chat.ack && !(chat.ack in referencedObj)){
           chatRoomDataLength++;
-          referencedObj[room.roomId] = room;
-          return room;
+          referencedObj[chat.ack] = chat;
+          return chat;
+        }else if(chat.chatId && !(chat.chatId in referencedObj)){
+          chatRoomDataLength++;
+          referencedObj[chat.chatId] = chat;
+          return chat;
         }
         return {};
       })
