@@ -28,7 +28,7 @@ export function afterFormSubmit(show,message,variant){
 
 export function loginApi(email,password){
     return axios.post(
-        `${process.env.REACT_APP_DOMAIN || ""}/api/v1/users/login`,
+        `${process.env.REACT_APP_DOMAIN}${process.env.REACT_APP_API_VERSION}users/login`,
         {
             email,
             password
@@ -39,7 +39,7 @@ export function loginApi(email,password){
 
 export function signUpApi(firstName,lastName,email,password){
     return axios.post(
-        `${process.env.REACT_APP_DOMAIN || ""}/api/v1/users/signup`,
+        `${process.env.REACT_APP_DOMAIN}${process.env.REACT_APP_API_VERSION}users/signup`,
         {
             firstName,
             lastName,

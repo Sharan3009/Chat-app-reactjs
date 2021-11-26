@@ -6,7 +6,7 @@ import { setFormData, afterFormSubmit,loginApi } from '../../actions/credentials
 import { connect } from 'react-redux';
 import { reduxForm,Field,startSubmit,stopSubmit } from 'redux-form';
 import {compose} from 'redux';
-import Auth from "../../classes/Auth";
+import { userDetails } from '../../higher-order-components/user';
 const formName = "login";
 
 class Login extends React.Component {
@@ -27,19 +27,20 @@ class Login extends React.Component {
   submitForm = (event) => {
     event.preventDefault();
     this.props.dispatch(startSubmit(formName));
-    loginApi(this.props.email,this.props.password).then(
+    loginApi(this.props.email,this.props.password)
+    .then(
       (apiResponse)=>{
         this.props.dispatch(stopSubmit(formName));
         if(apiResponse.data){
           if(apiResponse.data.status===200){
-          Auth.login(apiResponse.data.data);
-          this.props.history.push("/home");
+          this.props.setUserDetailsInStorage(apiResponse.data.data);
+          this.props.history.push("/rooms");
           } else {
             this.handleConfirmation(true,"warning",apiResponse.data.message);
           }
         }
-      }
-    ).catch(
+      })
+      .catch(
       (apiError)=>{
         this.props.dispatch(stopSubmit(formName));
         let message = ""
@@ -132,5 +133,6 @@ export default compose(
   connect(mapStateToProps),
   reduxForm({ 
     form: formName,
-    validate })
+    validate }),
+  userDetails
 )(Login)

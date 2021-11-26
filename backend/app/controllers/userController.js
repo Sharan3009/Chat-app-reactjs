@@ -336,7 +336,7 @@ let resetPassword = (req,res) => {
 
 // Logout function.
 let logout = (req, res) => {
-    AuthModel.remove({ userId: req.body.userId },(err,result)=>{
+    AuthModel.remove({ authToken: req.cookies.authToken },(err,result)=>{
         if(err) {
             console.log(err)
             logger.error(err.message , 'User Controller : logout',10)

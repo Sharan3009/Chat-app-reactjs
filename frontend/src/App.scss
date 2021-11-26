@@ -1,8 +1,12 @@
+@import "./scss/mixins";
+@import "./scss/scrollbar";
+
 body{
     margin:0px;
     padding:0px;
     height:100vh;
     width:100vw;
+    overflow:hidden;
 }
 
 #app{
@@ -11,10 +15,7 @@ body{
 }
 
 .custom-form{
-    position: absolute;
-    left:50%;
-    top:50%;
-    transform: translate(-50%,-50%);
+    @include absolute-center ;
     width:400px;
     max-width:100%;
 }
@@ -28,4 +29,32 @@ body{
     -webkit-filter: blur(4px);
     filter: blur(4px);
     transform:scale(1.2);
+}
+
+.parent-flex ,.container-parent-flex,.container-parent-flex>.row>[class*='col-']{
+    @include parent-flex;
+}
+
+.container-parent-flex>.row {
+    @include parent-flex();
+    flex-direction:row;
+}
+
+.child-flex{
+    flex:1 !important;
+    overflow-y:auto !important;
+}
+
+.text-ellipsis{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.line-height-1\.5{
+    line-height: 1.5;
+}
+
+#main{
+    background-color:#f2f2f2;
 }

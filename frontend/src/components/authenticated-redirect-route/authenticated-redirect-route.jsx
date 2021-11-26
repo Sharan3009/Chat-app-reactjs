@@ -1,13 +1,13 @@
 import React from 'react';
 import { Route,Redirect } from 'react-router-dom';
-import Auth from '../../classes/Auth/Auth';
+import { userDetails } from '../../higher-order-components/user';
 
 const AuthenticatedRedirectRoute = ({ component: Component, ...rest }) => (
   <Route {...rest}
     render={(props) =>
-      Auth.isAuthenticated() ? <Redirect to={{pathname: "/home"}}/>:<Component {...props} />
+      rest.isAuthenticated() ? <Redirect to={{pathname: "/rooms"}}/>:<Component {...props} />
     }
   />
 );
 
-export default AuthenticatedRedirectRoute
+export default userDetails(AuthenticatedRedirectRoute)

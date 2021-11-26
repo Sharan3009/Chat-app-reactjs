@@ -33,10 +33,10 @@ let getGroupChat = (req, res) => {
   
         ChatModel.find(findQuery)
           .select('-_id -__v')
-          .sort('-createdOn')
+          .sort({createdOn:-1})
           .skip(parseInt(req.query.skip) || 0)
           .lean()
-          .limit(20)
+          .limit(100)
           .exec((err, result) => {
             if (err) {
               console.log(err)
@@ -45,7 +45,7 @@ let getGroupChat = (req, res) => {
               reject(apiResponse)
             } else if (check.isEmpty(result)) {
               logger.info('No Chat Found', 'Chat Controller: getUsersChat')
-              let apiResponse = response.generate(true, 'No Chat Found', 404, null)
+              let apiResponse = response.generate(true, 'No Chat Found', 404, result)
               reject(apiResponse)
             } else {
               resolve(result.reverse())

@@ -30,7 +30,8 @@ class SignUp extends React.Component {
     event.preventDefault();
     this.props.dispatch(startSubmit(formName));
     let {firstName,lastName,email,password}=this.props;
-    signUpApi(firstName,lastName,email,password).then(
+    signUpApi(firstName,lastName,email,password)
+    .then(
       (apiResponse)=>{
         this.props.dispatch(stopSubmit(formName));
         if(apiResponse.data){
@@ -40,8 +41,8 @@ class SignUp extends React.Component {
             this.handleConfirmation(true,"warning",apiResponse.data.message);
           }
         }
-      }
-    ).catch(
+      })
+      .catch(
       (apiError)=>{
         this.props.dispatch(stopSubmit(formName));
         let message = "";

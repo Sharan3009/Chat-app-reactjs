@@ -1,10 +1,6 @@
 const mongoose = require('mongoose');
-const shortid = require('shortid');
-const time = require('./../libs/timeLib');
-const passwordLib = require('./../libs/generatePasswordLib');
 const response = require('./../libs/responseLib')
 const logger = require('./../libs/loggerLib');
-const validateInput = require('../libs/paramsValidationLib')
 const check = require('../libs/checkLib')
 const token = require('../libs/tokenLib')
 
@@ -16,6 +12,8 @@ const AuthModel = mongoose.model('Auth')
 let getAllChatRooms = (req,res) => {
     RoomModel.find()
 		.select('-_id -__v')
+		.sort({"_id": -1})
+		.limit(100)
 		.lean()
 		.exec((err, result) => {
 			if (err) {
@@ -24,7 +22,7 @@ let getAllChatRooms = (req,res) => {
 				res.send(apiResponse)
 			} else if (check.isEmpty(result)) {
 				logger.info('No Room Found', 'Room Controller: getAllChatRooms', 5)
-				let apiResponse = response.generate(true, 'No Rooms Found', 404, null)
+				let apiResponse = response.generate(true, 'No Rooms Found', 404, result)
 				console.log(apiResponse)
 				res.send(apiResponse)
 			} else {
@@ -59,7 +57,7 @@ let getSingleChatRoom = (req,res) => {
 					reject(apiResponse)
 				} else if (check.isEmpty(result)) {
 					logger.info('No Room Found', 'Room Controller: getSingleChatRoom', 5)
-					let apiResponse = response.generate(true, 'No Room Found', 404, null)
+					let apiResponse = response.generate(true, 'No Room Found', 404, result)
 					reject(apiResponse)
 				} else {
 					logger.info('Room Found', 'Room Controller: getSingleChatRoom', 5)
@@ -81,25 +79,29 @@ let getSingleChatRoom = (req,res) => {
 }
 
 let getYourRooms = (req,res)=>{
-	let validateParams = () => {
-		return new Promise((resolve, reject) => {
-		  if (check.isEmpty(req.params.userId)) {
-			logger.info('parameters missing', 'getYourRooms handler', 9)
-			let apiResponse = response.generate(true, 'parameters missing.', 403, null)
-			reject(apiResponse)
-		  } else {
-			resolve()
-		  }
+	let getUserId=()=>{
+		return new Promise((resolve,reject)=>{
+			token.verifyClaimWithoutSecret(req.cookies.authToken, (err, result) => {
+				if (err) {
+					logger.info('user missing', 'getYourRooms handler', 9)
+					let apiResponse = response.generate(true, 'user missing.', 403, null)
+					reject(apiResponse)
+				} else {
+					resolve(result.data.userId)
+				}
+			})
 		})
-	  }
-	
-	let getYourRooms = () =>{
+	}
+
+	let getYourRooms = (userId) =>{
 		return new Promise((resolve,reject)=>{
 			let findQuery = {
-					'joinees.userId' : req.params.userId
+					'joinees.userId' : userId
 			}
 			RoomModel.find(findQuery)
 				.select('-_id -__v')
+				.sort({"_id": -1})
+				.limit(100)
 				.lean()
 				.exec((err, result) => {
 					if (err) {
@@ -108,8 +110,7 @@ let getYourRooms = (req,res)=>{
 						reject(apiResponse)
 					} else if (check.isEmpty(result)) {
 						logger.info('No Room Found', 'Room Controller: getYourRooms', 5)
-						let apiResponse = response.generate(true, 'No Room Found', 404, null)
-						console.log(apiResponse)
+						let apiResponse = response.generate(true, 'No Room Found', 404, result)
 						reject(apiResponse)
 					} else {
 						logger.info('Room Found', 'Room Controller: getYourRooms', 5)
@@ -118,8 +119,8 @@ let getYourRooms = (req,res)=>{
 				})
 		})
 	}
-	validateParams(req,res)
-      .then(getYourRooms)
+	getUserId(req,res)
+	  .then(getYourRooms)
       .then((result) => {
         let apiResponse = response.generate(false, 'Rooms Found', 200, result)
         res.send(apiResponse)

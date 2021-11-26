@@ -272,7 +272,10 @@ let setServer = (server) => {
                         }
                     */
                     socket.on('create-room', (data) => {
-                        data['roomId'] = shortid.generate()
+                        data['roomId'] = shortid.generate();
+                        data['ownerId'] = socket.userId;
+                        data['capacity'] = 50;
+                        data['ownerName'] = socket.userName;
                         eventEmitter.emit('save-room', data)
                     })
                        /**
@@ -402,7 +405,7 @@ let setServer = (server) => {
                     */
                     socket.on('room-chat-msg', (data) => {
                         data['chatId'] = shortid.generate()
-                        setTimeout(function(){eventEmitter.emit('save-chat',data)},2000)
+                        eventEmitter.emit('save-chat',data);
                          /**
                              * @api {listen} receive-message Receiving message by other users in the chatroom
                              * @apiVersion 0.0.1
@@ -419,7 +422,6 @@ let setServer = (server) => {
                                     }
                                 }
                             */
-                        socket.to(data.chatRoom).broadcast.emit('receive-message', data)
                         })
             })
         })
@@ -695,32 +697,33 @@ let setServer = (server) => {
             }
         });
     })
+
+    eventEmitter.on('save-chat', (data) => {
+
+        let newChat = new ChatModel({
+            chatId: data.chatId,
+            senderName: data.senderName,
+            senderId: data.senderId,
+            message: data.message,
+            chatRoom: data.chatRoom || '',
+            createdOn: data.createdOn
+        });
+    
+        newChat.save((err, result) => {
+            if (err) {
+                console.log(`error occurred: ${err}`);
+            }
+            else if (result == undefined || result == null || result == "") {
+                console.log("Chat Is Not Saved.");
+            }
+            else {
+                io.sockets.in(data.chatRoom).emit('receive-message', data)
+            }
+        });
+    
+    });
+    
 }
-eventEmitter.on('save-chat', (data) => {
-
-    let newChat = new ChatModel({
-        chatId: data.chatId,
-        senderName: data.senderName,
-        senderId: data.senderId,
-        message: data.message,
-        chatRoom: data.chatRoom || '',
-        createdOn: data.createdOn
-    });
-
-    newChat.save((err, result) => {
-        if (err) {
-            console.log(`error occurred: ${err}`);
-        }
-        else if (result == undefined || result == null || result == "") {
-            console.log("Chat Is Not Saved.");
-        }
-        else {
-            console.log("Chat Saved.");
-        }
-    });
-
-});
-
   /**
  * @api {emit} delete-room-chats Deleting room chats after room is deleted
  * @apiVersion 0.0.1
