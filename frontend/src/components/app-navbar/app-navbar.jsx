@@ -8,7 +8,7 @@ class AppNavbar extends React.Component{
     render(){
         return(
             <Navbar bg="dark" variant="dark" expand="lg">
-              <Link to="/rooms" className="navbar-brand">Home</Link>
+              <Link to="/auth" className="navbar-brand">Home</Link>
             </Navbar>
         )
     }

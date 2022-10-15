@@ -2,8 +2,7 @@ import React from 'react';
 import {Switch, HashRouter, Route, Redirect} from "react-router-dom";
 import { Provider } from 'react-redux';
 import './App.scss';
-import Login from "./components/login";
-import SignUp from "./components/signup";
+import Auth from "./components/auth/auth";
 import Home from './components/home/home';
 import store from './store';
 import ProtectedRoute from './components/protected-route';
@@ -15,11 +14,10 @@ class App extends React.Component {
       <Provider store={store}>
         <HashRouter>
           <Switch>
-            <AuthenticatedRedirectRoute exact path="/signup" component={SignUp} />
-            <AuthenticatedRedirectRoute exact path="/login" component={Login} />
+            <AuthenticatedRedirectRoute exact path="/auth" component={Auth} />
             <ProtectedRoute path="/room" component={Home} />
             <Route path="/">
-              <Redirect to="/login"></Redirect>
+              <Redirect to="/auth"></Redirect>
             </Route>
           </Switch>
         </HashRouter>

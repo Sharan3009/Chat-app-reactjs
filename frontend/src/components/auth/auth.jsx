@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Button, Col,Row, Alert } from 'react-bootstrap';
 import {Link} from 'react-router-dom';
-import style from './signup.module.scss';
+import style from './auth.module.scss';
 import { 
   afterFormSubmit,
   setFormData,
@@ -11,7 +11,7 @@ import { compose } from 'redux';
 import { Field, reduxForm,startSubmit,stopSubmit } from 'redux-form';
 const formName = "signup";
 
-class SignUp extends React.Component {
+class Auth extends React.Component {
   constructor(props){
     super(props);
     this.state = {}
@@ -111,9 +111,6 @@ class SignUp extends React.Component {
             Sign Up
           </Button>
         </Col>
-        <Col className="d-flex align-items-center justify-content-end">
-          <Link to={"login"}>Already a User?</Link>
-        </Col>
       </Row>
     </Form>
     </>
@@ -185,4 +182,4 @@ export default compose(
   reduxForm({ 
     form: formName,
     validate })
-)(SignUp)
+)(Auth)
