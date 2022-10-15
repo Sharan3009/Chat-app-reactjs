@@ -1,6 +1,5 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import credentialsForm from './reducers/credentials-form.reducer';
-import mainComponent from './reducers/main-component.reducer';
 import homeComponent from './reducers/home-component.reducer';
 import socketReducer from './reducers/socket.reducer';
 import globalRooms from './reducers/global-rooms.reducer';
@@ -18,7 +17,6 @@ const rootReducer = combineReducers({
     form,
     credentialsForm,
     homeComponent,
-    mainComponent,
     socketReducer,
     globalRooms,
     chatRoom,

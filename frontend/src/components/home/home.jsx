@@ -1,11 +1,11 @@
 import React from 'react';
 import style from './home.module.scss';
 import AppNavbar from '../app-navbar';
-import Main from '../main-component/';
 import { Container, Row, Col } from 'react-bootstrap';
 import { socketConnect, socketDisconnect,socketOn,socketEmit } from '../../actions/socket.action';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import ChatRoom from '../chat-room/chat-room';
 
 class Home extends React.Component {
   constructor(props){
@@ -45,7 +45,7 @@ class Home extends React.Component {
         <Container fluid className="container-parent-flex">
           <Row>
             <Col className="p-0">
-              <Main />
+              <ChatRoom />
             </Col>
           </Row>
         </Container>
