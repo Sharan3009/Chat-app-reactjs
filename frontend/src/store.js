@@ -4,7 +4,6 @@ import sideComponent from './reducers/side-component.reducer';
 import mainComponent from './reducers/main-component.reducer';
 import homeComponent from './reducers/home-component.reducer';
 import socketReducer from './reducers/socket.reducer';
-import appNavbar from './reducers/app-navbar.reducer';
 import globalRooms from './reducers/global-rooms.reducer';
 import chatRoom from './reducers/chat-room.reducer';
 import roomNameInput from './reducers/room-name-input.reducer';
@@ -22,7 +21,6 @@ const rootReducer = combineReducers({
     homeComponent,
     sideComponent,
     mainComponent,
-    appNavbar,
     socketReducer,
     globalRooms,
     chatRoom,
