@@ -2,7 +2,6 @@ import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { updateCurrentRoomId } from '../actions/side-component.action';
 
 export function childRouteParam(WrappedComponent){
     class ChildRouteParam extends React.Component{
@@ -23,7 +22,6 @@ export function childRouteParam(WrappedComponent){
 
         updateRoomId=()=>{
             const roomId = this.props.match.params.roomId || "";
-            this.props.dispatch(updateCurrentRoomId(roomId));
         }
 
         render(){

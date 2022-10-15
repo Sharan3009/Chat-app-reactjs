@@ -63,7 +63,7 @@ class ChatRoom extends React.Component{
 
     getChats(){
         this.props.dispatch(setInitialProps())
-        let roomId = this.props.match.params.roomId;
+        let roomId = '4pVF6ILmJ'; // hard coded room id
         this.props.dispatch(setRoomDataStatus("loading"))
         getRoomChatsApi(roomId)
         .then(
