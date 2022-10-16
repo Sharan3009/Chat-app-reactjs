@@ -1,7 +1,5 @@
 import React from 'react';
 import { Form, Button, Col,Row, Alert } from 'react-bootstrap';
-import {Link} from 'react-router-dom';
-import style from './auth.module.scss';
 import { 
   afterFormSubmit,
   setFormData,
@@ -68,47 +66,17 @@ class Auth extends React.Component {
       onClose={() => this.handleConfirmation(false)} dismissible>
         {this.props.afterSubmit.message}
       </Alert>)}
-      <Form.Row>
-        <Form.Group as={Col} controlId="formGridFirstName">
-          <Field label="First Name" name="firstName" 
-          type="text" placeholder="First Name"
-          value={this.props.firstName}
-          onChange={this.setForm}
-          component={getFormControlField} />
-        </Form.Group>
-        <Form.Group as={Col} controlId="formGridLastName">
-        <Field label="Last Name" name="lastName" 
-          type="text" placeholder="Last Name"
-          value={this.props.lastName}
-          onChange={this.setForm}
-          component={getFormControlField} />
-        </Form.Group>
-      </Form.Row>
       <Form.Group controlId="formBasicEmail">
         <Field label="Email address" name="email" 
           type="email" placeholder="Enter email"
-          value={this.props.firstName}
-          onChange={this.setForm}
-          component={getFormControlField} />
-      </Form.Group>
-      <Form.Group controlId="formBasicPassword">
-        <Field label="Password" name="password" 
-          type="password" placeholder="Enter Password"
-          value={this.props.password}
-          onChange={this.setForm}
-          component={getFormControlField} />
-      </Form.Group>
-      <Form.Group controlId="formBasicConfirmPasswod">
-        <Field label="Confirm Password" name="confirmPassword" 
-          type="password" placeholder="Re-enter password"
-          value={this.props.confirmPassword}
+          value={this.props.email}
           onChange={this.setForm}
           component={getFormControlField} />
       </Form.Group>
       <Row>
         <Col>
           <Button variant="primary" type="submit" disabled={this.props.invalid || this.props.submitting}>
-            Sign Up
+            GET OTP
           </Button>
         </Col>
       </Row>
