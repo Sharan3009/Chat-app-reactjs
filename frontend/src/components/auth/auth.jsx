@@ -68,7 +68,7 @@ class Auth extends React.Component {
       </Alert>)}
       <Form.Group controlId="formBasicEmail">
         <Field label="Email address" name="email" 
-          type="email" placeholder="Enter email"
+          type="email" placeholder="someone@hawk.iit.edu"
           value={this.props.email}
           onChange={this.setForm}
           component={getFormControlField} />
@@ -88,8 +88,7 @@ class Auth extends React.Component {
 
 const getFormControlField = ({type,placeholder,label, input ,meta:{error,touched,valid,dirty}})=>{
   let isError = null;
-  let exceptionField = "confirmPassword"
-  if(error && touched && input.name!==exceptionField){
+  if(error && touched){
     isError = true;
   } else {
     isError = false;
@@ -101,7 +100,7 @@ const getFormControlField = ({type,placeholder,label, input ,meta:{error,touched
       {...input}
       type={type} placeholder={placeholder} 
       isInvalid={isError}
-      isValid={input.name===exceptionField && dirty && valid}
+      isValid={dirty && valid}
       />
       <Form.Control.Feedback type="invalid">
         {(isError)?error:""}
