@@ -12,6 +12,11 @@ appConfig.mongooseOptions = {
     useNewUrlParser : true,
     useUnifiedTopology: true
 }
+appConfig.mailer = {
+    api_key: process.env.mailerKey,
+    user: process.env.mailerUser,
+    pass: process.env.mailerPass
+}
 
 module.exports = {
     port: appConfig.port,
@@ -19,5 +24,6 @@ module.exports = {
     environment: appConfig.env,
     db: appConfig.db,
     apiVersion: appConfig.apiVersion,
-    mongooseOptions: appConfig.mongooseOptions
+    mongooseOptions: appConfig.mongooseOptions,
+    mailer: appConfig.mailer
 }
