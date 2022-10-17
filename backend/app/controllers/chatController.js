@@ -1,34 +1,40 @@
 const mongoose = require('mongoose');
-const shortid = require('shortid');
-const time = require('./../libs/timeLib');
-const passwordLib = require('./../libs/generatePasswordLib');
 const response = require('./../libs/responseLib')
 const logger = require('./../libs/loggerLib');
-const validateInput = require('../libs/paramsValidationLib')
 const check = require('../libs/checkLib')
-const token = require('../libs/tokenLib')
-const ChatModel = mongoose.model('Chat')
+const RoomModel = mongoose.model("Room");
+const ChatModel = mongoose.model('Chat');
 
-let getGroupChat = (req, res) => {
-    // function to validate params.
-    let validateParams = () => {
-      return new Promise((resolve, reject) => {
-        if (check.isEmpty(req.params.roomId)) {
-          logger.info('parameters missing', 'getUsersChat handler', 9)
-          let apiResponse = response.generate(true, 'parameters missing.', 403, null)
-          reject(apiResponse)
-        } else {
-          resolve()
-        }
-      })
-    } // end of the validateParams function.
+let getRoomChats = (req, res) => {
+
+  let getRoomId = () => {
+    return new Promise((resolve, reject)=>{
+      RoomModel.findOne({userId: req.user.userId})
+			.select('-_id -__v')
+			.lean()
+			.exec((err, result) => {
+				if (err) {
+					logger.error(err.message, 'Chat Controller: getRoomId', 10)
+					let apiResponse = response.generate(true, 'Error occured while getting the room', 500, null)
+					reject(apiResponse)
+				} else if (check.isEmpty(result)) {
+					logger.info('No Room Found', 'Chat Controller: getRoomId', 5)
+					let apiResponse = response.generate(true, 'No Room Found', 404, result)
+					reject(apiResponse)
+				} else {
+					logger.info('Room Found', 'Chat Controller: getRoomId', 5)
+					resolve(result)
+				}
+			})
+    })
+  }
   
     // function to get chats.
-    let findChats = () => {
+    let findChats = (obj) => {
       return new Promise((resolve, reject) => {
         // creating find query.
         let findQuery = {
-          chatRoom: req.params.roomId
+          chatRoom: obj.roomId
         }
   
         ChatModel.find(findQuery)
@@ -55,10 +61,10 @@ let getGroupChat = (req, res) => {
     } // end of the findChats function.
   
     // making promise call.
-    validateParams(req,res)
+    getRoomId(req,res)
       .then(findChats)
       .then((result) => {
-        let apiResponse = response.generate(false, 'All Group Chats Listed', 200, result)
+        let apiResponse = response.generate(false, 'All Room Chats Listed', 200, result)
         res.send(apiResponse)
       })
       .catch((error) => {
@@ -67,5 +73,5 @@ let getGroupChat = (req, res) => {
   }
 
   module.exports = {
-    getGroupChat : getGroupChat
+    getRoomChats : getRoomChats
 }

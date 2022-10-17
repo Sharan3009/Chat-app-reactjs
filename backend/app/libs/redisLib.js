@@ -5,44 +5,79 @@ let client = redis.createClient()
 client.on('connect',()=>{
     console.log('Redis connection is successfully opened')
 })
+const aGroup = "availableHelpers";
+const uGroup = "unavaiableHelpers";
 
-let getAllUsersInHash = (hashName, callback)=>{
-    client.HGETALL(hashName,(err,result)=>{
-        if(err){
-            console.log(err)
-            callback(err,null)
-        } else if(check.isEmpty(result)){
-            console.log('online user list is empty')
-            console.log(result)
-            callback(null,{})
-        } else {
-            console.log(result)
-            callback(null,result)
-        }
-    })
+let getAvaiableHelper = ()=>{
+    return new Promise((resolve,reject)=>{
+        client.HGETALL(aGroup,(err,result)=>{
+            if(err){
+                console.log(err)
+                reject(err)
+            } else {
+                resolve(Object.keys(result)[0]);
+            }
+        })
+    }) 
 }
 
-let setANewOnlineUserInHash = (hashName,key,value,callback)=>{
-
-    client.HMSET(hashName,[key,value],(err, result)=>{
-        if(err){
-            console.log(err)
-            callback(err,null)
-        } else {
-            console.log('user has been set in the hash map')
-            console.log(result)
-            callback(null,result)
-        }
-    })
+let makeHelperAvailable = (helper, userId,userName)=>{
+    if(helper){
+        client.HDEL(uGroup,userId);
+        return new Promise((resolve,reject)=>{
+            client.HMSET(aGroup,[userId,userName],(err,result)=>{
+                if(err){
+                    reject(err)
+                } else {
+                    resolve(result);
+                }
+            })
+        }) 
+    }
 }
 
-let deleteUserFromHash = (hashName,key)=>{
-    client.HDEL(hashName,key);
-    return true
+let makeHelperUnAvailable = (helper, userId,userName)=>{
+    if(helper){
+        client.HDEL(aGroup,userId);
+        return new Promise((resolve,reject)=>{
+            client.HMSET(uGroup,[userId,userName],(err,result)=>{
+                if(err){
+                    reject(err)
+                } else {
+                    resolve(result);
+                }
+            })
+        }) 
+    }
 }
+
+let makeHelperOffline = (helper, userId)=>{
+    if(helper){
+        client.HDEL(aGroup,userId);
+        client.HDEL(uGroup,userId);
+    }
+}
+
+let getOnlineHelperCount = () => {
+    return new Promise((resolve,reject)=>{
+        client.HLEN(aGroup,(err,aresult)=>{
+            client.HLEN(uGroup,(err,bresult)=>{
+                if(err){
+                    console.log(err)
+                    reject(err)
+                } else {
+                    resolve(aresult + bresult);
+                }
+            })
+        })
+    }) 
+}
+
 
 module.exports = {
-    getAllUsersInHash : getAllUsersInHash,
-    setANewOnlineUserInHash : setANewOnlineUserInHash,
-    deleteUserFromHash : deleteUserFromHash
+    getAvaiableHelper : getAvaiableHelper,
+    makeHelperAvailable : makeHelperAvailable,
+    makeHelperUnAvailable: makeHelperUnAvailable,
+    makeHelperOffline: makeHelperOffline,
+    getOnlineHelperCount : getOnlineHelperCount
 }

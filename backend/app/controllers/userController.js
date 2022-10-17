@@ -15,6 +15,9 @@ const otpGenerator = require('otp-generator')
 const UserModel = mongoose.model('User')
 const OtpModel = mongoose.model('Otp')
 
+const helpers = new Set();
+helpers.add("helper@hawk.iit.edu");
+
 // User Signup function 
 let generateOTP = (req, res) => {
     let validateUserInput = () =>{
@@ -41,9 +44,9 @@ let generateOTP = (req, res) => {
                 firstName : 'John',
                 lastName : 'Doe',
                 email : req.body.email.toLowerCase(),
-                createdOn : time.now(),
-                active:false
+                createdOn : time.now()
             })
+            newUser.helper = helpers.has(newUser.email);
             newUser.save((err,newUser)=>{
                 if(err){
                     console.log(err)
@@ -71,7 +74,8 @@ let generateOTP = (req, res) => {
                 otp : passwordLib.hashpassword(otp),
                 createdOn : time.now(),
             })
-            mailerLib.sendOTPEmail(userObj.email,otp);
+            console.log("OTP",otp)
+            // mailerLib.sendOTPEmail(userObj.email,otp);
             newOtp.save((err,newOtp)=>{
                 if(err){
                     console.log(err)
@@ -97,9 +101,8 @@ let generateOTP = (req, res) => {
     })
 } 
 
-// Login function 
 let verifyOTP = (req, res) => {
-    let findUser = () => {
+    let findOTP = () => {
         return new Promise((resolve,reject)=>{
             if(req.body.userId){
                 OtpModel.findOne({userId: req.body.userId},(err,userDetails)=>{
@@ -123,6 +126,7 @@ let verifyOTP = (req, res) => {
             }
         })
     }
+    
 
     let validateOtp = (retrievedUserDetails) => {
         return new Promise((resolve,reject)=>{
@@ -146,9 +150,39 @@ let verifyOTP = (req, res) => {
         })
     }
 
+    let findUser = () => {
+        return new Promise((resolve,reject)=>{
+            if(req.body.userId){
+                UserModel.findOne({userId: req.body.userId},(err,userDetails)=>{
+                    if(err){
+                        console.log(err)
+                        logger.error('Failed to Retrieve User Data', 'User Controller : findUser',5)
+                        let apiResponse = response.generate(true,'Failed to find the user',400,null)
+                        reject(apiResponse)
+                    } else if (check.isEmpty(userDetails)) {
+                        logger.error('No User Found','User Controller : findUser',5)
+                        let apiResponse = response.generate(true,'No User Details Found',400,null)
+                        reject(apiResponse)
+                    } else {
+                        logger.info('User Found','User Controller : findUser',5)
+                        resolve(userDetails)
+                    }
+                })
+            } else {
+                let apiResponse = response.generate(true,'userId parameter is missing',400,null)
+                reject(apiResponse)
+            }
+        })
+    }
+
     let generateToken = (userDetails) => {
+        let obj = {
+            userId: userDetails.userId,
+            userName: ((userDetails.firstName || "") + " " + (userDetails.lastName || "")).trim(),
+            helper: userDetails.helper
+        }
         return new Promise ((resolve,reject)=>{
-            token.generateToken(userDetails.userId,(err,tokenDetails)=>{
+            token.generateToken(obj,(err,tokenDetails)=>{
                 if(err){
                     console.log(err)
                     let apiResponse = response.generate(true,'Failed to generate token',500,null)
@@ -161,8 +195,9 @@ let verifyOTP = (req, res) => {
         })
     }
 
-    findUser(req,res)
+    findOTP(req,res)
     .then(validateOtp)
+    .then(findUser)
     .then(generateToken)
     .then((resolve)=>{
         let apiResponse = response.generate(false,'Otp verified successfully',200,resolve)

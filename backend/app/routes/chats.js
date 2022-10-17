@@ -7,7 +7,7 @@ const auth = require('../middlewares/auth')
 module.exports.setRouter = (app) => {
     let baseUrl = appConfig.apiVersion + '/chats'
 
-    app.get(baseUrl + '/:roomId', auth.isAuthorized, chatController.getGroupChat)
+    app.get(baseUrl, auth.isAuthorized, chatController.getRoomChats)
         /**
 	 * @api {get} /api/v1/chats/:roomId Get Room Chats
 	 * @apiVersion 0.0.1

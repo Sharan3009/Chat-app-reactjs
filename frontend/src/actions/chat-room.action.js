@@ -7,9 +7,9 @@ export const ADD_CHAT = "ADD_CHAT";
 export const RESET_ROOMS_DATA_OBJ = "RESET_CHAT_ROOM_DATA_OBJ";
 export const UPDATE_CHAT = "UPDATE_CHAT";
 
-export function getRoomChatsApi(roomId){
+export function getRoomChatsApi(){
     return axios.get(
-        `${process.env.REACT_APP_DOMAIN}${process.env.REACT_APP_API_VERSION}chats/${roomId}`,
+        `${process.env.REACT_APP_DOMAIN}${process.env.REACT_APP_API_VERSION}chats`,
         { withCredentials:true }
     )
 }

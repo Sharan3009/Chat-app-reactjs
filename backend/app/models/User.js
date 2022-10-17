@@ -24,7 +24,7 @@ let userSchema = new Schema({
     type : Date,
     default: Date.now()
   },
-  active : {
+  helper : {
     type : Boolean,
     default : false
   }

@@ -8,7 +8,7 @@ let chatSchema = new Schema({
     senderId : { type : String, required : true },
     message : { type : String, required : true },
     chatRoom : { type : String, required : true },
-    // seen : { type : Boolean, default : false },
+    type: {type: Number, default: 1},
     createdOn : { type : Date, default : Date.now() }
 })
 

@@ -8,8 +8,9 @@ const token = require('./../libs/tokenLib')
 const check = require('./../libs/checkLib')
 
 let isAuthorized = (req, res, next) => {
-    if(req.params.authToken || req.query.authToken || req.body.authToken || req.cookies.authToken) {
-        token.verifyClaim(authDetails.authToken, authDetails.tokenSecret,(err,decoded)=>{
+    let authToken = req.cookies.authToken || req.params.authToken || req.query.authToken || req.body.authToken;
+    if(authToken) {
+        token.verifyClaim(authToken,(err,decoded)=>{
             if(err){
                 logger.error(err.message,'Authorization middleware',10)
                 let apiResponse = responseLib.generate(true,'Failed to authorize',500,null)

@@ -19,13 +19,17 @@ class ChatRoom extends React.Component{
     }
 
     componentDidMount(){
-        this.joinRoom();
-        this.getChats();
-        this.onSocketReceiveMessage();
+        this.getRoom();
     }
 
-    componentWillUnmount(){
-        this.leaveRoom(this.props.match.params.roomId);
+    getRoom(){
+        const { userId, userName } = this.props.currentUser;
+        this.props.dispatch(socketOn(userId,(f)=>{
+            if(f==="room_created"){
+                this.getChats();
+                this.onSocketReceiveMessage();
+            }
+        }))
     }
 
     onSocketReceiveMessage=()=>{
@@ -40,32 +44,10 @@ class ChatRoom extends React.Component{
         this.props.dispatch(addChatToChatRoom(data));
     }
 
-    componentDidUpdate(prevProps,prevStates,segment){
-        if(prevProps.match.params.roomId!==this.props.match.params.roomId){
-            this.getChats();
-            this.leaveRoom(prevProps.match.params.roomId);
-        }
-        return null;
-    }
-
-    joinRoom = () =>{
-        this.props.dispatch(socketOn('start-room',()=>{
-            const roomId = this.props.match.params.roomId;
-            const { userId, userName } = this.props.currentUser;
-            this.props.dispatch(socketEmit('join-room',{roomId,userId,userName}));
-        }))
-    }
-
-    leaveRoom = (roomId) =>{
-        const { userId, userName } = this.props.currentUser;
-        this.props.dispatch(socketEmit('leave-room',{roomId,userId,userName}));
-    }
-
     getChats(){
         this.props.dispatch(setInitialProps())
-        let roomId = '4pVF6ILmJ'; // hard coded room id
         this.props.dispatch(setRoomDataStatus("loading"))
-        getRoomChatsApi(roomId)
+        getRoomChatsApi()
         .then(
         (apiResponse)=>{
             if(apiResponse.data){

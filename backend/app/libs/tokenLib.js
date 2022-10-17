@@ -10,7 +10,7 @@ let generateToken = (data,cb)=>{
 			iat : Date.now(),
 			exp : Math.floor(Date.now()/1000 + (60*60*24)),
 			sub : 'authToken',
-			iss : 'goChat',
+			iss : 'convoCare',
 			data : data
 		}
 		let tokenDetails = {
@@ -24,7 +24,7 @@ let generateToken = (data,cb)=>{
 	}
 }
 
-let verifyClaim = (token, secretKey, cb) => {
+let verifyClaim = (token, cb) => {
 	jwt.verify(token, secretKey, function(err,decoded){
 		if(err){
 			console.log('error while verify token');
