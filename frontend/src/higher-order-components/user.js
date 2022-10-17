@@ -9,7 +9,7 @@ export function userDetails(WrappedComponent) {
         this.currentUser = this.getUserDetailsFromStorage();
       }
 
-      getUserDetailsFromStorage(){
+      getUserDetailsFromStorage=()=>{
         let user = getDataFromStorage(this.key);
         if(user && user.userId){
             return user;
@@ -20,7 +20,7 @@ export function userDetails(WrappedComponent) {
 
       setUserDetailsInStorage=(data)=>{
         if(data){
-          data.userName = this.getFullName(data)
+          data.userName = this.getFullName(data);
           setDataInStorage(this.key,data);
         }
       }
@@ -28,7 +28,7 @@ export function userDetails(WrappedComponent) {
       
       getFullName(user){
         if(user){
-            return (user.firstName || "" + user.lastName ||  "").trim();
+            return ((user.firstName || "") + " " +(user.lastName ||  "")).trim();
         }
         return "";
       }
@@ -45,6 +45,7 @@ export function userDetails(WrappedComponent) {
         return <WrappedComponent currentUser={this.currentUser}
          getFullName={this.getFullName}
          setUserDetailsInStorage={this.setUserDetailsInStorage}
+         getUserDetailsFromStorage = {this.getUserDetailsFromStorage}
          isAuthenticated={this.isAuthenticated}
          {...this.props} />;
       }

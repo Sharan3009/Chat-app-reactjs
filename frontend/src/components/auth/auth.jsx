@@ -3,16 +3,20 @@ import { Form, Button, Col,Row, Alert } from 'react-bootstrap';
 import { 
   afterFormSubmit,
   setFormData,
-  signUpApi} from '../../actions/credentials-form.action';
+  genearteOTP,
+  verifyOTP} from '../../actions/credentials-form.action';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { Field, reduxForm,startSubmit,stopSubmit } from 'redux-form';
+import { userDetails } from '../../higher-order-components/user';
 const formName = "signup";
 
 class Auth extends React.Component {
   constructor(props){
     super(props);
-    this.state = {}
+    this.state = {
+      screenOne: true
+    }
   }
 
   UNSAFE_componentWillMount(){
@@ -24,16 +28,45 @@ class Auth extends React.Component {
     this.props.dispatch(setFormData(name,value))
   }
 
-  submitForm = (event) =>{
+  submitOTPForm = (event) =>{
     event.preventDefault();
     this.props.dispatch(startSubmit(formName));
-    let {firstName,lastName,email,password}=this.props;
-    signUpApi(firstName,lastName,email,password)
+    genearteOTP(this.props.email)
     .then(
       (apiResponse)=>{
         this.props.dispatch(stopSubmit(formName));
         if(apiResponse.data){
           if(apiResponse.data.status===200){
+            this.props.setUserDetailsInStorage(apiResponse.data.data);
+            this.handleConfirmation(true,"success",apiResponse.data.message);
+            this.setState({screenOne: false});
+          } else {
+            this.handleConfirmation(true,"warning",apiResponse.data.message);
+          }
+        }
+      })
+      .catch(
+      (apiError)=>{
+        this.props.dispatch(stopSubmit(formName));
+        let message = "";
+        if(apiError.data){
+          message=apiError.data.message;
+        }
+        this.handleConfirmation(true,"danger",message);
+      }
+    );
+  }
+
+  submitVerifyOTPForm = (event) =>{
+    event.preventDefault();
+    this.props.dispatch(startSubmit(formName));
+    verifyOTP(this.props.getUserDetailsFromStorage().userId,this.props.otp)
+    .then(
+      (apiResponse)=>{
+        this.props.dispatch(stopSubmit(formName));
+        if(apiResponse.data){
+          if(apiResponse.data.status===200){
+            this.props.history.push("/room");
             this.handleConfirmation(true,"success",apiResponse.data.message);
           } else {
             this.handleConfirmation(true,"warning",apiResponse.data.message);
@@ -60,27 +93,59 @@ class Auth extends React.Component {
     return(
       <>
      <div className="credentials-bg"></div>
-      <Form className="bg-white p-3 custom-form rounded" onSubmit={this.submitForm}>
-      {this.props.afterSubmit.show && 
-      (<Alert variant={this.props.afterSubmit.variant} 
-      onClose={() => this.handleConfirmation(false)} dismissible>
-        {this.props.afterSubmit.message}
-      </Alert>)}
-      <Form.Group controlId="formBasicEmail">
-        <Field label="Email address" name="email" 
-          type="email" placeholder="someone@hawk.iit.edu"
-          value={this.props.email}
-          onChange={this.setForm}
-          component={getFormControlField} />
-      </Form.Group>
-      <Row>
-        <Col>
-          <Button variant="primary" type="submit" disabled={this.props.invalid || this.props.submitting}>
-            GET OTP
-          </Button>
-        </Col>
-      </Row>
-    </Form>
+     {
+     (()=>{
+      if(this.state.screenOne){
+          return(
+          <Form className="bg-white p-3 custom-form rounded" onSubmit={this.submitOTPForm}>
+            {this.props.afterSubmit.show && 
+            (<Alert variant={this.props.afterSubmit.variant} 
+            onClose={() => this.handleConfirmation(false)} dismissible>
+              {this.props.afterSubmit.message}
+            </Alert>)}
+            <Form.Group controlId="formBasicEmail">
+              <Field label="Email address" name="email" 
+                type="email" placeholder="someone@hawk.iit.edu"
+                value={this.props.email}
+                onChange={this.setForm}
+                component={getFormControlField} />
+            </Form.Group>
+            <Row>
+              <Col>
+                <Button variant="primary" type="submit" disabled={this.props.invalid || this.props.submitting}>
+                  GET OTP
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+          )
+      } else {
+          return (
+          <Form className="bg-white p-3 custom-form rounded" onSubmit={this.submitVerifyOTPForm} autoComplete="off">
+            {this.props.afterSubmit.show && 
+            (<Alert variant={this.props.afterSubmit.variant} 
+            onClose={() => this.handleConfirmation(false)} dismissible>
+              {this.props.afterSubmit.message}
+            </Alert>)}
+            <Form.Group controlId="formBasicEmail">
+              <Field label="Enter OTP" name="otp" 
+                type="text" placeholder="OTP"
+                value={this.props.otp}
+                onChange={this.setForm}
+                component={getFormControlField}/>
+            </Form.Group>
+            <Row>
+              <Col>
+                <Button variant="primary" type="submit" disabled={this.props.invalid || this.props.submitting}>
+                  Verify
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+          )
+      }
+     })()
+     }
     </>
     )
   }
@@ -109,38 +174,24 @@ const getFormControlField = ({type,placeholder,label, input ,meta:{error,touched
   )
 }
 
-const validate = ({firstName,email,password,confirmPassword}) => {
+const validate = ({email,otp}) => {
   const errors = {};
-  if (!firstName) {
-    errors.firstName = "First name is required";
-  }
   if (!email) {
     errors.email = "Email is required";
   } else if(!(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/.test(email))){
     errors.email = "Email is invalid";
   }
-
-  if (!password) {
-    errors.password = "Password is required";
-  } else if(password.length < 8){
-    errors.password = "Password must be atleast 8 digits";
-  }
-
-  if (!confirmPassword) {
-    errors.confirmPassword = "Password is required";
-  } else if(confirmPassword !== password){
-    errors.confirmPassword = "Passwords do not match";
+  if (!otp) {
+    errors.otp = "OTP is required";
   }
   return errors;
 };
 
 
 const mapStateToProps = ({credentialsForm}) => {
-  let { firstName, lastName, email,
-    password, confirmPassword, afterSubmit } = credentialsForm;
+  let { email, otp, afterSubmit } = credentialsForm;
   return {
-    firstName, lastName, email,
-    password, confirmPassword, afterSubmit
+    email, otp, afterSubmit 
   }
 }
 
@@ -148,5 +199,6 @@ export default compose(
   connect(mapStateToProps),
   reduxForm({ 
     form: formName,
-    validate })
+    validate }),
+  userDetails
 )(Auth)

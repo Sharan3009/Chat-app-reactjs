@@ -23,6 +23,7 @@
     "nodemailer": "^6.8.0",
     "nodemailer-sendgrid-transport": "^0.2.0",
     "nodemailer-smtp-transport": "^2.7.4",
+    "otp-generator": "^4.0.0",
     "pino": "^5.17.0",
     "redis": "^3.0.2",
     "shortid": "^2.2.15",

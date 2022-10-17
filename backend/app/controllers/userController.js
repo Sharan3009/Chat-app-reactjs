@@ -8,26 +8,20 @@ const validateInput = require('../libs/paramsValidationLib')
 const check = require('../libs/checkLib')
 const token = require('../libs/tokenLib')
 const passwordLib = require('../libs/generatePasswordLib')
-const uuid = require('uuid')
+const mailerLib = require('../libs/mailerLib')
+const otpGenerator = require('otp-generator')
 
 /* Models */
 const UserModel = mongoose.model('User')
-const AuthModel = mongoose.model('Auth')
+const OtpModel = mongoose.model('Otp')
 
 // User Signup function 
-let signUpFunction = (req, res) => {
+let generateOTP = (req, res) => {
     let validateUserInput = () =>{
         return new Promise((resolve,reject)=>{
             if(req.body.email){
                 if(!validateInput.Email(req.body.email)){
                     let apiResponse = response.generate(true,'Email Does not meet the requirement',400,null)
-                    reject(apiResponse)
-                } else if(!validateInput.Password(req.body.password)){
-                    let apiResponse = response.generate(true,'Password must be atleast 8 characters',400,null)
-                    reject(apiResponse)
-                }
-                 else if (check.isEmpty(req.body.password)){
-                    let apiResponse = response.generate(true,'password parameter is missing',400,null)
                     reject(apiResponse)
                 } else {
                     resolve()
@@ -42,50 +36,59 @@ let signUpFunction = (req, res) => {
 
     let createUser = () =>{
         return new Promise((resolve,reject)=>{
-            UserModel.findOne({email:req.body.email})
-            .exec((err, retrievedUserDetails)=>{
+            let newUser = new UserModel({
+                userId : shortid.generate(),
+                firstName : 'John',
+                lastName : 'Doe',
+                email : req.body.email.toLowerCase(),
+                createdOn : time.now(),
+                active:false
+            })
+            newUser.save((err,newUser)=>{
                 if(err){
-                    logger.error(err.message,'User Controller : createUser',5)
-                    let apiResponse = response.generate(true,'Failed to create User',400,null)
+                    console.log(err)
+                    logger.error(err.message,'User Controller : createUser', 10)
+                    let apiResponse = response.generate(true,'Failed to create new user',400,null)
                     reject(apiResponse)
-                } else if (check.isEmpty(retrievedUserDetails)) {
-                    let newUser = new UserModel({
-                        userId : shortid.generate(),
-                        firstName : req.body.firstName,
-                        lastName : req.body.lastName || '',
-                        email : req.body.email.toLowerCase(),
-                        mobileNumber : req.body.mobileNumber,
-                        password : passwordLib.hashpassword(req.body.password),
-                        createdOn : time.now(),
-                        active:true
-                    })
-                    newUser.save((err,newUser)=>{
-                        if(err){
-                            console.log(err)
-                            logger.error(err.message,'User Controller : createUser', 10)
-                            let apiResponse = response.generate(true,'Failed to create new user',400,null)
-                            reject(apiResponse)
-                        } else {
-                            // delete keyword will not working until you convert it to js object using toObject()
-                            let newUserObj = newUser.toObject()
-                            resolve(newUserObj)
-                        }
-                    })
                 } else {
-                    logger.info('User cannot be created. User already present','User Controller : createUser',5)
-                    let apiResponse = response.generate(true,'User already present with this email',403,null)
+                    // delete keyword will not working until you convert it to js object using toObject()
+                    let newUserObj = newUser.toObject()
+                    delete newUserObj.__v;
+                    delete newUserObj._id;
+                    delete newUserObj.email;
+                    delete newUserObj.active;
+                    resolve(newUserObj)
+                }
+            })
+        })
+    }
+
+    let generateOTP = (userObj) =>{
+        return new Promise((resolve,reject)=>{
+            let otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
+            let newOtp = new OtpModel({
+                userId : userObj.userId,
+                otp : passwordLib.hashpassword(otp),
+                createdOn : time.now(),
+            })
+            mailerLib.sendOTPEmail(userObj.email,otp);
+            newOtp.save((err,newOtp)=>{
+                if(err){
+                    console.log(err)
+                    logger.error(err.message,'User Controller : generateOTP', 10)
+                    let apiResponse = response.generate(true,'Failed to create new otp',400,null)
                     reject(apiResponse)
-                } 
+                } else {
+                    resolve(userObj);
+                }
             })
         })
     }
     validateUserInput(req,res)
     .then(createUser)
+    .then(generateOTP)
     .then((resolve)=>{
-        delete resolve.password
-        delete resolve._id
-        delete resolve.__v
-        let apiResponse = response.generate(false,'User created',200,resolve)
+        let apiResponse = response.generate(false,'OTP email is sent successfully',200,resolve)
         res.send(apiResponse)
     })
     .catch((err)=>{
@@ -95,11 +98,11 @@ let signUpFunction = (req, res) => {
 } 
 
 // Login function 
-let loginFunction = (req, res) => {
+let verifyOTP = (req, res) => {
     let findUser = () => {
         return new Promise((resolve,reject)=>{
-            if(req.body.email){
-                UserModel.findOne({email: req.body.email.toLowerCase()},(err,userDetails)=>{
+            if(req.body.userId){
+                OtpModel.findOne({userId: req.body.userId},(err,userDetails)=>{
                     if(err){
                         console.log(err)
                         logger.error('Failed to Retrieve User Data', 'User Controller : findUser',5)
@@ -115,107 +118,54 @@ let loginFunction = (req, res) => {
                     }
                 })
             } else {
-                let apiResponse = response.generate(true,'email parameter is missing',400,null)
+                let apiResponse = response.generate(true,'userId parameter is missing',400,null)
                 reject(apiResponse)
             }
         })
     }
 
-    let validatePassword = (retrievedUserDetails) => {
+    let validateOtp = (retrievedUserDetails) => {
         return new Promise((resolve,reject)=>{
-            passwordLib.comparePassword(req.body.password,retrievedUserDetails.password,(err,isMatch)=>{
+            passwordLib.comparePassword(req.body.otp,retrievedUserDetails.otp,(err,isMatch)=>{
                 if(err){
                     console.log(err)
-                    logger.error(err.message,'User Controller : validatePassword',5)
-                    let apiResponse = response.generate(true,'Login Failed',500,null)
+                    logger.error(err.message,'User Controller : validateOtp',5)
+                    let apiResponse = response.generate(true,'Validation Otp Failed',500,null)
                     reject(apiResponse)
                 } else if (isMatch) {
                     let retrievedUserDetailsObj = retrievedUserDetails.toObject()
-                    delete retrievedUserDetailsObj.password
                     delete retrievedUserDetailsObj._id
                     delete retrievedUserDetailsObj.__v
-                    delete retrievedUserDetailsObj.createdOn
-                    delete retrievedUserDetailsObj.active
                     resolve(retrievedUserDetailsObj)
                 } else {
-                    logger.error('Login failed due to incorrect password','User Controller : validatePassword',5)
-                    let apiResponse = response.generate(true,'Wrong password . Login Failed',500,null)
+                    logger.error('Login failed due to incorrect OTP','User Controller : validatePassword',5)
+                    let apiResponse = response.generate(true,'OTP did not match. Please enter again',500,null)
                     reject(apiResponse)
                 }
             })
-           
         })
     }
 
     let generateToken = (userDetails) => {
         return new Promise ((resolve,reject)=>{
-            token.generateToken(userDetails,(err,tokenDetails)=>{
+            token.generateToken(userDetails.userId,(err,tokenDetails)=>{
                 if(err){
                     console.log(err)
                     let apiResponse = response.generate(true,'Failed to generate token',500,null)
                     reject(apiResponse)
                 } else {
-                    tokenDetails.userId = userDetails.userId
-                    tokenDetails.userDetails = userDetails
-                    resolve(tokenDetails)
+                    res.cookie("authToken",tokenDetails.token);
+                    resolve(true)
                 }
             })
         })
     }
 
-    let saveToken = (tokenDetails) => {
-        return new Promise((resolve,reject)=>{
-            AuthModel.findOne({userId : tokenDetails.userId })
-            .exec((err, retrievedTokenDetails)=>{
-                if(err){
-                    logger.error(err.message,'User Controller : saveToken',5)
-                    let apiResponse = response.generate(true,'Failed to generate token',400,null)
-                    reject(apiResponse)
-                } else if (check.isEmpty(retrievedTokenDetails)) {
-                    let newAuthToken = new AuthModel({
-                        userId : tokenDetails.userId,
-                        authToken : tokenDetails.token,
-                        tokenDetails : tokenDetails.tokenDetails,
-                        tokenSecret : tokenDetails.tokenSecret,
-                        tokenGenerationTime : time.now()
-                    })
-                    newAuthToken.save((err,newTokenDetails)=>{
-                        if(err){
-                            console.log(err)
-                            logger.error(err.message,'User Controller : saveToken', 10)
-                            let apiResponse = response.generate(true,'Failed to generate new token',400,null)
-                            reject(apiResponse)
-                        } else {
-                            res.cookie("authToken",newTokenDetails.authToken);
-                            resolve(tokenDetails.userDetails)
-                        }
-                    })
-                } else {
-                    retrievedTokenDetails.authToken = tokenDetails.token
-                    retrievedTokenDetails.tokenSecret = tokenDetails.tokenSecret
-                    retrievedTokenDetails.tokenGenerationTime = time.now()
-                    retrievedTokenDetails.save((err,newTokenDetails)=>{
-                        if(err){
-                            console.log(err)
-                            logger.error(err.message,'User Controller : saveToken',10)
-                            let apiResponse = response.generate(true,'Failed to generate Token',400,null)
-                            reject(apiResponse)
-                        } else {
-                            res.cookie("authToken",newTokenDetails.authToken);
-                            resolve(tokenDetails.userDetails)
-                        }
-                    })
-                } 
-            })
-        })
-    }
-
     findUser(req,res)
-    .then(validatePassword)
+    .then(validateOtp)
     .then(generateToken)
-    .then(saveToken)
     .then((resolve)=>{
-        let apiResponse = response.generate(false,'Login successful',200,resolve)
+        let apiResponse = response.generate(false,'Otp verified successfully',200,resolve)
         res.send(apiResponse)
     })
     .catch((err)=>{
@@ -224,141 +174,10 @@ let loginFunction = (req, res) => {
     })
 }
 
-let forgotPassword = (req,res) => {
-    let validateEmail = () =>{
-        return new Promise((resolve,reject)=>{
-            UserModel.findOne({ email: req.body.email.toLowerCase()},(err,result)=>{
-                if(err){
-                    logger.error(err.message,'User Controller : validateEmail',10)
-                    let apiResponse = response.generate(true,`error occured : ${err.message}`,500,null)
-                    reject(apiResponse)
-                } else if (check.isEmpty(result)){
-                    let apiResponse = response.generate(true,'No User Found',400,null)
-                    reject(apiResponse)
-                } else {
-                    resolve()
-                }
-            })
-        })
-        
-    }
-    let updateResetTokenInUser = ()=>{
-        return new Promise((resolve, reject) => {
-            let findQuery = {
-                email: req.body.email
-            }
-            let updateQuery = {
-              resetPasswordToken: uuid.v4(),
-              resetPasswordExpires : Date.now() + 300000 //link expiration after 5 mins
-            }
-            console.log(uuid.v4())
-            UserModel.findOneAndUpdate(findQuery, updateQuery, {multi: true,new:true})
-            .exec((err, result) => {
-              if (err) {
-                console.log(err)
-                logger.error(err.message, 'User Controller: updateResetTokenInUser', 10)
-                let apiResponse = response.generate(true, `Reset Token Failed`, 500, null)
-                reject(apiResponse)
-              } else {
-                  let resultObj = result.toObject()
-                  delete resultObj._id
-                  delete resultObj.__v
-                resolve(resultObj)
-              }
-            })
-          })
-        }
-    validateEmail(req,res)
-    .then(updateResetTokenInUser)
-    .then((resolve)=>{
-        let apiResponse = response.generate(false,'Reset Token successful',200,resolve)
-        res.send(apiResponse)
-    })
-    .catch((err)=>{
-        res.send(err)
-    })
-}
-
-let resetPassword = (req,res) => {
-    let findUser = () =>{
-        return new Promise((resolve,reject)=>{
-            UserModel.findOne({ resetPasswordToken: req.body.resetPasswordToken, resetPasswordExpires : { $gt: new Date(Date.now())}},(err,result)=>{
-                if(err){
-                    logger.error(err.message,'User Controller : findUser',10)
-                    let apiResponse = response.generate(true,`error occured : ${err.message}`,500,null)
-                    reject(apiResponse)
-                } else if (check.isEmpty(result)){
-                    let apiResponse = response.generate(true,'Link Expired',400,null)
-                    reject(apiResponse)
-                } else {
-                    resolve()
-                }
-            })
-        })
-        
-    }
-
-    let updatePassword = () =>{
-        return new Promise((resolve,reject)=>{
-            let updateQuery = {
-                password : passwordLib.hashpassword(req.body.password),
-                $unset : { resetPasswordToken:1,resetPasswordExpires:1 }
-              }
-            UserModel.update({ resetPasswordToken: req.body.resetPasswordToken},updateQuery ,(err,result)=>{
-                if(err){
-                    logger.error(err.message,'User Controller : resetPassword',10)
-                    let apiResponse = response.generate(true,`Password update failed`,500,null)
-                    reject(apiResponse)
-                } else if(!validateInput.Password(req.body.password)){
-                    let apiResponse = response.generate(true,`Password must be atleast 8 characters`,400,null)
-                    reject(apiResponse)
-                } 
-                else if (check.isEmpty(result)){
-                    let apiResponse = response.generate(true,'No User Found',400,null)
-                    reject(apiResponse)
-                } else {
-                    resolve(result)
-                }
-            })
-        })
-        
-    }
-    findUser(req,res)
-    .then(updatePassword)
-    .then((resolve)=>{
-        let apiResponse = response.generate(false,'Password Successfully Updated',200,resolve)
-        res.send(apiResponse)
-    })
-    .catch((err)=>{
-        res.send(err)
-    })
-}
-
-// Logout function.
-let logout = (req, res) => {
-    AuthModel.remove({ authToken: req.cookies.authToken },(err,result)=>{
-        if(err) {
-            console.log(err)
-            logger.error(err.message , 'User Controller : logout',10)
-            let apiResponse = response.generate(true,`error occured : ${err.message}`,500,null)
-            res.send(apiResponse)
-        } else if (check.isEmpty(result)) {
-            let apiResponse = response.generate(true,'Already logged out or invalid user',404,null)
-            res.send(apiResponse)
-        } else {
-            let apiResponse = response.generate(false,'Logged out successfully',200,result)
-            res.send(apiResponse)
-        }
-    })
-}
-
 
 module.exports = {
 
-    signUpFunction: signUpFunction,
-    loginFunction: loginFunction,
-    forgotPassword : forgotPassword,
-    resetPassword : resetPassword,
-    logout: logout
+    generateOTP: generateOTP,
+    verifyOTP: verifyOTP,
 
 }

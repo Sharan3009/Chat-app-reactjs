@@ -2,33 +2,21 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
 
-let userSchema = new Schema({
+let otpSchema = new Schema({
   userId: {
     type: String,
     index: true,
     unique: true
   },
-  firstName: {
-    type: String,
-    required : true
-  },
-  lastName: {
-    type: String,
-    default: ''
-  },
-  email: {
+  otp: {
     type: String,
     required : true
   },
   createdOn :{
     type : Date,
     default: Date.now()
-  },
-  active : {
-    type : Boolean,
-    default : false
   }
 })
 
 
-mongoose.model('User', userSchema);
+mongoose.model('Otp', otpSchema);

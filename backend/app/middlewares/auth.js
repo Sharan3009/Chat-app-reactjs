@@ -9,28 +9,15 @@ const check = require('./../libs/checkLib')
 
 let isAuthorized = (req, res, next) => {
     if(req.params.authToken || req.query.authToken || req.body.authToken || req.cookies.authToken) {
-        Auth.findOne({ authToken : req.cookies.authToken || req.params.authToken || req.query.authToken || req.body.authToken },(err,authDetails)=>{
+        token.verifyClaim(authDetails.authToken, authDetails.tokenSecret,(err,decoded)=>{
             if(err){
-                console.log(err)
-                logger.error(err.message,'Authorization Middleware',10)
-                let apiResponse = responseLib.generate(true,'Failed to Authorize',500,null)
-                res.send(apiResponse)
-            } else if (check.isEmpty(authDetails)){
-                logger.error('No AuthorizationKey is present','Authorization Middleware',10)
-                let apiResponse = responseLib.generate(true,'Invalid or expired authorization key',401,null)
+                logger.error(err.message,'Authorization middleware',10)
+                let apiResponse = responseLib.generate(true,'Failed to authorize',500,null)
                 res.send(apiResponse)
             } else {
-                token.verifyClaim(authDetails.authToken, authDetails.tokenSecret,(err,decoded)=>{
-                    if(err){
-                        logger.error(err.message,'Authorization middleware',10)
-                        let apiResponse = responseLib.generate(true,'Failed to authorize',500,null)
-                        res.send(apiResponse)
-                    } else {
-                        console.log('decoded ' + decoded)
-                        req.user = {userId : decoded.data.userId}
-                        next()
-                    }
-                })
+                console.log('decoded ' + decoded)
+                req.user = {userId : decoded.data.userId}
+                next()
             }
         })
     } else {

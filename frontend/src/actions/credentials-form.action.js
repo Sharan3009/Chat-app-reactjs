@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getDataFromStorage } from "../higher-order-components/local-storage";
 export const AFTER_SUBMIT = "AFTER_SUBMIT";
 export const FORM_HANDLER = "FORM_HANDLER";
 export const LOGIN = "LOGIN";
@@ -26,25 +27,23 @@ export function afterFormSubmit(show,message,variant){
     }
 }
 
-export function loginApi(email,password){
+export function genearteOTP(email){
     return axios.post(
-        `${process.env.REACT_APP_DOMAIN}${process.env.REACT_APP_API_VERSION}users/login`,
+        `${process.env.REACT_APP_DOMAIN}${process.env.REACT_APP_API_VERSION}users/otp`,
         {
-            email,
-            password
-        },
-        {withCredentials:true}
+            email
+        }
     )
 }
 
-export function signUpApi(firstName,lastName,email,password){
+export function verifyOTP(userId, otp){
     return axios.post(
-        `${process.env.REACT_APP_DOMAIN}${process.env.REACT_APP_API_VERSION}users/signup`,
+        `${process.env.REACT_APP_DOMAIN}${process.env.REACT_APP_API_VERSION}users/verify`,
         {
-            firstName,
-            lastName,
-            email,
-            password
-        }
+            userId,
+            otp
+        },
+        {withCredentials:true}
+
     )
 }
