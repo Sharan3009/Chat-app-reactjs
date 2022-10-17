@@ -53,7 +53,6 @@ let setServer = (server) => {
             message: data.message,
             chatRoom: data.chatRoom || ''
         });
-        console.log("Chat ROom", data.chatRoom);
     
         newChat.save((err, result) => {
             if (err) {
@@ -115,6 +114,7 @@ let setServer = (server) => {
 }
 
 let createOrJoinRoom = (socket) => {
+    let hasRoom;
     return new Promise((resolve, reject)=>{
         RoomModel.findOne({userId: socket.userId})
         .select('-_id -__v')
@@ -125,30 +125,33 @@ let createOrJoinRoom = (socket) => {
             } else if (check.isEmpty(result)) {
 
             } else {
-                const hasRoom = result.roomId;
-                console.log("hasrooooooooooom",hasRoom)
-                if(hasRoom){
-                    socket.roomId = hasRoom;
-                    socket.join(hasRoom);
-                } else {
-                    if(socket.helper){
-                        if(userRooms.length){
-                            socket.join(userRooms.pop())
-                        } else {
-                            let roomId = shortid.generate();
-                            socket.roomId = roomId;
-                            socket.join(roomId);
-                            helperRooms.push(roomId);
-                        }
+                hasRoom = result.roomId;
+            }
+            if(hasRoom){
+                socket.roomId = hasRoom;
+                socket.join(hasRoom);
+            } else {
+                if(socket.helper){
+                    if(userRooms.length){
+                        let roomId = userRooms.pop();
+                        socket.roomId = roomId;
+                        socket.join(roomId);
                     } else {
-                        if(helperRooms.length){
-                            socket.join(helperRooms.pop())
-                        } else {
-                            let roomId = shortid.generate();
-                            socket.roomId = roomId;
-                            socket.join(roomId);
-                            userRooms.push(roomId);
-                        }
+                        let roomId = shortid.generate();
+                        socket.roomId = roomId;
+                        socket.join(roomId);
+                        helperRooms.push(roomId);
+                    }
+                } else {
+                    if(helperRooms.length){
+                        let roomId = helperRooms.pop();
+                        socket.roomId = roomId;
+                        socket.join(roomId);
+                    } else {
+                        let roomId = shortid.generate();
+                        socket.roomId = roomId;
+                        socket.join(roomId);
+                        userRooms.push(roomId);
                     }
                 }
             }
