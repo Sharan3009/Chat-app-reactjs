@@ -1,7 +1,7 @@
 import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { FormControl} from 'react-bootstrap';
+import { Button, FormControl} from 'react-bootstrap';
 import { chatInput } from '../../actions/chat-input-box.action';
 import { socketEmit } from '../../actions/socket.action';
 import { userDetails } from '../../higher-order-components/user';
@@ -47,13 +47,16 @@ class ChatInputBox extends React.Component{
 
     render(){
         return(
-            <FormControl ref={this.textInput}
-             value={this.props.chatInputText}
-             onChange={this.onChatInputChange}
-             type="text" 
-             placeholder="Enter a message"
-             className="w-auto" 
-             onKeyDown={this.keyDownChatInput} />
+            <div className="d-flex w-100">
+                <FormControl ref={this.textInput}
+                value={this.props.chatInputText}
+                onChange={this.onChatInputChange}
+                type="text" 
+                placeholder="Enter a message"
+                className="form-control-lg mr-2" 
+                onKeyDown={this.keyDownChatInput} />
+                <Button variant="danger">End&nbsp;Chat</Button>
+            </div>
         )
     }
 }
