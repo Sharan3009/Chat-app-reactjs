@@ -77,7 +77,7 @@ let generateOTP = (req, res) => {
                 otp : passwordLib.hashpassword(otp),
                 createdOn : time.now(),
             })
-            // console.log("OTP",otp)
+            console.log("OTP",otp)
             mailerLib.sendOTPEmail(userObj.email,otp);
             newOtp.save((err,newOtp)=>{
                 if(err){

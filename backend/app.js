@@ -23,7 +23,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(routeLoggerMiddleware.logIp);
 app.use(globalErrorMiddleware.globalErrorHandler);
 app.use(helmet())
-
+app.use(express.static(path.resolve(__dirname, '../frontend/build')));
 // getting all models present in models folder
 let modelsPath = './app/models'
 fs.readdirSync(modelsPath).forEach(function(file){
