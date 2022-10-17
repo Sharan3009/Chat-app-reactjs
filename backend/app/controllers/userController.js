@@ -62,7 +62,6 @@ let generateOTP = (req, res) => {
                     let newUserObj = newUser.toObject()
                     delete newUserObj.__v;
                     delete newUserObj._id;
-                    delete newUserObj.email;
                     delete newUserObj.active;
                     resolve(newUserObj)
                 }
@@ -78,8 +77,8 @@ let generateOTP = (req, res) => {
                 otp : passwordLib.hashpassword(otp),
                 createdOn : time.now(),
             })
-            console.log("OTP",otp)
-            // mailerLib.sendOTPEmail(userObj.email,otp);
+            // console.log("OTP",otp)
+            mailerLib.sendOTPEmail(userObj.email,otp);
             newOtp.save((err,newOtp)=>{
                 if(err){
                     console.log(err)
