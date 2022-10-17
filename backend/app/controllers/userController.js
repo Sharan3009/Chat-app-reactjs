@@ -10,6 +10,10 @@ const token = require('../libs/tokenLib')
 const passwordLib = require('../libs/generatePasswordLib')
 const mailerLib = require('../libs/mailerLib')
 const otpGenerator = require('otp-generator')
+const ung = require("unique-names-generator");
+const config = {
+  dictionaries: [ung.names]
+}
 
 /* Models */
 const UserModel = mongoose.model('User')
@@ -41,8 +45,8 @@ let generateOTP = (req, res) => {
         return new Promise((resolve,reject)=>{
             let newUser = new UserModel({
                 userId : shortid.generate(),
-                firstName : 'John',
-                lastName : 'Doe',
+                firstName : ung.uniqueNamesGenerator(config),
+                lastName : ung.uniqueNamesGenerator(config),
                 email : req.body.email.toLowerCase(),
                 createdOn : time.now()
             })
