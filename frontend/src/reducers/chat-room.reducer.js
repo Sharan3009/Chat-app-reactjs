@@ -1,12 +1,11 @@
 import { CHAT_ROOM_DATA, CHAT_ROOM_DATA_STATUS,
-      RESET_ROOMS_DATA_OBJ,
      SET_INITIAL_PROPS, UPDATE_CHAT
     }
 from '../actions/chat-room.action'; 
 
 const initialState = {
     chatRoomDataStatus : "loading",
-    chatRoomData: null,
+    chatRoomData: [],
 }
 
 function reducer(state=initialState,action){
@@ -14,7 +13,7 @@ function reducer(state=initialState,action){
         case CHAT_ROOM_DATA:{
             return {
               ...state,
-              chatRoomData: action.payload
+              chatRoomData: [...state.chatRoomData,...action.payload]
             };
           }
       

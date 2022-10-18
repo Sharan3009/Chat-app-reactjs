@@ -9,11 +9,21 @@ class ChatPlank extends React.Component{
 
     chatUI=()=>{
         const { chat,currentUser } = this.props;
-        if(chat.senderId === currentUser.userId){
-            return this.myChatUI(chat.senderName, chat.message);
+        if(chat.type===1){
+            if(chat.senderId === currentUser.userId){
+                return this.myChatUI(chat.senderName, chat.message);
+            }
+            return this.notMineChatUI(chat.senderName, chat.message);
+        } else if(chat.type===2){
+            return this.chatNotificationUI(chat.message);
         }
-        return this.notMineChatUI(chat.senderName, chat.message);
 
+    }
+
+    chatNotificationUI = (message) =>{
+        return (
+            <div className="text-muted font-weight-bold text-center p-2">{message}</div>
+        )
     }
 
     notMineChatUI = (userName,message) => {

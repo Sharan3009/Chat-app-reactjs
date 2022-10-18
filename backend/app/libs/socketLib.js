@@ -117,54 +117,63 @@ let setServer = (server) => {
         .then(createRoom)
     
     }
-}
 
-let createOrJoinRoom = (socket) => {
-    let hasRoom;
-    return new Promise((resolve, reject)=>{
-        RoomModel.findOne({userId: socket.userId})
-        .select('-_id -__v')
-        .lean()
-        .exec((err, result) => {
-            if (err) {
-
-            } else if (check.isEmpty(result)) {
-
-            } else {
-                hasRoom = result.roomId;
-            }
-            if(hasRoom){
-                socket.roomId = hasRoom;
-                socket.join(hasRoom);
-            } else {
-                if(socket.helper){
-                    if(userRooms.length){
-                        let roomId = userRooms.pop();
-                        socket.roomId = roomId;
-                        socket.join(roomId);
-                    } else {
-                        let roomId = shortid.generate();
-                        socket.roomId = roomId;
-                        socket.join(roomId);
-                        helperRooms.push(roomId);
-                    }
-                } else {
-                    if(helperRooms.length){
-                        let roomId = helperRooms.pop();
-                        socket.roomId = roomId;
-                        socket.join(roomId);
-                    } else {
-                        let roomId = shortid.generate();
-                        socket.roomId = roomId;
-                        socket.join(roomId);
-                        userRooms.push(roomId);
-                    }
-                }
-            }
-            resolve();
-        })
-    })  
+    let broadcastRoomNotification = (chatRoom, message) =>{
+        let notification = {};
+        notification['chatId'] = shortid.generate();
+        notification.type = 2;
+        notification.message = message;
+        notification.createdOn = new Date();
+        io.sockets.in(chatRoom).emit('receive-message', notification)
+    }  
     
+    let createOrJoinRoom = (socket) => {
+        let hasRoom;
+        return new Promise((resolve, reject)=>{
+            RoomModel.findOne({userId: socket.userId})
+            .select('-_id -__v')
+            .lean()
+            .exec((err, result) => {
+                if (err) {
+    
+                } else if (check.isEmpty(result)) {
+    
+                } else {
+                    hasRoom = result.roomId;
+                }
+                if(hasRoom){
+                    socket.roomId = hasRoom;
+                    socket.join(hasRoom);
+                } else {
+                    if(socket.helper){
+                        if(userRooms.length){
+                            let roomId = userRooms.pop();
+                            socket.roomId = roomId;
+                            socket.join(roomId);
+                        } else {
+                            let roomId = shortid.generate();
+                            socket.roomId = roomId;
+                            socket.join(roomId);
+                            helperRooms.push(roomId);
+                        }
+                    } else {
+                        if(helperRooms.length){
+                            let roomId = helperRooms.pop();
+                            socket.roomId = roomId;
+                            socket.join(roomId);
+                        } else {
+                            let roomId = shortid.generate();
+                            socket.roomId = roomId;
+                            socket.join(roomId);
+                            userRooms.push(roomId);
+                        }
+                    }
+                    broadcastRoomNotification(socket.roomId,`${socket.userName} joined the chat`)
+                }
+                resolve();
+            })
+        })   
+    }
 }
 
 let leaveRoom = (socket) => {
