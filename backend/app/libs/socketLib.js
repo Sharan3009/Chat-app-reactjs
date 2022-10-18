@@ -20,29 +20,34 @@ let setServer = (server) => {
     /*--------estabilishing connection using service.ts---------------*/
     myIo.on('connection', (socket) => {
         const authToken = cookie.parse(socket.handshake.headers.cookie)["authToken"];
-        verifyClaim(authToken,async (err,obj)=>{
-            if(err)
-                return;
-            socket.userId = obj.data.userId;
-            socket.userName = obj.data.userName;
-            socket.helper = obj.data.helper;
-            await createOrJoinRoom(socket);
-            await saveRoomInDb(socket.userId, socket.roomId);
-            await redisLib.makeHelperAvailable(socket.helper,socket.userId, socket.userName);
-            console.log("online",await redisLib.getOnlineHelperCount());
-            socket.on('room-chat-msg', (data) => {
-                data['chatId'] = shortid.generate()
-                data.senderId = socket.userId;
-                data.senderName = socket.userName;
-                data.chatRoom = socket.roomId;
-                eventEmitter.emit('save-chat',data);
-                })
-            socket.on("disconnect",async ()=>{
-                leaveRoom(socket);
-                await redisLib.makeHelperOffline(socket.helper, socket.userId);
+        if(authToken){
+            verifyClaim(authToken,async (err,obj)=>{
+                if(err)
+                    return;
+                socket.userId = obj.data.userId;
+                socket.userName = obj.data.userName;
+                socket.helper = obj.data.helper;
+                await createOrJoinRoom(socket);
+                await saveRoomInDb(socket.userId, socket.roomId);
+                await redisLib.makeHelperAvailable(socket.helper,socket.userId, socket.userName);
                 console.log("online",await redisLib.getOnlineHelperCount());
+                socket.on('room-chat-msg', (data) => {
+                    data['chatId'] = shortid.generate()
+                    data.senderId = socket.userId;
+                    data.senderName = socket.userName;
+                    data.chatRoom = socket.roomId;
+                    eventEmitter.emit('save-chat',data);
+                    })
             })
+        } else {
+            socket.emit("invalid-authtoken",null);
+        }
+        socket.on("disconnect",async ()=>{
+            leaveRoom(socket);
+            await redisLib.makeHelperOffline(socket.helper, socket.userId);
+            console.log("online",await redisLib.getOnlineHelperCount());
         })
+        
     })
 
     eventEmitter.on('save-chat', (data) => {
@@ -51,7 +56,8 @@ let setServer = (server) => {
             senderName: data.senderName,
             senderId: data.senderId,
             message: data.message,
-            chatRoom: data.chatRoom || ''
+            chatRoom: data.chatRoom,
+            createdOn: new Date()
         });
     
         newChat.save((err, result) => {
@@ -62,7 +68,7 @@ let setServer = (server) => {
                 console.log("Chat Is Not Saved.");
             }
             else {
-                io.sockets.in(data.chatRoom).emit('receive-message', data)
+                io.sockets.in(result.chatRoom).emit('receive-message', result)
             }
         });
     

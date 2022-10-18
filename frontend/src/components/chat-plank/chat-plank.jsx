@@ -31,12 +31,12 @@ class ChatPlank extends React.Component{
 
     myChatUI = (userName, message) => {
         return (
-            <li class="clearfix">
-                <div class="message-data align-right">
-                <span class="message-data-name" ><b>{userName}</b> (You)</span> <i class="fa fa-circle me"></i>
+            <li className="clearfix">
+                <div className="message-data align-right">
+                <span className="message-data-name" ><b>{userName}</b> (You)</span> <i className="fa fa-circle me"></i>
                 
                 </div>
-                <div class="message other-message float-right">
+                <div className="message other-message float-right">
                 {message}
                 </div>
             </li>
@@ -45,14 +45,10 @@ class ChatPlank extends React.Component{
 
     render(){
         const { chat } = this.props;
-        console.log(chat);
         return(
             <div className="chat">
                 {this.chatUI()}
             </div>
-            // <div className={`${this.state.plankClass} text-center shadow`}>
-            //     {chat.message}
-            // </div>
         )
     }
 }

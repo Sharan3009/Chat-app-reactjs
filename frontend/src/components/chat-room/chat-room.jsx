@@ -6,7 +6,7 @@ import { childRouteParam } from '../../higher-order-components/child-route-param
 import ChatInputBox from '../chat-input-box';
 import { Spinner } from 'react-bootstrap';
 import { getRoomChatsApi, setRoomDataStatus,
-    setRoomData, setInitialProps, addChatToChatRoom,
+    setRoomData, setInitialProps,
     updateChatInChatRoom } from '../../actions/chat-room.action';
 import ChatPlank from '../chat-plank';
 import style from './chat-room.module.scss';
@@ -16,10 +16,19 @@ import { userDetails } from '../../higher-order-components/user';
 class ChatRoom extends React.Component{
     constructor(props){
         super(props);
+        this.scrollComponent = React.createRef();
     }
 
     componentDidMount(){
         this.getRoom();
+        this.onSocketDisconnect();
+    }
+
+    onSocketDisconnect = () =>{
+        this.props.dispatch(socketOn("invalid-authtoken",()=>{
+            localStorage.clear();
+            this.props.history.push("/auth");
+        }))
     }
 
     getRoom(){
@@ -36,12 +45,13 @@ class ChatRoom extends React.Component{
         this.props.dispatch(
             socketOn('receive-message',(data)=>{
                 this.props.dispatch(updateChatInChatRoom(data));
+                this.scrollToEnd();
             })
         )
     }
 
-    addNewChat=(data)=>{
-        this.props.dispatch(addChatToChatRoom(data));
+    scrollToEnd = () => {
+        this.scrollComponent.current.scrollTo(0,this.scrollComponent.current.scrollHeight);
     }
 
     getChats(){
@@ -53,9 +63,10 @@ class ChatRoom extends React.Component{
             if(apiResponse.data){
                 if(apiResponse.data.status===401){
                     localStorage.clear();
-                    this.props.history.push("/login");
+                    this.props.history.push("/auth");
                 } else {
                     this.props.dispatch(setRoomData(apiResponse.data.data));
+                    this.scrollToEnd();
                 }
             }
         })
@@ -78,24 +89,24 @@ class ChatRoom extends React.Component{
     }
 
     render(){
-        const { chatRoomData, chatRoomDataStatus, chatRoomDataLength } = this.props;
+        const { chatRoomData, chatRoomDataStatus } = this.props;
         if(chatRoomData){
-            if(chatRoomData && chatRoomDataLength){
+            if(chatRoomData && chatRoomData.length){
                 return (
                     <div className="parent-flex px-2 pb-2">
                         <div className="child-flex position-relative">
-                            <div className={style.shiftToEnd}>
-                                {chatRoomData.filter(chat=>chat.chatId || chat.ack).map((chat)=><ChatPlank key={chat.chatId || chat.ack} chat={chat}/>)}
+                            <div className={style.shiftToEnd} ref={this.scrollComponent}>
+                                {chatRoomData.sort((a,b)=>new Date(a.createdOn) - new Date(b.createdOn)).map((chat)=><ChatPlank key={chat.chatId} chat={chat}/>)}
                             </div>
                         </div>
-                        <ChatInputBox addNewChat={this.addNewChat}/>
+                        <ChatInputBox/>
                     </div>
                 )
             } else {
                 return (
                     <div className="parent-flex px-2 pb-2">
                         {this.renderErrorElement("No conversation has been started.")}
-                        <ChatInputBox addNewChat={this.addNewChat}/>
+                        <ChatInputBox/>
                     </div>
                     )
             }

@@ -9,7 +9,7 @@ let chatSchema = new Schema({
     message : { type : String, required : true },
     chatRoom : { type : String, required : true },
     type: {type: Number, default: 1},
-    createdOn : { type : Date, default : Date.now() }
+    createdOn : { type : Date, required: true }
 })
 
 mongoose.model('Chat',chatSchema)

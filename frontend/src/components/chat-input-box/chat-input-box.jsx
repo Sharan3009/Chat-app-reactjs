@@ -31,16 +31,11 @@ class ChatInputBox extends React.Component{
 
     sendChat=()=>{
         const { chatInputText } = this.props;
-        const { userId, userName } = this.props.currentUser;
-        let ack = `${userId}${Math.random()*new Date()}`;
         if(chatInputText){
             let data = {
                 message: chatInputText,
-                ack
             }
             this.props.dispatch(chatInput(""));
-            this.props.addNewChat({...data,senderId: userId,
-                senderName: userName,});
             this.props.dispatch(socketEmit("room-chat-msg",data))
         }
     }

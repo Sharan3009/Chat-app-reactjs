@@ -39,10 +39,8 @@ let getRoomChats = (req, res) => {
   
         ChatModel.find(findQuery)
           .select('-_id -__v')
-          .sort({createdOn:-1})
           .skip(parseInt(req.query.skip) || 0)
           .lean()
-          .limit(100)
           .exec((err, result) => {
             if (err) {
               console.log(err)
