@@ -40,6 +40,19 @@ class ChatInputBox extends React.Component{
         }
     }
 
+    endChat = () => {
+        var cookies = document.cookie.split(";");
+
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i];
+            var eqPos = cookie.indexOf("=");
+            var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        }
+        localStorage.clear();
+        this.props.history.push("/auth");
+    }
+
     render(){
         return(
             <div className="d-flex w-100">
@@ -50,7 +63,7 @@ class ChatInputBox extends React.Component{
                 placeholder="Enter a message"
                 className="form-control-lg mr-2" 
                 onKeyDown={this.keyDownChatInput} />
-                <Button variant="danger">End&nbsp;Chat</Button>
+                <Button variant="danger" onClick={this.endChat}>End&nbsp;Chat</Button>
             </div>
         )
     }
