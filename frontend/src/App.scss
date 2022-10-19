@@ -21,7 +21,7 @@ body{
 }
 
 .credentials-bg {
-    position:fixed;
+    position: fixed;
     background: url("/images/credentials_bg.png") no-repeat; 
     background-size: cover;
     width: 100%;
@@ -29,6 +29,7 @@ body{
     -webkit-filter: blur(4px);
     filter: blur(4px);
     transform:scale(1.2);
+    z-index:-1;
 }
 
 .parent-flex ,.container-parent-flex,.container-parent-flex>.row>[class*='col-']{

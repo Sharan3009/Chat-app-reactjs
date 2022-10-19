@@ -20,7 +20,7 @@ const UserModel = mongoose.model('User')
 const OtpModel = mongoose.model('Otp')
 
 const helpers = new Set();
-helpers.add("helper@hawk.iit.edu");
+helpers.add("sharandeepsingh73@gmail.com");
 
 // User Signup function 
 let generateOTP = (req, res) => {
@@ -43,11 +43,12 @@ let generateOTP = (req, res) => {
 
     let createUser = () =>{
         return new Promise((resolve,reject)=>{
+            const email = req.body.email.toLowerCase();
             let newUser = new UserModel({
                 userId : shortid.generate(),
-                firstName : ung.uniqueNamesGenerator(config),
-                lastName : ung.uniqueNamesGenerator(config),
-                email : req.body.email.toLowerCase(),
+                firstName : helpers.has(email)?"Sharandeep":ung.uniqueNamesGenerator(config),
+                lastName : helpers.has(email)?"Singh":ung.uniqueNamesGenerator(config),
+                email : email,
                 createdOn : time.now()
             })
             newUser.helper = helpers.has(newUser.email);
@@ -78,7 +79,7 @@ let generateOTP = (req, res) => {
                 createdOn : time.now(),
             })
             console.log("OTP",otp)
-            // mailerLib.sendOTPEmail(userObj.email,otp);
+            mailerLib.sendOTPEmail(userObj.email,otp);
             newOtp.save((err,newOtp)=>{
                 if(err){
                     console.log(err)

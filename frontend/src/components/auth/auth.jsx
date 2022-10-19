@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { Field, reduxForm,startSubmit,stopSubmit } from 'redux-form';
 import { userDetails } from '../../higher-order-components/user';
+import AppNavbar from '../app-navbar/app-navbar';
 const formName = "signup";
 
 class Auth extends React.Component {
@@ -92,12 +93,19 @@ class Auth extends React.Component {
   render(){
     return(
       <>
+      <AppNavbar/>
+      <div className="parent-flex">
      <div className="credentials-bg"></div>
      {
      (()=>{
       if(this.state.screenOne){
           return(
+            <>
           <Form className="bg-white p-3 custom-form rounded" onSubmit={this.submitOTPForm}>
+            <Alert variant="info">
+            Please enter a college email address ending in <b>hawk.iit.edu</b> to verify you're in college.
+            We'll email you to verify your college address, and that's all. 
+            </Alert>
             {this.props.afterSubmit.show && 
             (<Alert variant={this.props.afterSubmit.variant} 
             onClose={() => this.handleConfirmation(false)} dismissible>
@@ -118,6 +126,7 @@ class Auth extends React.Component {
               </Col>
             </Row>
           </Form>
+          </>
           )
       } else {
           return (
@@ -146,6 +155,7 @@ class Auth extends React.Component {
       }
      })()
      }
+     </div>
     </>
     )
   }

@@ -30,7 +30,7 @@ class ChatPlank extends React.Component{
         return (
             <li>
                 <div className="message-data align-left">
-                <span className="message-data-name"><i className="fa fa-circle online"></i> <b>{userName}</b> (Helper)</span>
+                <span className="message-data-name"><i className="fa fa-circle online"></i> <b>{userName}</b></span>
                 </div>
                 <div className="message my-message float-left">
                 {message}
